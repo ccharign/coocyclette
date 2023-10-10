@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom/client'
 import {
-	createBrowserRouter,
-	RouterProvider,
+    createBrowserRouter,
+    RouterProvider,
 } from "react-router-dom";
 import "leaflet/dist/leaflet.css"
 import "./css/pour-leaflet.css"
@@ -15,7 +15,7 @@ const router = createBrowserRouter([
         element: <AutourDeMoi />,
     },
     {
-        path: "",
+        path: "/osm-velo-front/",
         element: <AutourDeMoi />,
     },
 
