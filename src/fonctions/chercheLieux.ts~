@@ -1,0 +1,22 @@
+import { Lieu } from "../classes/lieux.ts";
+import { OverpassRes } from "../classes/types";
+import { BoundingBox } from "../classes/bounding-box";
+import { TypeLieu } from "../classes/types-lieux";
+
+
+export default async  function chercheLieux(carte:L.Map, types_de_lieux: TypeLieu[]): Promise<Lieu[]>{
+    
+    console.log("Lieux recherchés :", types_de_lieux);
+    const bb = BoundingBox.ofCarte(carte);
+    const requête =  "[out:json][timeout:25];"
+		   + types_de_lieux.map(tl=>tl.versOverpass()+bb.toOverpass()+";").join("")
+		   + "out body;";
+    console.log(requête);
+    const res_req = await fetch('https://www.overpass-api.de/api/interpreter?'+"data="+requête);
+    const res_overpass = await res_req.json();
+    const lieux = res_overpass.elements.map( (x:OverpassRes) => Lieu.from_overpass(x));
+    console.log(lieux);
+    return lieux;
+}
+
+

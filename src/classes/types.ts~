@@ -1,0 +1,11 @@
+export type Dico = {[clef:string]: string|number};
+
+export type OverpassRes = {
+    id:number,
+    lat:number,
+    lon:number,
+    tags: any,
+    type: string,
+}
+
+export type BoundingBox = {s:number, o:number, n:number, e:number};
