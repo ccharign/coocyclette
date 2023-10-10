@@ -4,24 +4,22 @@ import { Dico, OverpassRes } from "./types.ts";
 import { TypeLieu } from "./types-lieux.ts";
 
 
-class Vecteur {
+export class Vecteur {
 
-    x:number;
-    y:number;
-    
-    constructor(x:number, y:number){
-	this.x = x;
-	this.y = y;
+    x: number;
+    y: number;
+
+    constructor(x: number, y: number) {
+        this.x = x;
+        this.y = y;
     }
 
-    produitScalaire(autre_vecteur: Vecteur){
-	return this.x*autre_vecteur.x + this.y*autre_vecteur.y;
+    produitScalaire(autre_vecteur: Vecteur) {
+        return this.x * autre_vecteur.x + this.y * autre_vecteur.y;
     }
 }
 
-
-// Lieu de base : des coords et un marqueur
-export class Lieu{
+export class Lieu {
 
     static R_terre = 6360000; // en mètres
     static coeff_rad = Math.PI / 180; // Multiplier par ceci pour passer en radians
@@ -29,32 +27,30 @@ export class Lieu{
     coords: L.LatLng;
     marqueur: L.Marker;
 
-    
+
     // Crée l’objet mais aussi un marqueur. Le marqueur n’est pas lié à la carte.
     constructor(ll: L.LatLng) {
         this.coords = ll;
-        this.marqueur = new L.Marker(ll)
+        this.marqueur = new L.Marker(ll);
     }
 
 
     setLatlng(ll: L.LatLng) {
-	this.coords = ll;
+        this.coords = ll;
     }
 
 
-    vecteurVers(autreLieu: LieuOsm){
-	return this.vecteurVersLatLng(autreLieu.coords);
+    vecteurVers(autreLieu: LieuOsm) {
+        return this.vecteurVersLatLng(autreLieu.coords);
     }
 
-    vecteurVersLatLng(ll2: L.LatLng){
-	const ll1 = this.coords;
-	const dx = LieuOsm.R_terre * Math.cos(ll1.lat*Math.PI/180) * (ll2.lng - ll1.lng)*Math.PI/180;
-	const dy = LieuOsm.R_terre * (ll2.lat - ll1.lat)*Math.PI/180;
-	return new Vecteur(dx, dy);
+    vecteurVersLatLng(ll2: L.LatLng): Vecteur {
+        const ll1 = this.coords;
+        const dx = LieuOsm.R_terre * Math.cos(ll1.lat * Math.PI / 180) * (ll2.lng - ll1.lng) * Math.PI / 180;
+        const dy = LieuOsm.R_terre * (ll2.lat - ll1.lat) * Math.PI / 180;
+        return new Vecteur(dx, dy);
     }
 }
-
-
 
 
 // Un lieu venant d’un objet osm
