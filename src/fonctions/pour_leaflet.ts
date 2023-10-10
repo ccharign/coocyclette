@@ -3,7 +3,7 @@ import { Dico } from "../classes/types.ts";
 
 
 // https://stackoverflow.com/questions/23567203/leaflet-changing-marker-color
-function markerHtmlStyles(coul:string){
+function markerHtmlStyles(coul:string): string{
     return `
   background-color: ${coul};
   width: 2rem;
@@ -18,7 +18,7 @@ function markerHtmlStyles(coul:string){
 }
 
 
-export function mon_icone(coul:string){
+export function mon_icone(coul:string): L.DivIcon{
     return L.divIcon({
 	className: "my-custom-pin",
 	iconAnchor: [0, 24],
