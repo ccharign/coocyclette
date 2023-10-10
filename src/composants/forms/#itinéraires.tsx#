@@ -7,8 +7,6 @@ export default function FormItinéraires(){
     const [zone, setZone] = useState("");
 
     
-
-    
     function changeDépart(event: React.SyntheticEvent<HTMLDivElement, Event>):void {
         console.log("Valeur obtenue pour le départ", event.target)
 
