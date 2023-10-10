@@ -3,6 +3,11 @@ import L from "leaflet"
 import { Dico, OverpassRes } from "./types.ts";
 import { TypeLieu } from "./types-lieux.ts";
 
+import markerIcon from "../../node_modules/leaflet/dist/images/marker-icon.png";
+
+L.Marker.prototype.setIcon(L.icon({
+    iconUrl: markerIcon
+}))
 
 export class Vecteur {
 
