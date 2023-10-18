@@ -38,7 +38,7 @@ export default function FormAutourDeMoi({ carte, marqueurs }: props) {
 
 	// crée les nv marqueurs et les met dans le layerGroup « marqueurs »
 	(await chercheLieux(carte as L.Map, typesLieuxSélectionnés())).forEach(
-	    lieu => marqueurs.addLayer(lieu.marqueur)
+	    lieu => marqueurs.addLayer(lieu.leaflet_layer)
 	);
 	console.log("Marqueurs après", marqueurs);
         marqueurs.addTo(carte);
