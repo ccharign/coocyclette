@@ -3,10 +3,9 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Carte from "../composants/carte.tsx";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import L from "leaflet";
 import FormItinéraires from "../composants/forms/itinéraires.tsx";
-import { ÉtapeClic } from "../classes/lieux.ts"
 
 
 export default function Itinéraires() {
@@ -27,7 +26,13 @@ export default function Itinéraires() {
                     </Col>
 
                     <Col>
-                        {carte !== null ? <FormItinéraires marqueurs={marqueurs} carte={carte} itinéraires={itinéraires} /> : null}
+                        {carte !== null
+                            ? <FormItinéraires
+                                marqueurs={marqueurs}
+                                carte={carte}
+                                itinéraires={itinéraires}
+                            />
+                            : null}
                     </Col>
 
                 </Row>

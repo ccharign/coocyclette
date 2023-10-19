@@ -319,17 +319,17 @@ export class LieuOsm extends Lieu {
 
 
 // latlng: coords du point cliqué
-// toutes_les_étapes : toutes les étapes sauf l’arrivée.
+// toutes_les_étapes : toutes les étapes y compris départ et arrivée
 // Sortie : indice où mettre la nouvelle étapes dans toutes_les_étapes, ce sera également le numéro de celle-ci.
 // En particulier, la sortie est toujours⩾1
 function numOùInsérer(latlng: L.LatLng, toutes_les_étapes: Lieu[]): number {
-    if (toutes_les_étapes.length===0){
+    if (toutes_les_étapes.length === 0) {
         throw new Error("La liste d’étapes était vide");
-    } else if (toutes_les_étapes.length===1){
+    } else if (toutes_les_étapes.length === 1) {
         // Une seul étape: on considère que c’est le départ
         return 1;
     }
-    let res = toutes_les_étapes.length - 1; // On n’insère jamais après l’arrivée.
+    let res = toutes_les_étapes.length-1; // On n’insère jamais après l’arrivée.
     let éa = toutes_les_étapes[res];	// étape actuelle
     let ép = toutes_les_étapes[res - 1]; // étape préc
     let vi = ép.vecteurVers(éa); // vecteur suivant l’itinéraire actuel
@@ -360,14 +360,19 @@ function màjNumérosÉtapes(étapes: ÉtapeClic[]) {
 }
 
 
-function insèreÉtape(i:number, étape: ÉtapeClic, setÉtapes: React.Dispatch<React.SetStateAction<ÉtapeClic[]>>){
+function insèreÉtape(i: number, étape: ÉtapeClic, setÉtapes: React.Dispatch<React.SetStateAction<ÉtapeClic[]>>) {
     setÉtapes(
-        prev=>{
+        prev => {
             prev.splice(i, 0, étape);
+            màjNumérosÉtapes(prev);
             return prev;
         }
     )
 }
+
+// Sera mis dans les popup
+const bouton_suppr = '<button type="button" class="supprimeÉtape">Supprimer</button>';
+
 
 
 // Étape obtenue par un clic sur la carte
@@ -376,10 +381,19 @@ function insèreÉtape(i:number, étape: ÉtapeClic, setÉtapes: React.Dispatch<
 export class ÉtapeClic extends Lieu {
 
     numéro: number;
+    setÉtapes: React.Dispatch<React.SetStateAction<ÉtapeClic[]>>  // setter React pour les étaper intermédiaires
+    layer_group: L.LayerGroup;
 
-    constructor(ll: L.LatLng, toutes_les_étapes: ÉtapeClic[], départ: Lieu, setÉtapes: React.Dispatch<React.SetStateAction<ÉtapeClic[]>>) {
+    constructor(
+        ll: L.LatLng,
+        toutes_les_étapes: Lieu[],
+        setÉtapes: React.Dispatch<React.SetStateAction<ÉtapeClic[]>>,
+        layer_group: L.LayerGroup  // le layerGroup auquel appartiendra le marqueur de cette étape
+    ) {
 
         super([[ll.lng, ll.lat]], "Point de passage");
+        this.setÉtapes = setÉtapes;
+        this.layer_group = layer_group;
 
         // On écrase le marqueur créé par super
         this.leaflet_layer = new L.Marker(
@@ -389,24 +403,57 @@ export class ÉtapeClic extends Lieu {
                 icon: mon_icone("green")
             }
         )
-        // Création de l’étiquette
-        this.leaflet_layer.bindTooltip(
-            "",  // sera rempli par le numéro lors de l’insertion
-            { permanent: true, direction: "bottom" }
-        )
-        
-        // Gestion du numéro
-        this.numéro = numOùInsérer(ll, [départ, ...toutes_les_étapes]);
-        insèreÉtape(this.numéro - 1, this, setÉtapes);
-        màjNumérosÉtapes(toutes_les_étapes);
+            // màj les coords si déplacé
+            .on("dragend",
+                e => {
+                    this.setLatlng(e.target.getLatLng());
+                }
+            )
+            // Création de l’étiquette
+            .bindTooltip(
+                "",  // sera rempli par le numéro lors de l’insertion
+                { permanent: true, direction: "bottom" }
+            )
+            // Bouton pour supprimer l’étape
+            .bindPopup(bouton_suppr)
+            .on("popupopen",
+                () => {
+                    const bouton = document.querySelector(".supprimeÉtape");
+                    if (!bouton) {
+                        throw new Error("Bouton supprimer pas trouvé");
+                    }
+                    bouton.addEventListener("click",
+                        ()=>this.supprimer()
+                    );
+                }
+            );
 
-        
+        // Gestion du numéro
+        this.numéro = numOùInsérer(ll, toutes_les_étapes);
+        insèreÉtape(this.numéro - 1, this, setÉtapes);
+
+        this.layer_group.addLayer(this.leaflet_layer);
     }
+
 
     // Change le numéro et màj l’étiquette
     setNuméro(i: number) {
         this.numéro = i;
         (this.leaflet_layer.getTooltip() as L.Tooltip).setContent(`${i}`);
+    }
+
+
+    // Supprime l’étape
+    supprimer() {
+        this.layer_group.removeLayer(this.leaflet_layer);
+        this.setÉtapes(
+            prev => {
+                prev.splice(this.numéro - 1, 1);
+                màjNumérosÉtapes(prev);
+                return prev;
+            }
+        );
+
     }
 
 

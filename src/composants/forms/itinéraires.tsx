@@ -33,6 +33,7 @@ export default function FormItinéraires(props: propsFormItinéraires) {
         ];
     }
 
+    
     // Ajuste la fenêtre de la carte pour avoir toutes les étapes à l’écran
     function ajusteFenêtre() {
         const étapes = toutesLesÉtapes().map(lieu => lieu.coords);
@@ -43,6 +44,7 @@ export default function FormItinéraires(props: propsFormItinéraires) {
             props.carte.fitBounds(L.latLngBounds(étapes));
         }
     }
+    
 
     // renvoie l’objet polyline associé à un itinéraire
     function itiToPolyline(iti: Itinéraire): L.Polyline {
@@ -56,6 +58,7 @@ Pourcentage de détour: ${iti.pourcentage_détour}
         `);
         return res;
     }
+    
 
     // Efface les anciens itinéraires et affiche les nouveaux
     function màjItinéraires(itis: Itinéraire[]) {
@@ -95,6 +98,7 @@ Pourcentage de détour: ${iti.pourcentage_détour}
         )
     }
 
+    
     // Recadre la carte quand départ ou arrivée change
     useEffect(
         ajusteFenêtre,
@@ -104,14 +108,13 @@ Pourcentage de détour: ${iti.pourcentage_détour}
     // Lance la gestion des clics
     useEffect(
         () => {
-            if (props.carte && départ) {
+            if (props.carte && départ && arrivée) {
                 props.carte.on("click", e => {
-                    const étape = new ÉtapeClic(e.latlng, étapes, départ, setÉtapes);
-                    props.marqueurs.addLayer(étape.leaflet_layer)
+                    new ÉtapeClic(e.latlng, [départ, ...étapes, arrivée], setÉtapes, props.marqueurs);
                 })
             }
         },
-        [props.carte, départ]
+        [props.carte, départ, arrivée, étapes]
     )
 
 
