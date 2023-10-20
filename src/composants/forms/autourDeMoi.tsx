@@ -119,10 +119,10 @@ export default function FormAutourDeMoi({ carte, marqueurs }: props) {
 	    tl =>
 		<li key={gtl+toString()+tl.toString()} list-style-type:none>
 		    <FormControlLabel
-			control={< Checkbox
+			control={<Checkbox
 			    onChange={changeTl(tl)}
 			    checked={type_lieux_sélectionnés.get(tl)}
-						/>}
+			    />}
 				label={tl.toString()}
 		    />
 		</li>

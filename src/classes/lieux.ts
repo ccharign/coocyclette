@@ -463,7 +463,6 @@ export class ÉtapeClic extends Lieu {
             type_étape: "arête",
             lon: this.coords.lng,
             lat: this.coords.lat,
-
         }
     }
 }

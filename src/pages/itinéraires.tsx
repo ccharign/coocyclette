@@ -6,17 +6,20 @@ import Carte from "../composants/carte.tsx";
 import { useState } from "react";
 import L from "leaflet";
 import FormItinéraires from "../composants/forms/itinéraires.tsx";
+import FormContribuer from "../composants/forms/contribuer.tsx";
+import { Lieu } from "../classes/lieux.ts";
 
 
 export default function Itinéraires() {
 
-    let [carte, setCarte] = useState<L.Map | null>(null);
+    const [carte, setCarte] = useState<L.Map | null>(null);
+    const [zone, setZone] = useState("");
+    const [toutes_les_étapes, setToutesLesÉtapes] = useState<Lieu[]>([]);
     const marqueurs = new L.LayerGroup();
     const itinéraires = new L.LayerGroup();
 
     return (
         <Base>
-            <p>Recherche d’itinéraires</p>
 
             <Container>
                 <Row>
@@ -31,10 +34,22 @@ export default function Itinéraires() {
                                 marqueurs={marqueurs}
                                 carte={carte}
                                 itinéraires={itinéraires}
+                                zone={zone}
+                                setZone={setZone}
+                                toutes_les_étapes={toutes_les_étapes}
+                                setToutesLesÉtapes={setToutesLesÉtapes}
                             />
                             : null}
                     </Col>
 
+                </Row>
+                <Row>
+                    {toutes_les_étapes.length>2 ?
+                        <FormContribuer
+                            toutes_les_étapes={toutes_les_étapes}
+                            zone={zone}
+                        />
+                        : null}
                 </Row>
             </Container>
 

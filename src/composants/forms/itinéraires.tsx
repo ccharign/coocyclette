@@ -13,38 +13,45 @@ export type propsFormItinéraires = {
     marqueurs: L.LayerGroup,
     carte: L.Map,
     itinéraires: L.LayerGroup,
+    zone: string,
+    setZone: React.Dispatch<React.SetStateAction<string>>,
+    toutes_les_étapes: Lieu[],
+    setToutesLesÉtapes: React.Dispatch<React.SetStateAction<Lieu[]>>,
 }
 
 
-export default function FormItinéraires(props: propsFormItinéraires) {
+export default function FormItinéraires(
+    { marqueurs, carte, itinéraires, zone, setZone, setToutesLesÉtapes }:
+        propsFormItinéraires) {
 
-    const [zone, setZone] = useState("");
-    const [étapes, setÉtapes] = useState<ÉtapeClic[]>([]);
+    //const [zone, setZone] = useState("");
+    const [étapes, setÉtapes] = useState<ÉtapeClic[]>([]);  // étapes intermédiaires
     const [départ, setDépart] = useState<Lieu | undefined>(undefined);
     const [arrivée, setArrivée] = useState<Lieu | undefined>(undefined);
 
 
     // Renvoie la liste de toutes les étapes, départ et arrivée comprises
-    function toutesLesÉtapes(): Lieu[] {
-        return [
-            ...(départ ? [départ] : []),
-            ...étapes,
-            ...(arrivée ? [arrivée] : [])
-        ];
-    }
+    /* function toutesLesÉtapes(): Lieu[] {
+*     return [
+*         ...(départ ? [départ] : []),
+*         ...étapes,
+*         ...(arrivée ? [arrivée] : [])
+*     ];
+* }
+ */
 
-    
     // Ajuste la fenêtre de la carte pour avoir toutes les étapes à l’écran
     function ajusteFenêtre() {
-        const étapes = toutesLesÉtapes().map(lieu => lieu.coords);
+        const étapes = [départ, arrivée]
+            .flatMap(lieu => lieu ? [lieu.coords] : []);
 
         if (étapes.length === 1) {
-            props.carte.setView(étapes[0]);
+            carte.setView(étapes[0]);
         } else if (étapes.length > 1) {
-            props.carte.fitBounds(L.latLngBounds(étapes));
+            carte.fitBounds(L.latLngBounds(étapes));
         }
     }
-    
+
 
     // renvoie l’objet polyline associé à un itinéraire
     function itiToPolyline(iti: Itinéraire): L.Polyline {
@@ -58,22 +65,24 @@ Pourcentage de détour: ${iti.pourcentage_détour}
         `);
         return res;
     }
-    
+
 
     // Efface les anciens itinéraires et affiche les nouveaux
     function màjItinéraires(itis: Itinéraire[]) {
-        props.itinéraires.clearLayers();
+        itinéraires.clearLayers();
         itis.forEach(
-            iti => props.itinéraires.addLayer(itiToPolyline(iti))
+            iti => itinéraires.addLayer(itiToPolyline(iti))
         );
-        props.itinéraires.addTo(props.carte);
-        console.log("Itinéraires chargés.", props.itinéraires);
+        itinéraires.addTo(carte);
     }
 
-
+    // màj la liste de toutes les étapes via setToutesLesÉtapes
+    // et lance la recherche d’itinéraires
     async function envoieForm(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        const étapes_django = toutesLesÉtapes().map(é => é.pourDjango());
+        const toutes_les_étapes = [départ, ...étapes, arrivée].filter(x => x) as Lieu[];
+        setToutesLesÉtapes(toutes_les_étapes);
+        const étapes_django = toutes_les_étapes.map(é => é.pourDjango());
         const url = new URL(`${URL_API}itineraire/${zone}`);
         url.searchParams.append("étapes_str", JSON.stringify(étapes_django));
         const res = await (fetch(url).then(res => res.json())) as Itinéraire[];
@@ -81,7 +90,7 @@ Pourcentage de détour: ${iti.pourcentage_détour}
     }
 
 
-    // Renvoie la fonction onChange à utiliser pour l’étape indiquée
+    // Renvoie la fonction onChange à utiliser pour l’étape indiquée (départ ou arrivée)
     function fonctionOnChangeÉtape(étape_préc: Lieu | undefined, setÉtape: React.Dispatch<React.SetStateAction<Lieu | undefined>>) {
         return (
             (_truc: SyntheticEvent<Element>, value: LieuJson | null, _reason: AutocompleteChangeReason) => {
@@ -91,30 +100,44 @@ Pourcentage de détour: ${iti.pourcentage_détour}
                         étape_préc.leaflet_layer.remove();
                     }
                     setÉtape(étape);
-                    props.marqueurs.addLayer(étape.leaflet_layer);
-                    props.marqueurs.addTo(props.carte);
+                    marqueurs.addLayer(étape.leaflet_layer);
+                    marqueurs.addTo(carte);
                 }
             }
         )
     }
 
-    
-    // Recadre la carte quand départ ou arrivée change
+
+    // Màj toutes_les_étapes
     useEffect(
-        ajusteFenêtre,
+        () => {
+            if (départ && arrivée) {
+                console.log("màj de la liste des étapes");
+                setToutesLesÉtapes([départ, ...étapes, arrivée]);
+            }
+        },
+        [départ, arrivée, étapes]
+    );
+
+
+    // Recadre la fenêtre quand départ ou arrivée change
+    useEffect(
+        ajusteFenêtre
+        ,
         [départ, arrivée]
     );
+
 
     // Lance la gestion des clics
     useEffect(
         () => {
-            if (props.carte && départ && arrivée) {
-                props.carte.on("click", e => {
-                    new ÉtapeClic(e.latlng, [départ, ...étapes, arrivée], setÉtapes, props.marqueurs);
+            if (carte && départ && arrivée) {
+                carte.on("click", e => {
+                    new ÉtapeClic(e.latlng, [départ, ...étapes, arrivée], setÉtapes, marqueurs);
                 })
             }
         },
-        [props.carte, départ, arrivée, étapes]
+        [carte, départ, arrivée, étapes]
     )
 
 
@@ -137,7 +160,7 @@ Pourcentage de détour: ${iti.pourcentage_détour}
                 label="Arrivée"
             />
 
-            <Button type="submit" variant="contained">C’est parti ! </Button>
+            <Button type="submit" variant="contained">C’est parti !</Button>
 
         </form>
     );
