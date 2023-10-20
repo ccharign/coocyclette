@@ -17,11 +17,12 @@ export type propsFormItinéraires = {
     setZone: React.Dispatch<React.SetStateAction<string>>,
     toutes_les_étapes: Lieu[],
     setToutesLesÉtapes: React.Dispatch<React.SetStateAction<Lieu[]>>,
+    setItiEnChargement: React.Dispatch<React.SetStateAction<boolean>>,
 }
 
 
 export default function FormItinéraires(
-    { marqueurs, carte, itinéraires, zone, setZone, setToutesLesÉtapes }:
+    { marqueurs, carte, itinéraires, zone, setZone, setToutesLesÉtapes, setItiEnChargement }:
         propsFormItinéraires) {
 
     //const [zone, setZone] = useState("");
@@ -74,12 +75,14 @@ Pourcentage de détour: ${iti.pourcentage_détour}
             iti => itinéraires.addLayer(itiToPolyline(iti))
         );
         itinéraires.addTo(carte);
+        setItiEnChargement(false);
     }
 
     // màj la liste de toutes les étapes via setToutesLesÉtapes
     // et lance la recherche d’itinéraires
     async function envoieForm(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
+        setItiEnChargement(true);
         const toutes_les_étapes = [départ, ...étapes, arrivée].filter(x => x) as Lieu[];
         setToutesLesÉtapes(toutes_les_étapes);
         const étapes_django = toutes_les_étapes.map(é => é.pourDjango());
