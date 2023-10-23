@@ -24,14 +24,14 @@ export default function Itinéraires() {
     const [zone, setZone] = useState("");
     const [toutes_les_étapes, setToutesLesÉtapes] = useState<Lieu[]>([]);
     const [iti_en_chargement, setItiEnChargement] = useState(false);
-    const [marqueurs, setMarqueurs] = useState(new L.LayerGroup());
-    const [itinéraires, setItinéraires] = useState(new L.LayerGroup());
+    const [marqueurs,] = useState(new L.LayerGroup());
+    const [itinéraires,] = useState(new L.LayerGroup());
 
     return (
         <Base>
 
             <Container>
-                <Row>
+                <Row className="my-3">
 
                     <Col md={9} >
                         <Carte carte={carte} setCarte={setCarte} layers_groups={[marqueurs, itinéraires]} />
@@ -48,12 +48,13 @@ export default function Itinéraires() {
                                 toutes_les_étapes={toutes_les_étapes}
                                 setToutesLesÉtapes={setToutesLesÉtapes}
                                 setItiEnChargement={setItiEnChargement}
+                                  iti_en_chargement={iti_en_chargement}
                             />
                             : null}
                     </Col>
 
                 </Row>
-                <Row>
+                <Row className="my-3">
                     {toutes_les_étapes.length > 2 && !iti_en_chargement ?
                         <FormContribuer
                             toutes_les_étapes={toutes_les_étapes}

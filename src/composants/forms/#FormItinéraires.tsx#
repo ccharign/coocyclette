@@ -1,35 +1,21 @@
 import { FormEvent, SyntheticEvent, useEffect, useState } from "react";
 import ChoixZone from "../molécules/choixZone";
-import AutoComplèteDistant from "../molécules/autoComplèteDistant"
+import AutoComplèteDistant from "../molécules/autoComplèteDistant";
 import { Lieu, géomOsmVersLeaflet, ÉtapeClic } from "../../classes/lieux";
 import { LieuJson, Itinéraire } from "../../classes/types";
-import { AutocompleteChangeReason, Button } from "@mui/material";
-import LoadingButton from '@mui/lab/LoadingButton';
-
+import { AutocompleteChangeReason } from "@mui/material";
 import L from "leaflet";
 import { URL_API } from "../../params";
 import { Container, Row, Col } from "react-bootstrap";
+import { propsFormItinéraires } from "./itinéraires";
 
-
-export type propsFormItinéraires = {
-    marqueurs: L.LayerGroup,
-    carte: L.Map,
-    itinéraires: L.LayerGroup,
-    zone: string,
-    setZone: React.Dispatch<React.SetStateAction<string>>,
-    toutes_les_étapes: Lieu[],
-    setToutesLesÉtapes: React.Dispatch<React.SetStateAction<Lieu[]>>,
-    setItiEnChargement: React.Dispatch<React.SetStateAction<boolean>>,
-    iti_en_chargement: boolean,
-}
 
 
 export default function FormItinéraires(
-    { marqueurs, carte, itinéraires, zone, setZone, setToutesLesÉtapes, setItiEnChargement, iti_en_chargement }:
-        propsFormItinéraires) {
+    { marqueurs, carte, itinéraires, zone, setZone, setToutesLesÉtapes, setItiEnChargement }: propsFormItinéraires) {
 
 
-    const [étapes, setÉtapes] = useState<ÉtapeClic[]>([]);  // étapes intermédiaires
+    const [étapes, setÉtapes] = useState<ÉtapeClic[]>([]); // étapes intermédiaires
     const [départ, setDépart] = useState<Lieu | undefined>(undefined);
     const [arrivée, setArrivée] = useState<Lieu | undefined>(undefined);
 
@@ -70,6 +56,7 @@ Durée: ${Math.floor(iti.longueur / 250)}mn
             iti => itinéraires.addLayer(itiToPolyline(iti))
         );
         itinéraires.addTo(carte);
+        setItiEnChargement(false);
     }
 
 
@@ -86,7 +73,6 @@ Durée: ${Math.floor(iti.longueur / 250)}mn
         url.searchParams.append("étapes_str", JSON.stringify(étapes_django));
         const res = await (fetch(url).then(res => res.json())) as Itinéraire[];
         màjItinéraires(res);
-        setItiEnChargement(false);
     }
 
 
@@ -118,34 +104,33 @@ Durée: ${Math.floor(iti.longueur / 250)}mn
                     setÉtape(undefined);
                 }
             }
-        )
+        );
     }
 
 
     // Recadre la fenêtre quand départ ou arrivée change
     useEffect(
-        ajusteFenêtre
-        ,
+        ajusteFenêtre,
+
         [départ, arrivée]
     );
 
 
     // Lance la gestion des clics
-    // TODO sans doute simplifiable !
     useEffect(
         () => {
             if (carte && départ && arrivée) {
                 carte.off("click");
                 carte.on(
                     "click",
-                    e => { new ÉtapeClic(e.latlng, [départ, ...étapes, arrivée], setÉtapes, marqueurs); },
-                )
+                    e => { new ÉtapeClic(e.latlng, [départ, ...étapes, arrivée], setÉtapes, marqueurs); }
+                );
             } else {
                 carte.off("click");
             }
         },
         [carte, étapes] // étapes change dès que départ ou arrivée change -> inutile de mettre ceux-ci dans les déps
-    )
+    );
 
 
     return (
@@ -161,31 +146,28 @@ Durée: ${Math.floor(iti.longueur / 250)}mn
 
 
                 <Row className="my-3">
-                    <Col >
+                    <Col>
                         <AutoComplèteDistant
                             l_min={3}
                             onSelect={fonctionOnChangeÉtape(départ, setDépart)}
                             zone={zone}
-                            label="Départ"
-                        />
+                            label="Départ" />
 
                         <AutoComplèteDistant
                             l_min={3}
                             onSelect={fonctionOnChangeÉtape(arrivée, setArrivée)}
                             zone={zone}
-                            label="Arrivée"
-                        />
+                            label="Arrivée" />
                     </Col>
                 </Row>
 
 
                 <Row className="my-3">
-                    <Col >
+                    <Col>
                         <LoadingButton
                             type="submit"
                             variant="contained"
                             disabled={!départ || !arrivée}
-                            loading={iti_en_chargement}
                         >
                             C’est parti !
                         </LoadingButton>

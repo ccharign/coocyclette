@@ -1,9 +1,10 @@
 import { URL_API } from "../../params";
 
-import Autocomplete, { AutocompleteInputChangeReason, AutocompleteChangeReason, AutocompleteChangeDetails } from "@mui/material/Autocomplete";
+import Autocomplete, { AutocompleteInputChangeReason, AutocompleteChangeReason } from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField"
 import { useEffect, useState } from "react";
 import { debounce } from "@mui/material";
+import { LieuJson } from "../../classes/types";
 
 
 const URL_COMPLÉTION = URL_API + "completion";
