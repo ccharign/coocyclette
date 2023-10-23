@@ -24,8 +24,8 @@ export default function Itinéraires() {
     const [zone, setZone] = useState("");
     const [toutes_les_étapes, setToutesLesÉtapes] = useState<Lieu[]>([]);
     const [iti_en_chargement, setItiEnChargement] = useState(false);
-    const marqueurs = new L.LayerGroup();
-    const itinéraires = new L.LayerGroup();
+    const [marqueurs, setMarqueurs] = useState(new L.LayerGroup());
+    const [itinéraires, setItinéraires] = useState(new L.LayerGroup());
 
     return (
         <Base>
@@ -46,7 +46,7 @@ export default function Itinéraires() {
                                 zone={zone}
                                 setZone={setZone}
                                 toutes_les_étapes={toutes_les_étapes}
-                                  setToutesLesÉtapes={setToutesLesÉtapes}
+                                setToutesLesÉtapes={setToutesLesÉtapes}
                                 setItiEnChargement={setItiEnChargement}
                             />
                             : null}

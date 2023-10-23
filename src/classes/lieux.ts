@@ -207,7 +207,7 @@ export class LieuAdresse extends Lieu {
                 // On associe une ligne à la place du marqueur initialement créé par super
                 this.géométrie = géomOsmVersLeaflet(géom);
                 this.leaflet_layer.remove();
-                this.leaflet_layer = new L.Polyline(this.géométrie);
+                this.leaflet_layer = new L.Polyline(this.géométrie, {color:"purple"});
             } else {
                 throw new Error("Ni numéro de rue ni géométrie!")
             }
@@ -329,7 +329,7 @@ function numOùInsérer(latlng: L.LatLng, toutes_les_étapes: Lieu[]): number {
         // Une seul étape: on considère que c’est le départ
         return 1;
     }
-    let res = toutes_les_étapes.length-1; // On n’insère jamais après l’arrivée.
+    let res = toutes_les_étapes.length - 1; // On n’insère jamais après l’arrivée.
     let éa = toutes_les_étapes[res];	// étape actuelle
     let ép = toutes_les_étapes[res - 1]; // étape préc
     let vi = ép.vecteurVers(éa); // vecteur suivant l’itinéraire actuel
@@ -423,7 +423,7 @@ export class ÉtapeClic extends Lieu {
                         throw new Error("Bouton supprimer pas trouvé");
                     }
                     bouton.addEventListener("click",
-                        ()=>this.supprimer()
+                        () => this.supprimer()
                     );
                 }
             );

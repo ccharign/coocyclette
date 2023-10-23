@@ -71,18 +71,21 @@ Pourcentage de détour: ${iti.pourcentage_détour}
     // Efface les anciens itinéraires et affiche les nouveaux
     function màjItinéraires(itis: Itinéraire[]) {
         itinéraires.clearLayers();
+        
         itis.forEach(
             iti => itinéraires.addLayer(itiToPolyline(iti))
         );
         itinéraires.addTo(carte);
         setItiEnChargement(false);
     }
+    
 
     // màj la liste de toutes les étapes via setToutesLesÉtapes
     // et lance la recherche d’itinéraires
     async function envoieForm(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setItiEnChargement(true);
+
         const toutes_les_étapes = [départ, ...étapes, arrivée].filter(x => x) as Lieu[];
         setToutesLesÉtapes(toutes_les_étapes);
         const étapes_django = toutes_les_étapes.map(é => é.pourDjango());
@@ -93,10 +96,22 @@ Pourcentage de détour: ${iti.pourcentage_détour}
     }
 
 
+    // Supprime les étapes intermédiaires et les itinéraires
+    function videItinéraires(){
+        itinéraires.clearLayers();
+        étapes.forEach(
+            l => l.leaflet_layer.remove()
+        );
+        étapes.length=0;
+        setÉtapes([]);
+    }
+
+
     // Renvoie la fonction onChange à utiliser pour l’étape indiquée (départ ou arrivée)
     function fonctionOnChangeÉtape(étape_préc: Lieu | undefined, setÉtape: React.Dispatch<React.SetStateAction<Lieu | undefined>>) {
         return (
             (_truc: SyntheticEvent<Element>, value: LieuJson | null, _reason: AutocompleteChangeReason) => {
+                videItinéraires();
                 if (value) {
                     const étape = Lieu.from_json(value);
                     if (étape_préc) {
@@ -105,6 +120,8 @@ Pourcentage de détour: ${iti.pourcentage_détour}
                     setÉtape(étape);
                     marqueurs.addLayer(étape.leaflet_layer);
                     marqueurs.addTo(carte);
+                } else {
+                    setÉtape(undefined);
                 }
             }
         )
@@ -112,15 +129,15 @@ Pourcentage de détour: ${iti.pourcentage_détour}
 
 
     // Màj toutes_les_étapes
-    useEffect(
-        () => {
-            if (départ && arrivée) {
-                console.log("màj de la liste des étapes");
-                setToutesLesÉtapes([départ, ...étapes, arrivée]);
-            }
-        },
-        [départ, arrivée, étapes]
-    );
+    /* useEffect(
+*     () => {
+*         if (départ && arrivée) {
+*             console.log("màj de la liste des étapes");
+*             setToutesLesÉtapes([départ, ...étapes, arrivée]);
+*         }
+*     },
+*     [départ, arrivée, étapes]
+* ); */
 
 
     // Recadre la fenêtre quand départ ou arrivée change
@@ -135,12 +152,16 @@ Pourcentage de détour: ${iti.pourcentage_détour}
     useEffect(
         () => {
             if (carte && départ && arrivée) {
-                carte.on("click", e => {
-                    new ÉtapeClic(e.latlng, [départ, ...étapes, arrivée], setÉtapes, marqueurs);
-                })
+                carte.off("click");
+                carte.on(
+                    "click",
+                    e => { new ÉtapeClic(e.latlng, [départ, ...étapes, arrivée], setÉtapes, marqueurs);},
+                )
+            }else{
+                carte.off("click");
             }
         },
-        [carte, départ, arrivée, étapes]
+        [carte, étapes] // étapes change dès que départ ou arrivée change -> inutile de mettre ceux-ci dans les déps
     )
 
 
@@ -163,7 +184,13 @@ Pourcentage de détour: ${iti.pourcentage_détour}
                 label="Arrivée"
             />
 
-            <Button type="submit" variant="contained">C’est parti !</Button>
+            <Button
+                type="submit"
+                variant="contained"
+                disabled={!départ || !arrivée}
+            >
+                C’est parti !
+            </Button>
 
         </form>
     );

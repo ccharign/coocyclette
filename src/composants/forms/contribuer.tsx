@@ -12,7 +12,7 @@ import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { URL_API } from "../../params";
 import { Lieu } from "../../classes/lieux";
 import Button from "@mui/material/Button";
-import { Checkbox, FormControlLabel, Switch } from "@mui/material";
+import { Checkbox, FormControlLabel, Switch, Tooltip } from "@mui/material";
 import { FormGroup } from "react-bootstrap";
 
 type PropsContribuer = {
@@ -89,16 +89,19 @@ export default function FormContribuer(props: PropsContribuer) {
 
     function checkboxOfPd(pd: PourcentageDétour) {
         return (
-            <FormControlLabel
-                control={
-                    <Checkbox
-                        checked={pd_selectionnés.get(pd.pourcentage_détour)}
-                        onChange={fonctionChangePdSelectionné(pd.pourcentage_détour)}
-                    />
-                }
-                label={pd.label}
-                key={pd.pourcentage_détour}
-            />
+            <Tooltip title={pd.explication} key={pd.pourcentage_détour} >
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={pd_selectionnés.get(pd.pourcentage_détour)}
+                            onChange={fonctionChangePdSelectionné(pd.pourcentage_détour)}
+                        />
+                    }
+                    label={pd.label}
+
+                />
+
+            </Tooltip>
 
         )
     }
@@ -108,7 +111,7 @@ export default function FormContribuer(props: PropsContribuer) {
         <div>
             <h1>Enregistrer ma contribution </h1>
 
-            <p> Si les points de passage indiqués vous semblent pertinent pour aller de {props.toutes_les_étapes[0].nom} à {props.toutes_les_étapes[props.toutes_les_étapes.length - 1].nom}, entraînez l’IA :</p>
+            <p> Si les points de passage indiqués vous semblent pertinents pour aller de « {props.toutes_les_étapes[0].nom} » à « {props.toutes_les_étapes[props.toutes_les_étapes.length - 1].nom} », entraînez l’IA !</p>
             <form onSubmit={envoieForm}>
 
                 <FormGroup>
