@@ -102,21 +102,27 @@ Durée: ${Math.floor(iti.longueur / 250)}mn
 
 
     // Renvoie la fonction onChange à utiliser pour l’étape indiquée (départ ou arrivée)
-    function fonctionOnChangeÉtape(étape_préc: Lieu | undefined, setÉtape: React.Dispatch<React.SetStateAction<Lieu | undefined>>) {
+    function fonctionOnChangeÉtape(setÉtape: React.Dispatch<React.SetStateAction<Lieu | undefined>>) {
         return (
             (_truc: SyntheticEvent<Element>, value: LieuJson | null, _reason: AutocompleteChangeReason) => {
+
                 videItinéraires();
                 if (value) {
                     const étape = Lieu.from_json(value);
-                    if (étape_préc) {
-                        étape_préc.leaflet_layer.remove();
-                    }
-                    setÉtape(étape);
+                    setÉtape(prev => {
+                        prev?.leaflet_layer.remove();
+                        return étape;
+                    });
                     marqueurs.addLayer(étape.leaflet_layer);
                     marqueurs.addTo(carte);
                 } else {
-                    setÉtape(undefined);
+                    setÉtape(prev => {
+                        prev?.leaflet_layer.remove();
+                        return undefined;
+                    }
+                    );
                 }
+
             }
         )
     }
@@ -164,14 +170,14 @@ Durée: ${Math.floor(iti.longueur / 250)}mn
                     <Col >
                         <AutoComplèteDistant
                             l_min={3}
-                            onSelect={fonctionOnChangeÉtape(départ, setDépart)}
+                            onSelect={fonctionOnChangeÉtape(setDépart)}
                             zone={zone}
                             label="Départ"
                         />
 
                         <AutoComplèteDistant
                             l_min={3}
-                            onSelect={fonctionOnChangeÉtape(arrivée, setArrivée)}
+                            onSelect={fonctionOnChangeÉtape(setArrivée)}
                             zone={zone}
                             label="Arrivée"
                         />
