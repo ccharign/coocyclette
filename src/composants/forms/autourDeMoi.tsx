@@ -7,7 +7,7 @@
 
 
 import chercheLieux from "../../fonctions/chercheLieux.ts"
-import { Button, FormGroup, FormControlLabel, Checkbox } from "@mui/material"
+import {  FormGroup, FormControlLabel, Checkbox } from "@mui/material"
 import { tous_les_gtls } from "../../données/gtls.ts"
 import L from "leaflet"
 import { GroupeTypeLieu, TypeLieu } from "../../classes/types-lieux.ts"

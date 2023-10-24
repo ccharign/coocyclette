@@ -49,7 +49,7 @@ const pd_défaut: PourcentageDétour[] = [
 export default function FormContribuer(props: PropsContribuer) {
 
     const [pd_selectionnés, setPdSelectionnés] = useState(new Map(pd_défaut.map(pd => [pd.pourcentage_détour, false])));
-    const ar = useRef();
+    const ar = useRef<any>();
 
     async function envoieForm(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -65,7 +65,7 @@ export default function FormContribuer(props: PropsContribuer) {
                 body: JSON.stringify({
                     "étapes_str": étapes_django,
                     "pourcentages_détour": pourcentages_détour,
-                    "AR": ar.current.value,
+                    "AR": ar.current ? ar.current.value : false,
                 }),
                 headers: {
                     "Content-type": "application/json; charset=UTF-8"
