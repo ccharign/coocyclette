@@ -111,7 +111,7 @@ export default function FormContribuer(props: PropsContribuer) {
         <div>
             <h1>Enregistrer ma contribution </h1>
 
-            <p> Si les points de passage indiqués vous semblent pertinents pour aller de « {props.toutes_les_étapes[0].nom} » à « {props.toutes_les_étapes[props.toutes_les_étapes.length - 1].nom} », entraînez l’IA !</p>
+            <p> Si les points de passage indiqués vous semblent pertinents pour aller de « {props.toutes_les_étapes[0].nom} » à « {props.toutes_les_étapes[props.toutes_les_étapes.length - 1].nom} » sélectionnez le ou les type(s) de trajets :</p>
             <form onSubmit={envoieForm}>
 
                 <FormGroup>

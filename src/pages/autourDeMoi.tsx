@@ -13,11 +13,11 @@ import Carte from "../composants/carte.tsx";
 // Page « Autour de moi »
 // Une carte et un formulaire pour chercher des lieux.
 
+const marqueurs = new L.LayerGroup();
 
 export default function AutourDeMoi() {
 
     let [carte, setCarte] = useState<L.Map | null>(null);
-    const marqueurs = new L.LayerGroup();
 
 
     return (
@@ -26,7 +26,7 @@ export default function AutourDeMoi() {
                 <Row>
                     
                     <Col md={9} >
-                    <Carte carte={carte} setCarte={setCarte} marqueurs={marqueurs} />
+                    <Carte carte={carte} setCarte={setCarte} layers_groups={[marqueurs]} />
 	            </Col>
                     
                     <Col>
