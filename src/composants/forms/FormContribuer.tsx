@@ -11,7 +11,7 @@
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { URL_API } from "../../params";
 import { Lieu } from "../../classes/lieux";
-import Button from "@mui/material/Button";
+import { LoadingButton } from "@mui/lab";
 import { Checkbox, FormControlLabel, Switch, Tooltip } from "@mui/material";
 import { FormGroup } from "react-bootstrap";
 
@@ -36,12 +36,12 @@ const pd_défaut: PourcentageDétour[] = [
     {
         pourcentage_détour: 20,
         label: "Intermédiaire",
-        explication: "Un trajet « intermédiaire » est rallongé en moyenne de 10% pour éviter les passages désagréables. Il ira jusqu’à 20% de détour si cela permet de remplacer un trajet entièrement sans aménagement par un trajet entièrement sur une vraie piste cyclable séparée des voitures."
+        explication: "Ce type de trajet est un compromis entre vitesse et caractère agréable. Il propose en moyenne des détours de 10 à 20%."
     },
     {
         pourcentage_détour: 40,
         label: "Priorité confort",
-        explication: "Un trajet « priorité confort » est rallongé en moyenne de 15% pour éviter les passages désagréables. Il ira jusqu’à 40% de détour si cela permet de remplacer un trajet entièrement sans aménagement par un trajet entièrement sur une vraie piste cyclable sépasée des voitures."
+        explication: "Ce type de trajet peut proposer des détours significatifs afin d’améliorer sa sécurité et son agrément."
     },
 ]
 
@@ -49,10 +49,13 @@ const pd_défaut: PourcentageDétour[] = [
 export default function FormContribuer(props: PropsContribuer) {
 
     const [pd_selectionnés, setPdSelectionnés] = useState(new Map(pd_défaut.map(pd => [pd.pourcentage_détour, false])));
+    const [apprentissage_en_cours, setApprentissageEnCours] = useState(false);
     const ar = useRef<any>();
 
-    async function envoieForm(e: FormEvent<HTMLFormElement>) {
+
+    function envoieForm(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
+        setApprentissageEnCours(true);
         const étapes_django = props.toutes_les_étapes.map(é => é.pourDjango());
         const pourcentages_détour = pd_défaut.flatMap(
             pd => pd_selectionnés.get(pd.pourcentage_détour) ? [pd.pourcentage_détour] : []
@@ -73,9 +76,9 @@ export default function FormContribuer(props: PropsContribuer) {
             }
         )
             .then(res => res.json())
-            .then(res => console.log(res));
-
+            .then(_res => setApprentissageEnCours(false));
     }
+
 
     function fonctionChangePdSelectionné(pourcentage_détour: number) {
         return (_event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
@@ -107,24 +110,60 @@ export default function FormContribuer(props: PropsContribuer) {
     }
 
 
+    // Cette fonction renvoie le formulaire lui-même
+    const formContribuer = () =>
+        <div>
+            <p> Si les points de passage indiqués vous semblent pertinents pour aller de « {props.toutes_les_étapes[0].nom} » à « {props.toutes_les_étapes[props.toutes_les_étapes.length - 1].nom} » : </p>
+
+            <form onSubmit={envoieForm}>
+                <ul>
+
+                    <li>
+                        <FormControlLabel
+                            label="Type(s) de trajets adapté(s) : "
+                            labelPlacement="start"
+                            control={
+                                <FormGroup>
+                                    {pd_défaut.flatMap(pd => pd.pourcentage_détour !== 0 ? [checkboxOfPd(pd)] : [])}
+                                </FormGroup>
+                            }
+                        />
+
+                    </li>
+
+                    <li>
+                        <FormControlLabel
+                            label="Valable aussi pour le retour ?"
+                            labelPlacement="start"
+                            control={
+                                <Switch inputRef={ar} />
+                            }
+                        />
+                    </li>
+
+                    <li>
+                        <LoadingButton
+                            type="submit"
+                            variant="contained"
+                            loading={apprentissage_en_cours}
+                        >
+                            Enregistrer
+                        </LoadingButton>
+                    </li>
+                </ul>
+            </form>
+        </div >;
+
+
     return (
         <div>
-            <h1>Enregistrer ma contribution </h1>
+            <h1>Contribuer à OsmVélo ! </h1>
 
-            <p> Si les points de passage indiqués vous semblent pertinents pour aller de « {props.toutes_les_étapes[0].nom} » à « {props.toutes_les_étapes[props.toutes_les_étapes.length - 1].nom} » sélectionnez le ou les type(s) de trajets :</p>
-            <form onSubmit={envoieForm}>
-
-                <FormGroup>
-                    {pd_défaut.flatMap(pd => pd.pourcentage_détour !== 0 ? [checkboxOfPd(pd)] : [])}
-                </FormGroup>
-
-                <FormControlLabel label="Valable aussi pour le retour ?" control={
-                    <Switch inputRef={ar} />
-                } />
-
-                <Button type="submit" variant="contained">Enregistrer </Button>
-
-            </form>
+            {
+                props.toutes_les_étapes.length > 2
+                    ? formContribuer()
+                    : <p> Ajoutez des points de passage pour améliorer l’itinéraire </p>
+            }
         </div>
     );
 

@@ -40,6 +40,8 @@ export default function AutoComplèteDistant(props: autocomplèteProps) {
             if (value.length >= props.l_min) {
                 const res = await getLieux(value);
                 setOptions(res);
+            }else{
+                setOptions([]);
             }
         },
         300
