@@ -1,7 +1,8 @@
 import { FormEvent, SyntheticEvent, useEffect, useState } from "react";
 import ChoixZone from "../molécules/choixZone";
 import AutoComplèteDistant from "../molécules/autoComplèteDistant"
-import { ÉtapeClic, Lieu } from "../../classes/lieux";
+import { Lieu } from "../../classes/lieux";
+import { ÉtapeClic } from "../../classes/ÉtapeClic";
 import { LieuJson, GetItinéraire } from "../../classes/types";
 import { AutocompleteChangeReason } from "@mui/material";
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -10,6 +11,8 @@ import L from "leaflet";
 import { URL_API } from "../../params";
 import { Container, Row, Col } from "react-bootstrap";
 import { Itinéraire } from "../../classes/Itinéraire";
+import { iconeFa } from "../../classes/iconeFa";
+import lieuOfJson from "../../fonctions/crée-lieu";
 
 
 export type propsFormItinéraires = {
@@ -101,7 +104,7 @@ export default function FormItinéraires(
 
                 videItinéraires();
                 if (value) {
-                    const étape = Lieu.from_json(value);
+                    const étape = lieuOfJson(value);
                     setÉtape(prev => {
                         prev?.leaflet_layer.remove();
                         return étape;
@@ -127,6 +130,15 @@ export default function FormItinéraires(
         ,
         [départ, arrivée]
     );
+
+    // Change l’icone pour le départ
+    useEffect(
+        ()=> {
+            if (départ && départ.leaflet_layer instanceof L.Marker){
+                départ.leaflet_layer.setIcon(iconeFa("bicycle"));
+            }
+        }
+    )
 
 
     // Lance la gestion des clics

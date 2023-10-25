@@ -67,7 +67,7 @@ export default function carteIci() {
         'laCarte'
         , {
             fullscreenControl: true,
-            fullscreenControlOptions:{
+            fullscreenControlOptions: {
                 title: "Plein écran",
             }
         }
@@ -158,9 +158,9 @@ function ajoute_fonctionalités_à_la_carte(carte: L.Map) {
         {
             locateOptions: {
                 enableHighAccuracy: true,
-                setView:false,
+                setView: false,
             },
-            strings:{
+            strings: {
                 title: "Afficher ma position"
             },
             showCompass: true,

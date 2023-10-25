@@ -1,4 +1,4 @@
-import { LieuOsm } from "../classes/lieux.ts";
+import LieuOsm from "../classes/LieuOsm.ts";
 import { OverpassRes } from "../classes/types.ts";
 import { BoundingBox } from "../classes/bounding-box.ts";
 import { TypeLieu } from "../classes/types-lieux.ts";
