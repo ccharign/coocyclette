@@ -1,9 +1,13 @@
 import L from "leaflet"
+import "leaflet.fullscreen"
+import "leaflet.fullscreen/icon-fullscreen.svg"
+import "leaflet.locatecontrol"
+import "leaflet.locatecontrol/dist/L.Control.Locate.min.css"
 import { Dico } from "../classes/types.ts";
 
 
 // https://stackoverflow.com/questions/23567203/leaflet-changing-marker-color
-function markerHtmlStyles(coul:string): string{
+function markerHtmlStyles(coul: string): string {
     return `
   background-color: ${coul};
   width: 2rem;
@@ -18,13 +22,13 @@ function markerHtmlStyles(coul:string): string{
 }
 
 
-export function mon_icone(coul:string): L.DivIcon{
+export function mon_icone(coul: string): L.DivIcon {
     return L.divIcon({
-	className: "my-custom-pin",
-	iconAnchor: [0, 24],
-	// labelAnchor: [-6, 0],
-	popupAnchor: [0, -36],
-	html: `<span style="${markerHtmlStyles(coul)}" />`
+        className: "my-custom-pin",
+        iconAnchor: [0, 24],
+        // labelAnchor: [-6, 0],
+        popupAnchor: [0, -36],
+        html: `<span style="${markerHtmlStyles(coul)}" />`
     });
 }
 
@@ -33,41 +37,50 @@ export function mon_icone(coul:string): L.DivIcon{
 // Mettre en entrée la liste des champs du dico à afficher ?
 /**
  * Rajoute à la carte « carte » un marqueur avec un popup contenant les infos.
- * @param {dico} infos 
- * @param {L.map} carte 
+ * @param {dico} infos
+ * @param {L.map} carte
  */
 export function marqueur_avec_popup(infos: Dico, carte: L.Map) {
 
-	const marqueur = L.marker(
-		[infos.lat as number, infos.lon as number]
-	).addTo(carte);
-        
-    let contenu = ["nom", "adresse", "horaires", "tél" ]
-	.filter(c=>infos[c])
-	.map(c=>infos[c])
-	.join("<br>");
-    
+    const marqueur = L.marker(
+        [infos.lat as number, infos.lon as number]
+    ).addTo(carte);
+
+    let contenu = ["nom", "adresse", "horaires", "tél"]
+        .filter(c => infos[c])
+        .map(c => infos[c])
+        .join("<br>");
+
     //D’après le tuto de leaflet:
     marqueur.bindPopup(`<div class="pop">${contenu}</div>`);
-    
+
 }
 
 
 
-export default function carteIci() {    // Crée une carte à la position actuelle
-	// Tuiles de cyclosm
-	// Sortie : l’objet map créé
+export default function carteIci() {
+    // Crée une carte à la position actuelle
+    // Tuiles de cyclosm
+    // Sortie : l’objet map créé
 
-	const laCarte = L.map('laCarte'//, {fullscreenControl: true}
-	).fitWorld();
+    const laCarte = L.map(
+        'laCarte'
+        , {
+            fullscreenControl: true,
+            fullscreenControlOptions:{
+                title: "Plein écran",
+            }
+        }
+    )
+        .fitWorld();
 
     coucheCyclosm(laCarte);
 
     ajoute_fonctionalités_à_la_carte(laCarte);
 
-    laCarte.locate({setView: true, maxZoom: 12});
+    laCarte.locate({ setView: true, maxZoom: 14 });
 
-	return laCarte;
+    return laCarte;
 }
 
 
@@ -76,13 +89,13 @@ export default function carteIci() {    // Crée une carte à la position actuel
 
 
 // Ajoute la couche de tuiles cyclosm à la carte
-function coucheCyclosm(carte: L.Map){
+function coucheCyclosm(carte: L.Map) {
     L.tileLayer(
-	'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
-	{
-	    maxZoom: 20,
-	    attribution: '<a href="https://github.com/cyclosm/cyclosm-cartocss-style/releases" title="CyclOSM - Open Bicycle render">CyclOSM</a> | Map data: {attribution.OpenStreetMap}'
-	}
+        'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
+        {
+            maxZoom: 20,
+            attribution: '<a href="https://github.com/cyclosm/cyclosm-cartocss-style/releases" title="CyclOSM - Open Bicycle render">CyclOSM</a> | Map data: {attribution.OpenStreetMap}'
+        }
     ).addTo(carte);
 }
 
@@ -91,21 +104,21 @@ function coucheCyclosm(carte: L.Map){
 // Ajoute la couche osm classique puis la surcouche cyclosmlite
 function coucheSimple(carte: L.Map) {
 
-	// tuiles osm de base
-	L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-	maxZoom: 19,
-	attribution: '© OpenStreetMap'
+    // tuiles osm de base
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
     }).addTo(carte);
 
     // couche cyclosm-lite
     L.tileLayer(
-	'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm-lite/{z}/{x}/{y}.png',
-	{
-	    maxZoom: 19,
-	    attribution: '<a href="https://github.com/cyclosm/cyclosm-cartocss-style/releases" title="CyclOSM - Open Bicycle render">CyclOSM</a> | Map data: {attribution.OpenStreetMap}',
-	    opacity: .3,
-	}
-    ).addTo(carte);   
+        'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm-lite/{z}/{x}/{y}.png',
+        {
+            maxZoom: 19,
+            attribution: '<a href="https://github.com/cyclosm/cyclosm-cartocss-style/releases" title="CyclOSM - Open Bicycle render">CyclOSM</a> | Map data: {attribution.OpenStreetMap}',
+            opacity: .3,
+        }
+    ).addTo(carte);
 }
 
 
@@ -113,22 +126,22 @@ function coucheSimple(carte: L.Map) {
 // Crée une carte sur la bb passée en arg
 // Si cyclosm, tuiles cyclosm, sinon tuile osm normales avec une couche cyclosm_lite
 // Sortie : la carte créé
-export function carteBb(bb: number[], cyclosm=false){
+export function carteBb(bb: number[], cyclosm = false) {
 
     const s = bb[0],
-	  o = bb[1],
-	  n = bb[2],
-	  e = bb[3];
+        o = bb[1],
+        n = bb[2],
+        e = bb[3];
 
     const laCarte = L.map('laCarte',
         //           {"fullscreenControl": true}
     )
-	  .fitBounds([[s,o], [n,e]]);
+        .fitBounds([[s, o], [n, e]]);
 
-    if (cyclosm){
-	coucheCyclosm(laCarte);
-    }else{
-	coucheSimple(laCarte);
+    if (cyclosm) {
+        coucheCyclosm(laCarte);
+    } else {
+        coucheSimple(laCarte);
     }
 
     ajoute_fonctionalités_à_la_carte(laCarte);
@@ -140,23 +153,24 @@ export function carteBb(bb: number[], cyclosm=false){
 function ajoute_fonctionalités_à_la_carte(carte: L.Map) {
     // Ajoute le bouton géoloc et l’échelle à la carte passée en arg.
 
-    // Bouton de géoloc
-	// L.control.locate(
-	// 	{
-	// 	    "locateOptions": {
-	// 		"enableHighAccuracy": true,
-	// 		//"keepCurrentZoomLevel": true
-	// 	    }
-	// 	}
-	// ).addTo(carte);
+    //Bouton de géoloc
+    L.control.locate(
+        {
+            locateOptions: {
+                enableHighAccuracy: true,
+                setView:false,
+            },
+            strings:{
+                title: "Afficher ma position"
+            },
+            showCompass: true,
+        }
+    ).addTo(carte);
 
     // Échelle
-	L.control.scale({ "imperial": false })
-     .addTo(carte);
-    
+    L.control.scale({ "imperial": false })
+        .addTo(carte);
+
     // Boussole
     // carte.addControl( new L.Control.Compass() );
 }
-
-
-

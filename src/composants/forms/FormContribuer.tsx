@@ -10,7 +10,7 @@
 
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { URL_API } from "../../params";
-import { Lieu } from "../../classes/lieux";
+import { Lieu } from "../../classes/Lieu";
 import { LoadingButton } from "@mui/lab";
 import { Checkbox, FormControlLabel, Switch, Tooltip } from "@mui/material";
 import { FormGroup } from "react-bootstrap";
@@ -162,7 +162,7 @@ export default function FormContribuer(props: PropsContribuer) {
             {
                 props.toutes_les_étapes.length > 2
                     ? formContribuer()
-                    : <p> Ajoutez des points de passage pour améliorer l’itinéraire </p>
+                    : <p> Ajoutez des points de passage pour améliorer l’itinéraire en cliquant sur la carte. </p>
             }
         </div>
     );

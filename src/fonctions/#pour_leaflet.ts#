@@ -1,8 +1,13 @@
-import L from "leaflet";
+import L from "leaflet"
+import "leaflet.fullscreen"
+import "leaflet.fullscreen/icon-fullscreen.svg"
+import "leaflet.locatecontrol"
+import "leaflet.locatecontrol/dist/L.Control.Locate.min.css"
 import { Dico } from "../classes/types.ts";
 
+
 // https://stackoverflow.com/questions/23567203/leaflet-changing-marker-color
-function markerHtmlStyles(coul: string) {
+function markerHtmlStyles(coul: string): string {
     return `
   background-color: ${coul};
   width: 2rem;
@@ -17,7 +22,7 @@ function markerHtmlStyles(coul: string) {
 }
 
 
-export function mon_icone(coul: string) {
+export function mon_icone(coul: string): L.DivIcon {
     return L.divIcon({
         className: "my-custom-pin",
         iconAnchor: [0, 24],
@@ -26,15 +31,15 @@ export function mon_icone(coul: string) {
         html: `<span style="${markerHtmlStyles(coul)}" />`
     });
 }
+
+
+
 // Mettre en entrée la liste des champs du dico à afficher ?
 /**
  * Rajoute à la carte « carte » un marqueur avec un popup contenant les infos.
  * @param {dico} infos
  * @param {L.map} carte
  */
-
-
-
 export function marqueur_avec_popup(infos: Dico, carte: L.Map) {
 
     const marqueur = L.marker(
@@ -54,20 +59,35 @@ export function marqueur_avec_popup(infos: Dico, carte: L.Map) {
 
 
 export default function carteIci() {
+    // Crée une carte à la position actuelle
     // Tuiles de cyclosm
     // Sortie : l’objet map créé
 
-    const laCarte = L.map('laCarte' //, {fullscreenControl: true}
-    ).fitWorld();
+    const laCarte = L.map(
+        'laCarte'
+        , {
+            fullscreenControl: true,
+            fullscreenControlOptions: {
+                title: "Plein écran",
+            }
+        }
+    )
+        .fitWorld();
 
     coucheCyclosm(laCarte);
 
     ajoute_fonctionalités_à_la_carte(laCarte);
 
-    laCarte.locate({ setView: true, maxZoom: 12 });
+    laCarte.locate({ setView: true, maxZoom: 14 });
 
     return laCarte;
 }
+
+
+
+
+
+
 // Ajoute la couche de tuiles cyclosm à la carte
 function coucheCyclosm(carte: L.Map) {
     L.tileLayer(
@@ -78,6 +98,9 @@ function coucheCyclosm(carte: L.Map) {
         }
     ).addTo(carte);
 }
+
+
+
 // Ajoute la couche osm classique puis la surcouche cyclosmlite
 function coucheSimple(carte: L.Map) {
 
@@ -93,21 +116,25 @@ function coucheSimple(carte: L.Map) {
         {
             maxZoom: 19,
             attribution: '<a href="https://github.com/cyclosm/cyclosm-cartocss-style/releases" title="CyclOSM - Open Bicycle render">CyclOSM</a> | Map data: {attribution.OpenStreetMap}',
-            opacity: 0.3,
+            opacity: .3,
         }
     ).addTo(carte);
 }
+
+
+
 // Crée une carte sur la bb passée en arg
 // Si cyclosm, tuiles cyclosm, sinon tuile osm normales avec une couche cyclosm_lite
 // Sortie : la carte créé
-
-
-
 export function carteBb(bb: number[], cyclosm = false) {
 
-    const s = bb[0], o = bb[1], n = bb[2], e = bb[3];
+    const s = bb[0],
+        o = bb[1],
+        n = bb[2],
+        e = bb[3];
 
-    const laCarte = L.map('laCarte'
+    const laCarte = L.map('laCarte',
+        //           {"fullscreenControl": true}
     )
         .fitBounds([[s, o], [n, e]]);
 
@@ -121,17 +148,25 @@ export function carteBb(bb: number[], cyclosm = false) {
 
     return laCarte;
 }
+
+
 function ajoute_fonctionalités_à_la_carte(carte: L.Map) {
     // Ajoute le bouton géoloc et l’échelle à la carte passée en arg.
-    // Bouton de géoloc
-    // L.control.locate(
-    // 	{
-    // 	    "locateOptions": {
-    // 		"enableHighAccuracy": true,
-    // 		//"keepCurrentZoomLevel": true
-    // 	    }
-    // 	}
-    // ).addTo(carte);
+
+    //Bouton de géoloc
+    L.control.locate(
+        {
+            locateOptions: {
+                enableHighAccuracy: true,
+                setView: false,
+            },
+            strings: {
+                title: "Afficher ma position"
+            },
+            showCompass: true,
+        }
+    ).addTo(carte);
+
     // Échelle
     L.control.scale({ "imperial": false })
         .addTo(carte);

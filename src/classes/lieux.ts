@@ -1,5 +1,8 @@
 
 import L from "leaflet"
+//import "leaflet.awesome-markers/dist/leaflet.awesome-markers";
+import "leaflet.icon.glyph/Leaflet.Icon.Glyph"
+
 import { Dico, OverpassRes, GéométrieOsm, LieuJson } from "./types.ts";
 import { TypeLieu } from "./types-lieux.ts";
 import markerIcon from "../../node_modules/leaflet/dist/images/marker-icon.png";
@@ -127,7 +130,12 @@ export abstract class Lieu {
     // Crée l’objet mais aussi un marqueur. Le marqueur n’est pas lié à la carte.
     constructor(géom: GéométrieOsm, nom: string) {
         this.coords = sommetMédian(géom);
-        this.leaflet_layer = new L.Marker(this.coords);
+        const icone = L.icon.glyph({
+            glyph:"home",
+            prefix:"fa"
+        });
+        console.log("icone", icone);
+        this.leaflet_layer = new L.Marker(this.coords, {icon: icone});
         this.leaflet_layer.bindPopup(nom);
         this.nom = nom
     }

@@ -1,14 +1,15 @@
 import { FormEvent, SyntheticEvent, useEffect, useState } from "react";
 import ChoixZone from "../molécules/choixZone";
 import AutoComplèteDistant from "../molécules/autoComplèteDistant"
-import { Lieu, géomOsmVersLeaflet, ÉtapeClic } from "../../classes/lieux";
-import { LieuJson, Itinéraire } from "../../classes/types";
+import { ÉtapeClic, Lieu } from "../../classes/lieux";
+import { LieuJson, GetItinéraire } from "../../classes/types";
 import { AutocompleteChangeReason } from "@mui/material";
 import LoadingButton from '@mui/lab/LoadingButton';
 
 import L from "leaflet";
 import { URL_API } from "../../params";
 import { Container, Row, Col } from "react-bootstrap";
+import { Itinéraire } from "../../classes/Itinéraire";
 
 
 export type propsFormItinéraires = {
@@ -48,22 +49,14 @@ export default function FormItinéraires(
 
 
     // renvoie l’objet polyline associé à un itinéraire
-    function itiToPolyline(iti: Itinéraire): L.Polyline {
-        const res = new L.Polyline(
-            géomOsmVersLeaflet(iti.points),
-            { color: iti.couleur }
-        );
-        res.bindPopup(`
-        Longueur: ${iti.longueur}m<br>
-Pourcentage de détour: ${iti.pourcentage_détour}<br>
-Durée: ${Math.floor(iti.longueur / 250)}mn
-        `);
-        return res;
+    function itiToPolyline(iti: GetItinéraire): L.Polyline {
+        return new Itinéraire(iti).polyline;
     }
 
 
     // Efface les anciens itinéraires et affiche les nouveaux
-    function màjItinéraires(itis: Itinéraire[]) {
+    function màjItinéraires(itis: GetItinéraire[]) {
+        
         itinéraires.clearLayers();
 
         itis.forEach(
@@ -84,7 +77,7 @@ Durée: ${Math.floor(iti.longueur / 250)}mn
         const étapes_django = toutes_les_étapes.map(é => é.pourDjango());
         const url = new URL(`${URL_API}itineraire/${zone}`);
         url.searchParams.append("étapes_str", JSON.stringify(étapes_django));
-        const res = await (fetch(url).then(res => res.json())) as Itinéraire[];
+        const res = await (fetch(url).then(res => res.json())) as GetItinéraire[];
         màjItinéraires(res);
         setItiEnChargement(false);
     }

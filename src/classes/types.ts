@@ -1,13 +1,14 @@
-export type Dico = {[clef:string]: string|number};
+export type Dico = { [clef: string]: string | number };
 
 export type OverpassRes = {
-    id:number,
-    lat:number,
-    lon:number,
+    id: number,
+    lat: number,
+    lon: number,
     tags: any,
     type: string,
 }
 
+// géomtrie osm : coords au format [lon, lat]
 export type GéométrieOsm = [number, number][];
 
 
@@ -21,10 +22,11 @@ export interface LieuJson {
 
 
 // Type reçu du serveur lors d’une recherche d’itinéraire
-export type Itinéraire = {
+export type GetItinéraire = {
     points: GéométrieOsm,
     couleur: string,
     marqueurs: LieuJson[],
     pourcentage_détour: number,
     longueur: number,
+    nom: string,
 }

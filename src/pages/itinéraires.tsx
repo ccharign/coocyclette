@@ -7,7 +7,7 @@ import { useState } from "react";
 import L from "leaflet";
 import FormItinéraires from "../composants/forms/FormItinéraires.tsx";
 import FormContribuer from "../composants/forms/FormContribuer.tsx";
-import { Lieu } from "../classes/lieux.ts";
+import { Lieu } from "../classes/Lieu.ts";
 
 
 
