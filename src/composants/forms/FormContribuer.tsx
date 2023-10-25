@@ -10,10 +10,11 @@
 
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { URL_API } from "../../params";
-import { Lieu } from "../../classes/Lieu";
 import { LoadingButton } from "@mui/lab";
 import { Checkbox, FormControlLabel, Switch, Tooltip } from "@mui/material";
 import { FormGroup } from "react-bootstrap";
+import { Lieu } from "../../classes/lieux";
+
 
 type PropsContribuer = {
     toutes_les_étapes: Lieu[],

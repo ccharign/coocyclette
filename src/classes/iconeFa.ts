@@ -9,7 +9,7 @@ export function sansIcone(couleur: Couleur) {
 }
 
 
-export function iconeFa(nom: string = "", couleur: Couleur = "blue") {
+export function iconeFa(nom: string = "", couleur: Couleur = "blue"): L.AwesomeMarkers.Icon {
     return L.AwesomeMarkers.icon({
         icon: nom,
         prefix: "fa",

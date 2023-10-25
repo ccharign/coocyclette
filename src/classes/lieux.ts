@@ -12,10 +12,6 @@ import { iconeFa } from "./iconeFa.ts";
 
 
 
-
-
-
-
 // Pour envoyer au serveur
 export type PourDjango = {
     type_étape: string,
@@ -38,6 +34,7 @@ L.Marker.prototype.setIcon(L.icon({
 export function géomOsmVersLeaflet(g: GéométrieOsm): L.LatLng[] {
     return g.map(x => new L.LatLng(x[1], x[0]));
 }
+
 
 function sommetMédian(g: GéométrieOsm): L.LatLng {
     const sommet_médian = g[g.length >> 2];
@@ -70,6 +67,7 @@ export abstract class Lieu {
     coords: L.LatLng;
     leaflet_layer: L.Layer; // L’objet leaflet à dessiner sur la carte. (Sera un polyline pour les rues, un marqueur sinon.)
     nom: string;
+    icone: L.AwesomeMarkers.Icon = iconeFa();
 
 
     abstract pourDjango(): PourDjango;
@@ -77,7 +75,7 @@ export abstract class Lieu {
     // Crée l’objet mais aussi un marqueur. Le marqueur n’est pas lié à la carte.
     constructor(géom: GéométrieOsm, nom: string) {
         this.coords = sommetMédian(géom);
-        this.leaflet_layer = new L.Marker(this.coords, { icon: iconeFa() });
+        this.leaflet_layer = new L.Marker(this.coords, { icon: this.icone });
         this.leaflet_layer.bindPopup(nom);
         this.nom = nom;
     }
