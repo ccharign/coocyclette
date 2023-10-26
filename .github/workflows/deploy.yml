@@ -41,7 +41,11 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Create the params file
-        run: echo "export const URL_API = " $URL_API ; >src/params.ts
+        run: |
+             ls
+             echo "export const URL_API = " $URL_API ; >src/params.ts
+             ls
+             cat src/params.ts
       - name: Build
         run: npm run build
       - name: Setup Pages
