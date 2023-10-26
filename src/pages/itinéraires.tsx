@@ -32,15 +32,18 @@ export default function Itinéraires() {
         <Base>
 
             <Container>
-                <Row className="my-3">
+                {
+                    toutes_les_étapes.length > 1 ? // Affichage de la partie « Contribuer » ssi départ et arrivée remplis
+                        <Row className="my-3">
 
-                    <Col md={9} >
-                        <Carte
-                            carte={carte}
-                            setCarte={setCarte}
-                            layers_groups={[marqueurs, itinéraires]}
-                        />
-                    </Col>
+                            <FormContribuer
+                                toutes_les_étapes={toutes_les_étapes}
+                                zone={zone}
+                            />
+                        </Row>
+                        : null
+                }
+                <Row className="my-3">
 
                     <Col>
                         {carte !== null
@@ -56,21 +59,21 @@ export default function Itinéraires() {
                                 iti_en_chargement={iti_en_chargement}
                             />
                             : null}
+
+
+                    </Col>
+
+                    <Col md={9} >
+                        <Carte
+                            carte={carte}
+                            setCarte={setCarte}
+                            layers_groups={[marqueurs, itinéraires]}
+                        />
                     </Col>
 
                 </Row>
 
-                {
-                    toutes_les_étapes.length > 1 ? // Affichage de la partie « Contribuer » ssi départ et arrivée remplis
-                        <Row className="my-3">
 
-                            <FormContribuer
-                                toutes_les_étapes={toutes_les_étapes}
-                                zone={zone}
-                            />
-                        </Row>
-                        : null
-                }
 
             </Container>
 
