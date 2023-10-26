@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 env:
-  URL_API: "https://trajet.pauavelo.fr/api/"
+  URL_API: "'https://trajet.pauavelo.fr/api/'"
 
 # Sets the GITHUB_TOKEN permissions to allow deployment to GitHub Pages
 permissions:
