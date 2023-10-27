@@ -25,7 +25,7 @@ export interface LieuJson {
 export type GetItinéraire = {
     points: GéométrieOsm,
     couleur: string,
-    marqueurs: LieuJson[],
+    lieux: LieuJson[],
     pourcentage_détour: number,
     longueur: number,
     nom: string,

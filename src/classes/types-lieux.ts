@@ -1,5 +1,7 @@
 //import Papa from "papaparse";
 
+import { PourDjango, Étape } from "./lieux";
+
 export class TypeLieu {
 
     nom_osm: string
@@ -23,6 +25,8 @@ export class TypeLieu {
 }
 
 
+// Un ensemble de types de lieux
+// Utilisé dans le form autourDeMoi
 export class GroupeTypeLieu {
 
     nom: string
@@ -43,5 +47,34 @@ export class GroupeTypeLieu {
             if (tl_sélectionnés.get(tl)) nb++;
         })
         return nb > 0 && nb < this.types_lieux.length;
+    }
+}
+
+
+
+//////////////////////////////////////////////////////
+// Groupe de type de lieu identifié par sa pk Django//
+// utilisé comme étape pour la recherche d’iti      //
+//////////////////////////////////////////////////////
+
+export type ArgsÉtapeGtl = {
+    nom: string,
+    pk: number,
+}
+
+export class ÉtapeGtl extends Étape {
+
+    pk: number
+
+    constructor({ nom, pk }: ArgsÉtapeGtl) {
+        super(nom);
+        this.pk = pk;
+    }
+
+    pourDjango(): PourDjango {
+        return {
+            type_étape: "gtl",
+            pk: this.pk,
+        }
     }
 }

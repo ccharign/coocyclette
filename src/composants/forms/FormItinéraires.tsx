@@ -1,7 +1,7 @@
 import { FormEvent, SyntheticEvent, useEffect, useState } from "react";
 import ChoixZone from "../molécules/choixZone";
 import AutoComplèteDistant from "../molécules/autoComplèteDistant"
-import { Lieu } from "../../classes/lieux";
+import { Étape, Lieu } from "../../classes/lieux";
 import { ÉtapeClic } from "../../classes/ÉtapeClic";
 import { LieuJson, GetItinéraire } from "../../classes/types";
 import { AutocompleteChangeReason } from "@mui/material";
@@ -21,8 +21,8 @@ export type propsFormItinéraires = {
     itinéraires: L.LayerGroup,
     zone: string,
     setZone: React.Dispatch<React.SetStateAction<string>>,
-    toutes_les_étapes: Lieu[],
-    setToutesLesÉtapes: React.Dispatch<React.SetStateAction<Lieu[]>>,
+    toutes_les_étapes: Étape[],
+    setToutesLesÉtapes: React.Dispatch<React.SetStateAction<Étape[]>>,
     setItiEnChargement: React.Dispatch<React.SetStateAction<boolean>>,
     iti_en_chargement: boolean,
 }
@@ -34,14 +34,14 @@ export default function FormItinéraires(
 
 
     const [étapes, setÉtapes] = useState<ÉtapeClic[]>([]);  // étapes intermédiaires
-    const [départ, setDépart] = useState<Lieu | undefined>(undefined);
-    const [arrivée, setArrivée] = useState<Lieu | undefined>(undefined);
+    const [départ, setDépart] = useState<Étape | undefined>(undefined);  
+    const [arrivée, setArrivée] = useState<Étape | undefined>(undefined);  
 
 
     // Ajuste la fenêtre de la carte pour avoir toutes les étapes à l’écran
     function ajusteFenêtre() {
         const étapes = [départ, arrivée]
-            .flatMap(lieu => lieu ? [lieu.coords] : []);
+            .flatMap(étape => étape instanceof Lieu ? [étape.coords] : []);
 
         if (étapes.length === 1) {
             carte.setView(étapes[0]);
@@ -59,7 +59,7 @@ export default function FormItinéraires(
 
     // Efface les anciens itinéraires et affiche les nouveaux
     function màjItinéraires(itis: GetItinéraire[]) {
-        
+
         itinéraires.clearLayers();
 
         itis.forEach(
@@ -98,22 +98,25 @@ export default function FormItinéraires(
 
 
     // Renvoie la fonction onChange à utiliser pour l’étape indiquée (départ ou arrivée)
-    function fonctionOnChangeÉtape(setÉtape: React.Dispatch<React.SetStateAction<Lieu | undefined>>) {
+    function fonctionOnChangeÉtape(setÉtape: React.Dispatch<React.SetStateAction<Étape | undefined>>) {
         return (
-            (_truc: SyntheticEvent<Element>, value: LieuJson | null, _reason: AutocompleteChangeReason) => {
+            (_event: SyntheticEvent<Element>, value: LieuJson | null, _reason: AutocompleteChangeReason) => {
 
                 videItinéraires();
                 if (value) {
                     const étape = lieuOfJson(value);
+                    if (étape instanceof Lieu){
+                        marqueurs.addLayer(étape.leaflet_layer);
+                        marqueurs.addTo(carte);
+                    }
                     setÉtape(prev => {
-                        prev?.leaflet_layer.remove();
+                        prev instanceof Lieu ? prev.leaflet_layer.remove() : null;
                         return étape;
                     });
-                    marqueurs.addLayer(étape.leaflet_layer);
-                    marqueurs.addTo(carte);
+                    
                 } else {
                     setÉtape(prev => {
-                        prev?.leaflet_layer.remove();
+                        prev instanceof Lieu ? prev.leaflet_layer.remove() : null;
                         return undefined;
                     }
                     );
@@ -133,8 +136,8 @@ export default function FormItinéraires(
 
     // Change l’icone pour le départ
     useEffect(
-        ()=> {
-            if (départ && départ.leaflet_layer instanceof L.Marker){
+        () => {
+            if (départ instanceof Lieu && départ.leaflet_layer instanceof L.Marker) {
                 départ.leaflet_layer.setIcon(iconeFa("bicycle"));
             }
         }
@@ -145,7 +148,7 @@ export default function FormItinéraires(
     // TODO sans doute simplifiable !
     useEffect(
         () => {
-            if (carte && départ && arrivée) {
+            if (carte && départ instanceof Lieu && arrivée instanceof Lieu) {
                 carte.off("click");
                 carte.on(
                     "click",

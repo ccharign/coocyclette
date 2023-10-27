@@ -59,25 +59,36 @@ export class Vecteur {
 }
 
 
-export abstract class Lieu {
+// Représente une étape dans une recherche d’iti
+export abstract class Étape {
+    nom: string
+
+    abstract pourDjango(): PourDjango;
+
+    constructor(nom:string){
+        this.nom=nom;
+    }
+}
+
+
+// Une étape munie d’une géométrie
+export abstract class Lieu extends Étape{
 
     static R_terre = 6360000; // en mètres
     static coeff_rad = Math.PI / 180; // Multiplier par ceci pour passer en radians
 
     coords: L.LatLng;
     leaflet_layer: L.Layer; // L’objet leaflet à dessiner sur la carte. (Sera un polyline pour les rues, un marqueur sinon.)
-    nom: string;
     icone: L.AwesomeMarkers.Icon = iconeFa();
 
 
-    abstract pourDjango(): PourDjango;
 
     // Crée l’objet mais aussi un marqueur. Le marqueur n’est pas lié à la carte.
     constructor(géom: GéométrieOsm, nom: string) {
+        super(nom);
         this.coords = sommetMédian(géom);
         this.leaflet_layer = new L.Marker(this.coords, { icon: this.icone });
         this.leaflet_layer.bindPopup(nom);
-        this.nom = nom;
     }
 
 

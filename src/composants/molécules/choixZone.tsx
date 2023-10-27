@@ -41,11 +41,11 @@ export default function ChoixZone(props: PropsChoixZone) {
         () => {
             console.log("Je charge la liste des zones");
             setChargeListeZones(true);
-            fetch(URL_API + "zones")
+            fetch(URL_API + "init")
                 .then(res => res.json())
                 .then(res => {
                     console.log("Liste des zones obtenue");
-                    setOptions(res);
+                    setOptions(res.zones);
                     setChargeListeZones(false);
                 });
         },

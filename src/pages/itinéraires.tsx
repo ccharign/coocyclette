@@ -7,7 +7,7 @@ import { useState } from "react";
 import L from "leaflet";
 import FormItinéraires from "../composants/forms/FormItinéraires.tsx";
 import FormContribuer from "../composants/forms/FormContribuer.tsx";
-import { Lieu } from "../classes/lieux.ts";
+import { Lieu, Étape } from "../classes/lieux.ts";
 
 
 
@@ -23,7 +23,7 @@ export default function Itinéraires() {
 
     const [carte, setCarte] = useState<L.Map | null>(null);
     const [zone, setZone] = useState("");
-    const [toutes_les_étapes, setToutesLesÉtapes] = useState<Lieu[]>([]);
+    const [toutes_les_étapes, setToutesLesÉtapes] = useState<Étape[]>([]);
     const [iti_en_chargement, setItiEnChargement] = useState(false);
     //const [marqueurs,] = useState(new L.LayerGroup());
     //const [itinéraires,] = useState(new L.LayerGroup());
@@ -33,11 +33,12 @@ export default function Itinéraires() {
 
             <Container>
                 {
-                    toutes_les_étapes.length > 1 ? // Affichage de la partie « Contribuer » ssi départ et arrivée remplis
+                    toutes_les_étapes.length > 1 && toutes_les_étapes.every(é => é instanceof Lieu) ?
+                                               // Affichage de la partie « Contribuer » ssi départ et arrivée remplis
                         <Row className="my-3">
 
                             <FormContribuer
-                                toutes_les_étapes={toutes_les_étapes}
+                                toutes_les_étapes={toutes_les_étapes as Lieu[]}
                                 zone={zone}
                             />
                         </Row>
