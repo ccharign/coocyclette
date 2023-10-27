@@ -47,7 +47,7 @@ function numOùInsérer(latlng: L.LatLng, toutes_les_étapes: Lieu[]): number {
 
 // étapes: les étapes intermédiaire, hors départ et arrivée
 // Effet: màj le numéro de toutes les étapes
-function màjNumérosÉtapes(étapes: ÉtapeClic[]) {
+export function màjNumérosÉtapes(étapes: ÉtapeClic[]) {
     let i = 0;
     étapes.forEach(
         é => {

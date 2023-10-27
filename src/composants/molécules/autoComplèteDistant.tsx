@@ -18,6 +18,7 @@ type autocomplèteProps = {
     ) => void);
     zone: string;
     label: string;
+    placeHolder: string;
 }
 
 
@@ -70,6 +71,7 @@ export default function AutoComplèteDistant(props: autocomplèteProps) {
                     <TextField
                         {...params}
                         label={props.label}
+                        placeholder={props.placeHolder}
                     />
                 )
             }

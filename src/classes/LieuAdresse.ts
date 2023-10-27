@@ -1,7 +1,6 @@
 import L from "leaflet";
 import { Lieu, géomOsmVersLeaflet } from "./lieux.ts";
 import { GéométrieOsm } from "./types.ts";
-import { selectClasses } from "@mui/material";
 
 
 
