@@ -17,7 +17,7 @@ import { Lieu, Étape } from "../classes/lieux.ts";
 ////////////////////////////////////////
 
 const marqueurs = new L.LayerGroup();
-const itinéraires = new L.LayerGroup();
+
 
 export default function Itinéraires() {
 
@@ -51,7 +51,6 @@ export default function Itinéraires() {
                             ? <FormItinéraires
                                 marqueurs={marqueurs}
                                 carte={carte}
-                                itinéraires={itinéraires}
                                 zone={zone}
                                 setZone={setZone}
                                 toutes_les_étapes={toutes_les_étapes}
@@ -68,7 +67,7 @@ export default function Itinéraires() {
                         <Carte
                             carte={carte}
                             setCarte={setCarte}
-                            layers_groups={[marqueurs, itinéraires]}
+                            layers_groups={[marqueurs]}
                         />
                     </Col>
 

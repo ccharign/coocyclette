@@ -18,7 +18,7 @@ import lieuOfJson from "../../fonctions/crée-lieu";
 export type propsFormItinéraires = {
     marqueurs: L.LayerGroup,
     carte: L.Map,
-    itinéraires: L.LayerGroup,
+    //itinéraires: L.LayerGroup,
     zone: string,
     setZone: React.Dispatch<React.SetStateAction<string>>,
     toutes_les_étapes: Étape[],
@@ -27,9 +27,11 @@ export type propsFormItinéraires = {
     iti_en_chargement: boolean,
 }
 
+let itinéraires: Itinéraire[] = [];
+
 
 export default function FormItinéraires(
-    { marqueurs, carte, itinéraires, zone, setZone, setToutesLesÉtapes, setItiEnChargement, iti_en_chargement }:
+    { marqueurs, carte,  zone, setZone, setToutesLesÉtapes, setItiEnChargement, iti_en_chargement }:
         propsFormItinéraires) {
 
 
@@ -52,20 +54,20 @@ export default function FormItinéraires(
 
 
     // renvoie l’objet polyline associé à un itinéraire
-    function itiToPolyline(iti: GetItinéraire): L.Polyline {
-        return new Itinéraire(iti).polyline;
-    }
+    /* function itiToPolyline(iti: GetItinéraire): L.Polyline {
+*     return new Itinéraire(iti).polyline;
+* } */
 
 
     // Efface les anciens itinéraires et affiche les nouveaux
     function màjItinéraires(itis: GetItinéraire[]) {
 
-        itinéraires.clearLayers();
-
-        itis.forEach(
-            iti => itinéraires.addLayer(itiToPolyline(iti))
+        itinéraires.forEach(
+            iti => iti.supprimeLayers()
         );
-        itinéraires.addTo(carte);
+        itinéraires= itis.map(
+            iti => new Itinéraire(iti, carte)
+        );
     }
 
 
@@ -88,7 +90,8 @@ export default function FormItinéraires(
 
     // Supprime les étapes intermédiaires et les itinéraires
     function videItinéraires() {
-        itinéraires.clearLayers();
+        itinéraires.forEach(iti => iti.supprimeLayers());
+        itinéraires.length=0;
         étapes.forEach(
             l => l.leaflet_layer.remove()
         );

@@ -19,7 +19,7 @@ export class Itinéraire {
         this.pourcentage_détour = pourcentage_détour;
         this.lieux = lieux.map(lieuOfJson) as Lieu[];
         this.lieux.forEach(
-            l=>l.leaflet_layer.addTo(carte)
+            l => l.leaflet_layer.addTo(carte)
         )
         
         let contenu_popup = `
