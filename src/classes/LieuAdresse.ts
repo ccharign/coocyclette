@@ -1,6 +1,7 @@
 import L from "leaflet";
 import { Lieu, géomOsmVersLeaflet } from "./lieux.ts";
 import { GéométrieOsm } from "./types.ts";
+import { selectClasses } from "@mui/material";
 
 
 
@@ -59,12 +60,19 @@ export default class LieuAdresse extends Lieu {
 
 
     pourDjango() {
-        return {
-            "type_étape": "rue",
-            "pk": this.pk_rue,
-            "coords": this.avec_num ? this.coords : null,
-            "num": this.avec_num,
-        };
+        if (this.avec_num) {
+            // On renvoie en fait une étape arête
+            return {
+                type_étape: "arête",
+                lon: this.coords.lng,
+                lat: this.coords.lat,
+            }
+        } else {
+            return {
+                "type_étape": "rue",
+                "pk": this.pk_rue,
+            };
+        }
     }
 
 
