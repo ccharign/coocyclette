@@ -2,11 +2,11 @@ import { FormEvent, SyntheticEvent, useEffect, useState } from "react";
 import ChoixZone from "../molécules/choixZone";
 import AutoComplèteDistant from "../molécules/autoComplèteDistant"
 import { Étape, Lieu } from "../../classes/lieux";
-import { ÉtapeClic, màjNumérosÉtapes } from "../../classes/ÉtapeClic";
+import { ÉtapeClic } from "../../classes/ÉtapeClic";
 import { LieuJson, GetItinéraire } from "../../classes/types";
-import { AutocompleteChangeReason, IconButton } from "@mui/material";
+import { AutocompleteChangeReason } from "@mui/material";
 import LoadingButton from '@mui/lab/LoadingButton';
-import SwapVertIcon from '@mui/icons-material/SwapVert';
+//import SwapVertIcon from '@mui/icons-material/SwapVert';
 
 import L from "leaflet";
 import { URL_API } from "../../params";
