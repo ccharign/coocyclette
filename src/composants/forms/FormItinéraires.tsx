@@ -40,8 +40,9 @@ export default function FormItinéraires(
     const [départ, setDépart] = useState<Étape | undefined>(undefined);
     const [arrivée, setArrivée] = useState<Étape | undefined>(undefined);
     const [étapes_pas_clic, setÉtapePasClic] = useState<Étape | undefined>(undefined);
+    const [données_modifiées, setDonnéesModifiées] = useState(true); // Indique si des modifs ont été faites depuis le dernier calcul d’itinéraire
 
-
+    
     // Ajuste la fenêtre de la carte pour avoir toutes les étapes à l’écran
     function ajusteFenêtre() {
         const étapes = [départ, arrivée]
@@ -86,10 +87,11 @@ export default function FormItinéraires(
             url.searchParams.append("étapes_str", JSON.stringify(étapes_django));
             const res = await (fetch(url).then(res => res.json())) as GetItinéraire[];
             màjItinéraires(res);
-            
-        } catch(error) {
+            setDonnéesModifiées(false);
+
+        } catch (error) {
             console.log(error);
-        } finally{
+        } finally {
             setItiEnChargement(false);
         }
     }
@@ -133,6 +135,7 @@ export default function FormItinéraires(
                     }
                     );
                 }
+                setDonnéesModifiées(true);
 
             }
         )
@@ -164,7 +167,10 @@ export default function FormItinéraires(
                 carte.off("click");
                 carte.on(
                     "click",
-                    e => { new ÉtapeClic(e.latlng, [départ, ...étapes, arrivée], setÉtapes, marqueurs); },
+                    e => {
+                        setDonnéesModifiées(true);
+                        new ÉtapeClic(e.latlng, [départ, ...étapes, arrivée], setÉtapes, marqueurs, setDonnéesModifiées);
+                    },
                 )
             } else {
                 carte.off("click");
@@ -172,6 +178,7 @@ export default function FormItinéraires(
         },
         [carte, étapes] // étapes change dès que départ ou arrivée change -> inutile de mettre ceux-ci dans les déps
     )
+
 
 
     /* function inverseÉtapes(_event: any): void {
@@ -198,9 +205,6 @@ export default function FormItinéraires(
 
 
                 <Row className="my-3">
-
-
-
 
 
                     <AutoComplèteDistant
@@ -233,20 +237,21 @@ export default function FormItinéraires(
                         <LoadingButton
                             type="submit"
                             variant="contained"
-                            disabled={!départ || !arrivée}
+                            disabled={!départ || !arrivée || !données_modifiées}
                             loading={iti_en_chargement}
                         >
-                            C’est parti !
+                            {itinéraires.length ? "Recalculer" : "C’est parti !"}
                         </LoadingButton>
                     </Col>
                 </Row>
+
                 <Row>
                     <AutoComplèteDistant
                         l_min={3}
                         onSelect={fonctionOnChangeÉtape(setÉtapePasClic)}
                         zone={zone}
-                        label="(Facultatif) passer par :"
-                        placeHolder="une boulangerie, un lieu où manger, ..."
+                        label="(Option) passer par un(e):"
+                        placeHolder="Essayer 'boulangerie', 'lieu où', ..."
                     />
                 </Row>
 

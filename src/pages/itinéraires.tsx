@@ -18,8 +18,11 @@ import { Lieu, Étape } from "../classes/lieux.ts";
 
 const marqueurs = new L.LayerGroup();
 
+type propsItinéraires = {
+    fouine?: boolean
+};
 
-export default function Itinéraires() {
+export default function Itinéraires({ fouine }: propsItinéraires) {
 
     const [carte, setCarte] = useState<L.Map | null>(null);
     const [zone, setZone] = useState("");
@@ -31,10 +34,10 @@ export default function Itinéraires() {
     return (
         <Base>
 
-            <Container>
+            <Container >
                 {
                     toutes_les_étapes.length > 1 && toutes_les_étapes.every(é => é instanceof Lieu) ?
-                                               // Affichage de la partie « Contribuer » ssi départ et arrivée remplis
+                        // Affichage de la partie « Contribuer » ssi départ et arrivée remplis
                         <Row className="my-3">
 
                             <FormContribuer
@@ -46,38 +49,38 @@ export default function Itinéraires() {
                 }
                 <Row className="my-3">
 
-                    <Col>
-                        {carte !== null
-                            ? <FormItinéraires
-                                marqueurs={marqueurs}
-                                carte={carte}
-                                zone={zone}
-                                setZone={setZone}
-                                toutes_les_étapes={toutes_les_étapes}
-                                setToutesLesÉtapes={setToutesLesÉtapes}
-                                setItiEnChargement={setItiEnChargement}
-                                iti_en_chargement={iti_en_chargement}
-                            />
-                            : null}
-
-
-                    </Col>
-
-                    <Col md={9} >
-                        <Carte
+                    <Col className={fouine ? "fouine" : ""}>  {/* // cheat code pour avoir une image de fouine */}
+                    {carte !== null
+                        ? <FormItinéraires
+                            marqueurs={marqueurs}
                             carte={carte}
-                            setCarte={setCarte}
-                            layers_groups={[marqueurs]}
+                            zone={zone}
+                            setZone={setZone}
+                            toutes_les_étapes={toutes_les_étapes}
+                            setToutesLesÉtapes={setToutesLesÉtapes}
+                            setItiEnChargement={setItiEnChargement}
+                            iti_en_chargement={iti_en_chargement}
                         />
-                    </Col>
-
-                </Row>
+                        : null}
 
 
+                </Col>
 
-            </Container>
+                <Col md={9} >
+                    <Carte
+                        carte={carte}
+                        setCarte={setCarte}
+                        layers_groups={[marqueurs]}
+                    />
+                </Col>
+
+            </Row>
 
 
-        </Base>
+
+        </Container>
+
+
+        </Base >
     )
 }

@@ -1,6 +1,6 @@
 import L from "leaflet";
 import { sansIcone } from "./iconeFa.ts";
-import { Lieu,  PourDjango } from "./lieux.ts";
+import { Lieu, PourDjango } from "./lieux.ts";
 
 
 
@@ -77,17 +77,20 @@ export class ÉtapeClic extends Lieu {
     numéro: number;
     setÉtapes: React.Dispatch<React.SetStateAction<ÉtapeClic[]>>; // setter React pour les étaper intermédiaires
     layer_group: L.LayerGroup;
+    //setDonnéesModifiées: React.Dispatch<React.SetStateAction<boolean>>; // pour indiquer qu’il y a eu des changements dans les données du form
 
     constructor(
         ll: L.LatLng,
         toutes_les_étapes: Lieu[],
         setÉtapes: React.Dispatch<React.SetStateAction<ÉtapeClic[]>>,
-        layer_group: L.LayerGroup // le layerGroup auquel appartiendra le marqueur de cette étape
+        layer_group: L.LayerGroup, // le layerGroup auquel appartiendra le marqueur de cette étape
+        setDonnéesModifiées: React.Dispatch<React.SetStateAction<boolean>>
     ) {
 
         super([[ll.lng, ll.lat]], "Point de passage");
         this.setÉtapes = setÉtapes;
         this.layer_group = layer_group;
+        //this.setDonnéesModifiées = setDonnéesModifiées;
 
         // On écrase le marqueur créé par super
         this.leaflet_layer = new L.Marker(
@@ -116,8 +119,13 @@ export class ÉtapeClic extends Lieu {
                     if (!bouton) {
                         throw new Error("Bouton supprimer pas trouvé");
                     }
-                    bouton.addEventListener("click",
-                        () => this.supprimer()
+                    bouton.addEventListener(
+                        "click",
+                        () => {
+                            setDonnéesModifiées(true);
+                            this.supprimer();
+
+                        }
                     );
                 }
             );

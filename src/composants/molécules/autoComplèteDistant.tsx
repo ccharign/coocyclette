@@ -3,8 +3,14 @@ import { URL_API } from "../../params";
 import Autocomplete, { AutocompleteInputChangeReason, AutocompleteChangeReason } from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField"
 import { useEffect, useState } from "react";
-import { debounce } from "@mui/material";
+import { CircularProgress, debounce } from "@mui/material";
 import { LieuJson } from "../../classes/types";
+import React from "react";
+
+
+
+/* Champ de recherche lieu/adresse qui va chercher les options sur le serveur */
+
 
 
 const URL_COMPLÉTION = URL_API + "completion";
@@ -24,6 +30,8 @@ type autocomplèteProps = {
 
 export default function AutoComplèteDistant(props: autocomplèteProps) {
 
+    const [charge_options, setChargeOptions] = useState(false);
+
     function urlRecherche(cherché: string): URL {
         const url = new URL(URL_COMPLÉTION);
         url.searchParams.append("term", cherché);
@@ -39,13 +47,15 @@ export default function AutoComplèteDistant(props: autocomplèteProps) {
     const getOptions = debounce(
         async (_event: React.SyntheticEvent<Element, Event>, value: string, _reason: AutocompleteInputChangeReason) => {
             if (value.length >= props.l_min) {
+                setChargeOptions(true);
                 const res = await getLieux(value);
+                setChargeOptions(false);
                 setOptions(res);
-            }else{
+            } else {
                 setOptions([]);
             }
         },
-        300
+        600
     )
 
 
@@ -72,6 +82,15 @@ export default function AutoComplèteDistant(props: autocomplèteProps) {
                         {...params}
                         label={props.label}
                         placeholder={props.placeHolder}
+                        InputProps={{
+                            ...params.InputProps,
+                            endAdornment: (
+                                <React.Fragment>
+                                    {charge_options ? <CircularProgress color="inherit" size={20} /> : null}
+                                    {params.InputProps.endAdornment}
+                                </React.Fragment>
+                            ),
+                        }}
                     />
                 )
             }
