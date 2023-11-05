@@ -13,15 +13,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const router = createBrowserRouter([
     {
-        path: "/osm-velo-front/",
+        path: "/coocyclette/",
         element: <Itinéraires />,
     },
     {
-        path: "/osm-velo-front/fouine",
+        path: "/coocyclette/fouine",
         element: <Itinéraires fouine />,
     },
     {
-        path: "/osm-velo-front/autourDeMoi",
+        path: "/coocyclette/autourDeMoi",
         element: <AutourDeMoi />,
     },
 
