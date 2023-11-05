@@ -158,7 +158,7 @@ export default function FormContribuer(props: PropsContribuer) {
 
     return (
         <div>
-            <h1>Contribuer à OsmVélo ! </h1>
+            <h1>Contribuer à CooCyclette ! </h1>
 
             {
                 props.toutes_les_étapes.length > 2
