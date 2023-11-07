@@ -42,7 +42,7 @@ export default function FormItinéraires(
     const [étapes_pas_clic, setÉtapePasClic] = useState<Étape | undefined>(undefined);
     const [données_modifiées, setDonnéesModifiées] = useState(true); // Indique si des modifs ont été faites depuis le dernier calcul d’itinéraire
 
-    
+
     // Ajuste la fenêtre de la carte pour avoir toutes les étapes à l’écran
     function ajusteFenêtre() {
         const étapes = [départ, arrivée]

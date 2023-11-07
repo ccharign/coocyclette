@@ -7,7 +7,7 @@ import "leaflet/dist/leaflet.css"
 import "./css/pour-leaflet.css"
 import "./css/styles.css"
 import AutourDeMoi from './pages/autourDeMoi.tsx';
-import Itinéraires from './pages/itinéraires.tsx';
+import Itinéraires from "./pages/Itinéraires.tsx";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 

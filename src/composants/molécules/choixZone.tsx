@@ -34,7 +34,7 @@ export default function ChoixZone(props: PropsChoixZone) {
 
             // Et on enregistre la zone selectionnée
             props.setZone(zone);
-        }
+       }
     }
 
     useEffect(

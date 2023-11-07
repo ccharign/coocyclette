@@ -30,3 +30,15 @@ export type GetItinéraire = {
     longueur: number,
     nom: string,
 }
+
+
+// Pour les tiroirs de la page principale
+type Ancre = 'top' | 'left' | 'bottom' | 'right';
+export type tClefTiroir = "recherche" | "contribuer" | "stats";
+export type tTiroir = {
+    nom: string,
+    clef: tClefTiroir,
+    ancre: Ancre,
+    contenu: React.ReactNode,
+};
+export type tTiroirOuvert = Map<tClefTiroir, boolean>;
