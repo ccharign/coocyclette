@@ -3,7 +3,7 @@ import ChoixZone from "../molécules/choixZone";
 import AutoComplèteDistant from "../molécules/autoComplèteDistant"
 import { Étape, Lieu } from "../../classes/lieux";
 import { ÉtapeClic } from "../../classes/ÉtapeClic";
-import { LieuJson, GetItinéraire } from "../../classes/types";
+import { LieuJson, GetItinéraire, tClefTiroir } from "../../classes/types";
 import { AutocompleteChangeReason } from "@mui/material";
 import LoadingButton from '@mui/lab/LoadingButton';
 //import SwapVertIcon from '@mui/icons-material/SwapVert';
@@ -26,13 +26,14 @@ export type propsFormItinéraires = {
     setToutesLesÉtapes: React.Dispatch<React.SetStateAction<Étape[]>>,
     setItiEnChargement: React.Dispatch<React.SetStateAction<boolean>>,
     iti_en_chargement: boolean,
+    setTiroir: (clef: tClefTiroir, ouvert: boolean) => void,
 }
 
 let itinéraires: Itinéraire[] = [];
 
 
 export default function FormItinéraires(
-    { marqueurs, carte, zone, setZone, setToutesLesÉtapes, setItiEnChargement, iti_en_chargement }:
+    { marqueurs, carte, zone, setZone, setToutesLesÉtapes, setItiEnChargement, iti_en_chargement, setTiroir }:
         propsFormItinéraires) {
 
 
@@ -79,6 +80,7 @@ export default function FormItinéraires(
     async function envoieForm(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setItiEnChargement(true);
+        setTiroir("recherche", false);
         try {
             const toutes_les_étapes = [départ, ...étapes, étapes_pas_clic, arrivée].filter(x => x) as Lieu[];
             setToutesLesÉtapes(toutes_les_étapes);
@@ -88,6 +90,8 @@ export default function FormItinéraires(
             const res = await (fetch(url).then(res => res.json())) as GetItinéraire[];
             màjItinéraires(res);
             setDonnéesModifiées(false);
+            setTiroir("stats", true);
+            setTiroir("contribuer", true);
 
         } catch (error) {
             console.log(error);
@@ -125,6 +129,7 @@ export default function FormItinéraires(
                     }
                     setÉtape(prev => {
                         prev instanceof Lieu ? prev.leaflet_layer.remove() : null;
+                        ajusteFenêtre();
                         return étape;
                     });
 
@@ -136,6 +141,7 @@ export default function FormItinéraires(
                     );
                 }
                 setDonnéesModifiées(true);
+                
 
             }
         )
@@ -143,11 +149,11 @@ export default function FormItinéraires(
 
 
     // Recadre la fenêtre quand départ ou arrivée change
-    useEffect(
-        ajusteFenêtre
-        ,
-        [départ, arrivée]
-    );
+    /* useEffect(
+*     
+*     ,
+*     [départ, arrivée]
+* ); */
 
     // Change l’icone pour le départ
     useEffect(
@@ -199,7 +205,7 @@ export default function FormItinéraires(
 
                 <Row className="my-3">
                     <Col>
-                        <ChoixZone setZone={setZone} />
+                        <ChoixZone setZone={setZone} zone={zone} />
                     </Col>
                 </Row>
 

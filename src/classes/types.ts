@@ -37,7 +37,6 @@ type Ancre = 'top' | 'left' | 'bottom' | 'right';
 export type tClefTiroir = "recherche" | "contribuer" | "stats";
 export type tTiroir = {
     nom: string,
-    clef: tClefTiroir,
     ancre: Ancre,
     contenu: React.ReactNode,
 };

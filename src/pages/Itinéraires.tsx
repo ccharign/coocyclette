@@ -10,7 +10,7 @@ import FormContribuer from "../composants/forms/FormContribuer.tsx";
 import { Lieu, Étape } from "../classes/lieux.ts";
 import { Nav } from "react-bootstrap";
 import Tiroir from "../composants/atomes/ClefTiroir.tsx";
-import { tTiroir, tTiroirOuvert } from "../classes/types.ts";
+import { tClefTiroir, tTiroir, tTiroirOuvert } from "../classes/types.ts";
 
 
 ////////////////////////////////////////
@@ -24,12 +24,21 @@ type propsItinéraires = {
     fouine?: boolean
 };
 
+const clefs_tiroirs: tClefTiroir[] = ["recherche", "contribuer", "stats"];
 
-const tiroirs: tTiroir[] = [
-    { nom: "Modifier la recherche", clef: "recherche", ancre: "left", contenu: "" },
-    { nom: "Contribuer", clef: "contribuer", ancre: "top", contenu: "" },
-    { nom: "Stats", clef: "stats", ancre: "right", contenu: "" },
-]
+type tTiroirs = {
+    recherche: tTiroir,
+    contribuer: tTiroir,
+    stats: tTiroir,
+}
+
+
+const tiroirs: tTiroirs =
+{
+    recherche: { nom: "Modifier la recherche", ancre: "left", contenu: "" },
+    contribuer: { nom: "Contribuer", ancre: "top", contenu: "" },
+    stats: { nom: "Stats", ancre: "right", contenu: "Un jour il y aura ici les stats sur les itinéraires proposés" },
+}
 
 
 
@@ -42,26 +51,74 @@ export default function Itinéraires({ fouine }: propsItinéraires) {
     const [zone, setZone] = useState("");
     const [toutes_les_étapes, setToutesLesÉtapes] = useState<Étape[]>([]);
     const [iti_en_chargement, setItiEnChargement] = useState(false);
-    const [tiroir_ouvert, setTiroirOuvert] = useState<tTiroirOuvert>(new Map(tiroirs.map(t => [t.clef, false])));
+    const [tiroir_ouvert, setTiroirOuvert] = useState<tTiroirOuvert>(
+        new Map(clefs_tiroirs.map(clef => [clef, clef === "recherche"]))  // Initialement, seule la barre de recherche est ouverte.
+    );
+
+    
+    // Renvoie la fonction qui ouvre ou ferme le tiroir associé à la clef
+    function toggleTiroir(clef: tClefTiroir): () => void {
+        return () =>
+            setTiroirOuvert(
+                prev => new Map(prev.set(clef, !prev.get(clef)))
+            )
+    }
+
+    function setTiroir(clef: tClefTiroir, ouvert: boolean){
+        setTiroirOuvert(
+            prev => new Map(prev.set(clef, ouvert))
+        )
+    }
+
+
+    tiroirs.recherche.contenu =
+        carte !== null
+            ?
+            <FormItinéraires
+                marqueurs={marqueurs}
+                carte={carte}
+                zone={zone}
+                setZone={setZone}
+                toutes_les_étapes={toutes_les_étapes}
+                setToutesLesÉtapes={setToutesLesÉtapes}
+                setItiEnChargement={setItiEnChargement}
+                iti_en_chargement={iti_en_chargement}
+                setTiroir={setTiroir}
+            />
+            : null;
+
+
+    tiroirs.contribuer.contenu =
+        toutes_les_étapes.length > 1 && toutes_les_étapes.every(é => é instanceof Lieu) ?
+            // Affichage de la partie « Contribuer » ssi départ et arrivée remplis
+            <Row className="my-3">
+
+                <FormContribuer
+                    toutes_les_étapes={toutes_les_étapes as Lieu[]}
+                    zone={zone}
+                />
+            </Row>
+            : null;
 
 
     // La barre pour ouvrir et fermer les tiroirs
     const barreTiroirs =
         <Nav fill>
             {
-                tiroirs.map(
-                    tiroir =>
+                clefs_tiroirs.map(
+                    clef =>
                         <Tiroir
-                            key={tiroir.clef}
-                            tiroir={tiroir}
-                            setTiroirOuvert={setTiroirOuvert}
+                            key={clef}
+                            clef={clef}
+                            tiroir={tiroirs[clef]}
+                            toggleTiroir={toggleTiroir}
                             tiroir_ouvert={tiroir_ouvert}
+                            contenu={tiroirs[clef].contenu}
                         />
 
                 )
             }
         </Nav >;
-
 
 
     return (
@@ -71,44 +128,17 @@ export default function Itinéraires({ fouine }: propsItinéraires) {
 
 
             <Container >
-                {
-                    toutes_les_étapes.length > 1 && toutes_les_étapes.every(é => é instanceof Lieu) ?
-                        // Affichage de la partie « Contribuer » ssi départ et arrivée remplis
-                        <Row className="my-3">
 
-                            <FormContribuer
-                                toutes_les_étapes={toutes_les_étapes as Lieu[]}
-                                zone={zone}
-                            />
-                        </Row>
-                        : null
-                }
                 <Row className="my-3">
 
-                    <Col className={fouine ? "fouine" : ""}>  {/* // cheat code pour avoir une image de fouine */}
-                        {carte !== null
-                            ? <FormItinéraires
-                                marqueurs={marqueurs}
-                                carte={carte}
-                                zone={zone}
-                                setZone={setZone}
-                                toutes_les_étapes={toutes_les_étapes}
-                                setToutesLesÉtapes={setToutesLesÉtapes}
-                                setItiEnChargement={setItiEnChargement}
-                                iti_en_chargement={iti_en_chargement}
-                            />
-                            : null}
 
 
-                    </Col>
+                    <Carte
+                        carte={carte}
+                        setCarte={setCarte}
+                        layers_groups={[marqueurs]}
+                    />
 
-                    <Col md={9} >
-                        <Carte
-                            carte={carte}
-                            setCarte={setCarte}
-                            layers_groups={[marqueurs]}
-                        />
-                    </Col>
 
                 </Row>
 
