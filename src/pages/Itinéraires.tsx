@@ -5,11 +5,11 @@ import FormItinéraires from "../composants/forms/FormItinéraires.tsx";
 import FormContribuer from "../composants/forms/FormContribuer.tsx";
 import { Lieu, Étape } from "../classes/lieux.ts";
 import { Nav } from "react-bootstrap";
-import Tiroir from "../composants/atomes/ClefTiroir.tsx";
-import { LieuJson, tClefTiroir, tTiroir, tTiroirOuvert } from "../classes/types.ts";
+import { tClefTiroir, tTiroir, tTiroirOuvert } from "../classes/types.ts";
 import CarteItinéraires from "../composants/organismes/CarteItinéraire.tsx";
 import { contexte_iti } from "../composants/contextes/page-itinéraire.ts";
 import { Itinéraire } from "../classes/Itinéraire.ts";
+import Tiroir from "../composants/atomes/Tiroir.tsx";
 
 
 ////////////////////////////////////////

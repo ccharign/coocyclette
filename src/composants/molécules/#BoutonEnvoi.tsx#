@@ -1,9 +1,10 @@
 import LoadingButton from "@mui/lab/LoadingButton";
-import { FormEvent, useContext } from "react";
+import { FormEvent, useContext, useState } from "react";
 import { contexte_iti } from "../contextes/page-itinéraire";
 import { URL_API } from "../../params";
 import { màjItinéraires } from "../../fonctions/pour_leaflet";
 import { GetItinéraire } from "../../classes/types";
+import { Lieu } from "../../classes/lieux";
 
 type propsBoutonEnvoi = {
     texte: string,
@@ -15,12 +16,13 @@ type propsBoutonEnvoi = {
 export default function BoutonEnvoi({ texte, disabled }: propsBoutonEnvoi) {
 
     const { zone, setTiroir, carte, itinéraires } = useContext(contexte_iti);
-
+    const [iti_en_chargement, setItiEnChargement] = useState(false);
+    
     // màj la liste de toutes les étapes via setToutesLesÉtapes
-// et lance la recherche d’itinéraires
+    // et lance la recherche d’itinéraires
     async function envoieForm(e: FormEvent<HTMLFormElement>) {
-        
-    e.preventDefault();
+
+        e.preventDefault();
     setItiEnChargement(true);
 
     try {

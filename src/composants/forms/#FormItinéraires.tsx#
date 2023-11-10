@@ -37,10 +37,8 @@ export default function FormItinéraires(
 
 
 
-
-
-
     // Change l’icone pour le départ
+    // TODO mettre icone en arg facultatif de autocomplèteDistant
     useEffect(
         () => {
             if (départ instanceof Lieu && départ.leaflet_layer instanceof L.Marker) {
