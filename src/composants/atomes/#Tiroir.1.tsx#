@@ -1,0 +1,38 @@
+import Button from "@mui/material/Button";
+import { Nav } from "react-bootstrap";
+import Drawer from "@mui/material/Drawer";
+import { Divider, IconButton } from "@mui/material";
+import { propsClefTiroir } from "./ClefTiroir";
+
+
+
+
+
+
+export default function Tiroir({ tiroir, clef, toggleTiroir, tiroir_ouvert }: propsClefTiroir) {
+
+
+    return (
+        <>
+            <Nav.Item>
+                <Button onClick={toggleTiroir(clef)}>
+                    {tiroir.nom}
+                </Button>
+            </Nav.Item>
+
+            <Drawer
+                anchor={tiroir.ancre}
+                open={tiroir_ouvert.get(clef)}
+                onClose={toggleTiroir(clef)}
+                variant="persistent"
+            >
+
+                <IconButton onClick={toggleTiroir(clef)}>
+                    <ChevronLeftIcon />
+                </IconButton>
+                <Divider />
+                {tiroir.contenu}
+            </Drawer>
+        </>
+    );
+}

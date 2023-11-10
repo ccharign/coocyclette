@@ -76,20 +76,23 @@ export class ÉtapeClic extends Lieu {
 
     numéro: number;
     setÉtapes: React.Dispatch<React.SetStateAction<ÉtapeClic[]>>; // setter React pour les étaper intermédiaires
-    layer_group: L.LayerGroup;
+    carte: L.Map;
+    //layer_group: L.LayerGroup;
     //setDonnéesModifiées: React.Dispatch<React.SetStateAction<boolean>>; // pour indiquer qu’il y a eu des changements dans les données du form
 
     constructor(
         ll: L.LatLng,
         toutes_les_étapes: Lieu[],
         setÉtapes: React.Dispatch<React.SetStateAction<ÉtapeClic[]>>,
-        layer_group: L.LayerGroup, // le layerGroup auquel appartiendra le marqueur de cette étape
+        //layer_group: L.LayerGroup, // le layerGroup auquel appartiendra le marqueur de cette étape
+        carte: L.Map,
         setDonnéesModifiées: React.Dispatch<React.SetStateAction<boolean>>
     ) {
 
         super([[ll.lng, ll.lat]], "Point de passage");
         this.setÉtapes = setÉtapes;
-        this.layer_group = layer_group;
+        //this.layer_group = layer_group;
+        this.carte = carte;
         //this.setDonnéesModifiées = setDonnéesModifiées;
 
         // On écrase le marqueur créé par super
@@ -134,7 +137,8 @@ export class ÉtapeClic extends Lieu {
         this.numéro = numOùInsérer(ll, toutes_les_étapes);
         insèreÉtape(this.numéro - 1, this, setÉtapes);
 
-        this.layer_group.addLayer(this.leaflet_layer);
+        //this.layer_group.addLayer(this.leaflet_layer);
+        this.leaflet_layer.addTo(this.carte);
     }
 
 
@@ -147,7 +151,8 @@ export class ÉtapeClic extends Lieu {
 
     // Supprime l’étape
     supprimer() {
-        this.layer_group.removeLayer(this.leaflet_layer);
+        //this.layer_group.removeLayer(this.leaflet_layer);
+        this.leaflet_layer.remove();
         this.setÉtapes(
             prev => {
                 prev.splice(this.numéro - 1, 1);

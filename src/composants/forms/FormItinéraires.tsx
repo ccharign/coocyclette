@@ -1,78 +1,43 @@
-import { FormEvent, SyntheticEvent, useEffect, useState } from "react";
+import { FormEvent, useContext, useEffect, useState } from "react";
 import ChoixZone from "../molécules/choixZone";
 import AutoComplèteDistant from "../molécules/autoComplèteDistant"
 import { Étape, Lieu } from "../../classes/lieux";
 import { ÉtapeClic } from "../../classes/ÉtapeClic";
-import { LieuJson, GetItinéraire, tClefTiroir } from "../../classes/types";
-import { AutocompleteChangeReason } from "@mui/material";
+import {  GetItinéraire, tClefTiroir } from "../../classes/types";
 import LoadingButton from '@mui/lab/LoadingButton';
 //import SwapVertIcon from '@mui/icons-material/SwapVert';
 
 import L from "leaflet";
 import { URL_API } from "../../params";
 import { Container, Row, Col } from "react-bootstrap";
-import { Itinéraire } from "../../classes/Itinéraire";
 import { iconeFa } from "../../classes/iconeFa";
-import lieuOfJson from "../../fonctions/crée-lieu";
+import { contexte_iti } from "../contextes/page-itinéraire";
+import { màjItinéraires } from "../../fonctions/pour_leaflet";
 
 
 export type propsFormItinéraires = {
-    marqueurs: L.LayerGroup,
-    carte: L.Map,
-    //itinéraires: L.LayerGroup,
-    zone: string,
     setZone: React.Dispatch<React.SetStateAction<string>>,
-    toutes_les_étapes: Étape[],
     setToutesLesÉtapes: React.Dispatch<React.SetStateAction<Étape[]>>,
     setItiEnChargement: React.Dispatch<React.SetStateAction<boolean>>,
     iti_en_chargement: boolean,
     setTiroir: (clef: tClefTiroir, ouvert: boolean) => void,
 }
 
-let itinéraires: Itinéraire[] = [];
 
 
 export default function FormItinéraires(
-    { marqueurs, carte, zone, setZone, setToutesLesÉtapes, setItiEnChargement, iti_en_chargement, setTiroir }:
+    { setZone, setToutesLesÉtapes, setItiEnChargement, iti_en_chargement, setTiroir }:
         propsFormItinéraires) {
 
+    const { zone, carte, itinéraires } = useContext(contexte_iti);
 
-    const [étapes, setÉtapes] = useState<ÉtapeClic[]>([]);  // étapes créées par clic
+    const [étapes_clic, setÉtapesClic] = useState<ÉtapeClic[]>([]);  // étapes créées par clic
     const [départ, setDépart] = useState<Étape | undefined>(undefined);
     const [arrivée, setArrivée] = useState<Étape | undefined>(undefined);
     const [étapes_pas_clic, setÉtapePasClic] = useState<Étape | undefined>(undefined);
     const [données_modifiées, setDonnéesModifiées] = useState(true); // Indique si des modifs ont été faites depuis le dernier calcul d’itinéraire
 
 
-    // Ajuste la fenêtre de la carte pour avoir toutes les étapes à l’écran
-    function ajusteFenêtre() {
-        const étapes = [départ, arrivée]
-            .flatMap(étape => étape instanceof Lieu ? [étape.coords] : []);
-
-        if (étapes.length === 1) {
-            carte.setView(étapes[0]);
-        } else if (étapes.length > 1) {
-            carte.fitBounds(L.latLngBounds(étapes));
-        }
-    }
-
-
-    // renvoie l’objet polyline associé à un itinéraire
-    /* function itiToPolyline(iti: GetItinéraire): L.Polyline {
-*     return new Itinéraire(iti).polyline;
-* } */
-
-
-    // Efface les anciens itinéraires et affiche les nouveaux
-    function màjItinéraires(itis: GetItinéraire[]) {
-
-        itinéraires.forEach(
-            iti => iti.supprimeLayers()
-        );
-        itinéraires = itis.map(
-            iti => new Itinéraire(iti, carte)
-        );
-    }
 
 
     // màj la liste de toutes les étapes via setToutesLesÉtapes
@@ -82,13 +47,13 @@ export default function FormItinéraires(
         setItiEnChargement(true);
         setTiroir("recherche", false);
         try {
-            const toutes_les_étapes = [départ, ...étapes, étapes_pas_clic, arrivée].filter(x => x) as Lieu[];
+            const toutes_les_étapes = [départ, ...étapes_clic, étapes_pas_clic, arrivée].filter(x => x) as Lieu[];
             setToutesLesÉtapes(toutes_les_étapes);
             const étapes_django = toutes_les_étapes.map(é => é.pourDjango());
             const url = new URL(`${URL_API}itineraire/${zone}`);
             url.searchParams.append("étapes_str", JSON.stringify(étapes_django));
             const res = await (fetch(url).then(res => res.json())) as GetItinéraire[];
-            màjItinéraires(res);
+            màjItinéraires(res, carte as L.Map, itinéraires);
             setDonnéesModifiées(false);
             setTiroir("stats", true);
             setTiroir("contribuer", true);
@@ -101,59 +66,6 @@ export default function FormItinéraires(
     }
 
 
-    // Supprime les étapes intermédiaires et les itinéraires
-    function videItinéraires() {
-        itinéraires.forEach(
-            iti => iti.supprimeLayers()
-        );
-        itinéraires.length = 0;
-        étapes.forEach(
-            l => l.leaflet_layer.remove()
-        );
-        étapes.length = 0;
-        setÉtapes([]);
-    }
-
-
-    // Renvoie la fonction onChange à utiliser pour l’étape indiquée (départ ou arrivée)
-    function fonctionOnChangeÉtape(setÉtape: React.Dispatch<React.SetStateAction<Étape | undefined>>) {
-        return (
-            (_event: SyntheticEvent<Element>, value: LieuJson | null, _reason: AutocompleteChangeReason) => {
-
-                videItinéraires();
-                if (value) {
-                    const étape = lieuOfJson(value);
-                    if (étape instanceof Lieu) {
-                        marqueurs.addLayer(étape.leaflet_layer);
-                        marqueurs.addTo(carte);
-                    }
-                    setÉtape(prev => {
-                        prev instanceof Lieu ? prev.leaflet_layer.remove() : null;
-                        ajusteFenêtre();
-                        return étape;
-                    });
-
-                } else {
-                    setÉtape(prev => {
-                        prev instanceof Lieu ? prev.leaflet_layer.remove() : null;
-                        return undefined;
-                    }
-                    );
-                }
-                setDonnéesModifiées(true);
-                
-
-            }
-        )
-    }
-
-
-    // Recadre la fenêtre quand départ ou arrivée change
-    /* useEffect(
-*     
-*     ,
-*     [départ, arrivée]
-* ); */
 
     // Change l’icone pour le départ
     useEffect(
@@ -175,14 +87,20 @@ export default function FormItinéraires(
                     "click",
                     e => {
                         setDonnéesModifiées(true);
-                        new ÉtapeClic(e.latlng, [départ, ...étapes, arrivée], setÉtapes, marqueurs, setDonnéesModifiées);
+                        new ÉtapeClic(
+                            e.latlng,
+                            [départ, ...étapes_clic, arrivée],
+                            setÉtapesClic,
+                            carte,
+                            setDonnéesModifiées
+                        );
                     },
                 )
-            } else {
+            } else if(carte){
                 carte.off("click");
             }
         },
-        [carte, étapes] // étapes change dès que départ ou arrivée change -> inutile de mettre ceux-ci dans les déps
+        [carte, étapes_clic] // étapes change dès que départ ou arrivée change -> inutile de mettre ceux-ci dans les déps
     )
 
 
@@ -196,7 +114,13 @@ export default function FormItinéraires(
 *         return prev;
 *     });
 * }
- */
+     */
+
+    const propsDesAutocomplètes = {
+        étapes_clic: étapes_clic,
+        setÉtapesClic: setÉtapesClic,
+        setDonnéesModifiées: setDonnéesModifiées,
+    }
 
     return (
         <form onSubmit={envoieForm}>
@@ -205,7 +129,10 @@ export default function FormItinéraires(
 
                 <Row className="my-3">
                     <Col>
-                        <ChoixZone setZone={setZone} zone={zone} />
+                        <ChoixZone
+                            setZone={setZone}
+                            zone={zone}
+                        />
                     </Col>
                 </Row>
 
@@ -214,9 +141,9 @@ export default function FormItinéraires(
 
 
                     <AutoComplèteDistant
-                        l_min={3}
-                        onSelect={fonctionOnChangeÉtape(setDépart)}
-                        zone={zone}
+                        {...propsDesAutocomplètes}
+                        étape={départ}
+                        setÉtape={setDépart}
                         label="Départ"
                         placeHolder="2 rue bidule, mon café, ..."
                     />
@@ -228,9 +155,9 @@ export default function FormItinéraires(
                         </IconButton> */}
 
                     <AutoComplèteDistant
-                        l_min={3}
-                        onSelect={fonctionOnChangeÉtape(setArrivée)}
-                        zone={zone}
+                        {...propsDesAutocomplètes}
+                        étape={arrivée}
+                        setÉtape={setArrivée}
                         label="Arrivée"
                         placeHolder="une boulangerie, 3 rue truc, ..."
                     />
@@ -253,9 +180,9 @@ export default function FormItinéraires(
 
                 <Row>
                     <AutoComplèteDistant
-                        l_min={3}
-                        onSelect={fonctionOnChangeÉtape(setÉtapePasClic)}
-                        zone={zone}
+                        {...propsDesAutocomplètes}
+                        étape={étapes_pas_clic}
+                        setÉtape={setÉtapePasClic}
                         label="(Option) passer par un(e):"
                         placeHolder="Essayer 'boulangerie', 'lieu où', ..."
                     />

@@ -8,18 +8,13 @@
 //    les étapes
 //    la zone
 
-import { ChangeEvent, FormEvent, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useContext, useRef, useState } from "react";
 import { URL_API } from "../../params";
 import { LoadingButton } from "@mui/lab";
 import { Checkbox, FormControlLabel, Switch, Tooltip } from "@mui/material";
 import { FormGroup } from "react-bootstrap";
-import { Lieu } from "../../classes/lieux";
+import { contexte_iti } from "../contextes/page-itinéraire";
 
-
-type PropsContribuer = {
-    toutes_les_étapes: Lieu[],
-    zone: string,
-}
 
 
 type PourcentageDétour = {
@@ -47,8 +42,11 @@ const pd_défaut: PourcentageDétour[] = [
 ]
 
 
-export default function FormContribuer(props: PropsContribuer) {
+export default function FormContribuer() {
 
+
+    const { toutes_les_étapes, zone } = useContext(contexte_iti);
+    
     const [pd_selectionnés, setPdSelectionnés] = useState(new Map(pd_défaut.map(pd => [pd.pourcentage_détour, false])));
     const [apprentissage_en_cours, setApprentissageEnCours] = useState(false);
     const ar = useRef<any>();
@@ -57,11 +55,11 @@ export default function FormContribuer(props: PropsContribuer) {
     function envoieForm(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setApprentissageEnCours(true);
-        const étapes_django = props.toutes_les_étapes.map(é => é.pourDjango());
+        const étapes_django = toutes_les_étapes.map(é => é.pourDjango());
         const pourcentages_détour = pd_défaut.flatMap(
             pd => pd_selectionnés.get(pd.pourcentage_détour) ? [pd.pourcentage_détour] : []
         )
-        const url = new URL(`${URL_API}contribuer/${props.zone}`);
+        const url = new URL(`${URL_API}contribuer/${zone}`);
         fetch(
             url,
             {
@@ -114,7 +112,7 @@ export default function FormContribuer(props: PropsContribuer) {
     // Cette fonction renvoie le formulaire lui-même
     const formContribuer = () =>
         <div>
-            <p> Si les points de passage indiqués vous semblent pertinents pour aller de « {props.toutes_les_étapes[0].nom} » à « {props.toutes_les_étapes[props.toutes_les_étapes.length - 1].nom} » : </p>
+            <p> Si les points de passage indiqués vous semblent pertinents pour aller de « {toutes_les_étapes[0].nom} » à « {toutes_les_étapes[toutes_les_étapes.length - 1].nom} » : </p>
 
             <form onSubmit={envoieForm}>
                 <ul>
@@ -161,7 +159,7 @@ export default function FormContribuer(props: PropsContribuer) {
             <h1>Contribuer à CooCyclette ! </h1>
 
             {
-                props.toutes_les_étapes.length > 2
+                toutes_les_étapes.length > 2
                     ? formContribuer()
                     : <p> Ajoutez des points de passage pour améliorer l’itinéraire en cliquant sur la carte. </p>
             }

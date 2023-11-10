@@ -9,10 +9,10 @@ type PropsChoixZone = {
     zone: string,
 }
 
-type resDuGet={
-    label:string,
-    value:string,
-}
+type resDuGet = string;/* {
+    label: string,
+    value: string,
+} */
 
 export default function ChoixZone(props: PropsChoixZone) {
 
@@ -22,7 +22,7 @@ export default function ChoixZone(props: PropsChoixZone) {
     const [entrée, setEntrée] = useState(props.zone);
 
 
-    function sélectionneZone(_event: React.SyntheticEvent<Element, Event>, value: string|null, _reason: AutocompleteChangeReason) {
+    function sélectionneZone(_event: React.SyntheticEvent<Element, Event>, value: string | null, _reason: AutocompleteChangeReason) {
         setZoneChargée(false);
         if (value) {
 
@@ -36,7 +36,7 @@ export default function ChoixZone(props: PropsChoixZone) {
 
             // Et on enregistre la zone selectionnée
             props.setZone(value);
-       }
+        }
     }
 
     // Initialise la liste des zones dispo
@@ -48,7 +48,12 @@ export default function ChoixZone(props: PropsChoixZone) {
                 .then(res => res.json())
                 .then(res => {
                     console.log("Liste des zones obtenue");
-                    setOptions(res.zones.map((z:resDuGet) =>z.value));
+
+                    setOptions(
+                        res.zones
+                            //.map((z: resDuGet) => z.value)
+                            .concat("")
+                    );
                     setChargeListeZones(false);
                 });
         },
@@ -63,7 +68,7 @@ export default function ChoixZone(props: PropsChoixZone) {
             getOptionLabel={o => o}
             onChange={sélectionneZone}
             inputValue={entrée}
-            onInputChange={(e, val)=> setEntrée(val) }
+            onInputChange={(_e, val) => setEntrée(val)}
             renderInput={
                 (params) => (
                     <TextField
@@ -78,7 +83,7 @@ export default function ChoixZone(props: PropsChoixZone) {
                                 </React.Fragment>
                             ),
                         }}
-                        helperText={zoneChargée?"Zone chargée":null}
+                        helperText={zoneChargée ? "Zone chargée" : null}
                     />
                 )
             }
