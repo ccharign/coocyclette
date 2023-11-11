@@ -42,7 +42,6 @@ export default function BoutonEnvoi({ texte, disabled }: propsBoutonEnvoi) {
             const res = await (fetch(url).then(res => res.json())) as GetItinéraire[];
             màjItinéraires(res, carte as L.Map, itinéraires);
             //setDonnéesModifiées(false);
-            setTiroir("stats", true);
             setTiroir("contribuer", true);
             
 

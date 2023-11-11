@@ -1,3 +1,5 @@
+
+
 export type Dico = { [clef: string]: string | number };
 
 export type OverpassRes = {
@@ -32,12 +34,16 @@ export type GetItinéraire = {
 }
 
 
+
 // Pour les tiroirs de la page principale
+
+export type VariantDrawer = "persistent" | "permanent" | "temporary" | undefined;
+
 type Ancre = 'top' | 'left' | 'bottom' | 'right';
-export type tClefTiroir = "recherche" | "contribuer" | "stats";
+export type tZoneAffichage = "recherche"  | "contribuer" | "stats";
 export type tTiroir = {
     nom: string,
     ancre: Ancre,
     contenu: React.ReactNode,
 };
-export type tTiroirOuvert = Map<tClefTiroir, boolean>;
+export type tTiroirOuvert = Map<tZoneAffichage, boolean>;
