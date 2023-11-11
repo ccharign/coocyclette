@@ -139,7 +139,7 @@ export class ÉtapeClic extends Lieu {
         this.étapesReducer(
             {
                 cat: "supprime",
-                position: this.numéro - 1,
+                position: this.numéro,
             }
         );
 

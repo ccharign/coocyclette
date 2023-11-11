@@ -81,7 +81,7 @@ export default function FormItinéraires({ setZone, étapesReducer }: propsFormI
                 setDonnéesModifiées(true);
                 new ÉtapeClic(
                     e.latlng,
-                    étapes.toutes_les_étapes as Lieu[],
+                    étapes.toutes_les_étapes() as Lieu[],
                     étapesReducer,
                     carte,
                     setDonnéesModifiées

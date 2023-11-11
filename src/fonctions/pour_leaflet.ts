@@ -6,7 +6,6 @@ import "leaflet.locatecontrol/dist/L.Control.Locate.min.css"
 import { Dico, GetItinéraire } from "../classes/types.ts";
 import { Itinéraire } from "../classes/Itinéraire.ts"
 import { Lieu, Étape } from "../classes/lieux.ts"
-import { ÉtapeClic } from "../classes/ÉtapeClic.ts"
 
 
 // Efface les anciens itinéraires et affiche les nouveaux
@@ -26,7 +25,8 @@ export function màjItinéraires(itis: GetItinéraire[], carte: L.Map, itinérai
 
 
 // Supprime les itinéraires et les étapes passées en arg
-export function videItinéraires(itinéraires: Itinéraire[], étapes: Lieu[], setÉtapes: React.Dispatch<React.SetStateAction<ÉtapeClic[]>>) {
+export function videItinéraires(itinéraires: Itinéraire[], étapes: Lieu[]// , setÉtapes: React.Dispatch<React.SetStateAction<ÉtapeClic[]>>
+) {
     
     itinéraires.forEach(
         iti => iti.supprimeLayers()
@@ -37,7 +37,7 @@ export function videItinéraires(itinéraires: Itinéraire[], étapes: Lieu[], s
         é => é.supprimeLeafletLayer()
     );
     étapes.length = 0;
-    setÉtapes([]);
+    //setÉtapes([]);
 }
 
 
