@@ -1,6 +1,6 @@
 import { createContext } from "react";
 import { Itinéraire } from "../../classes/Itinéraire";
-import { tClefTiroir } from "../../classes/types";
+import { tZoneAffichage } from "../../classes/types";
 import { Étapes } from "../../hooks/useÉtapes";
 
 
@@ -12,7 +12,7 @@ export type tContexteItinéraire = {
     itinéraires: Itinéraire[],
     zone: string,
     étapes: Étapes,
-    setTiroir: (clef: tClefTiroir, ouvert: boolean) => void,
+    setTiroir: (clef: tZoneAffichage, ouvert: boolean) => void,
 }
 
 
