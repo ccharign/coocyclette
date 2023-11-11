@@ -14,6 +14,7 @@ import { LoadingButton } from "@mui/lab";
 import { Checkbox, FormControlLabel, Switch, Tooltip } from "@mui/material";
 import { FormGroup } from "react-bootstrap";
 import { contexte_iti } from "../contextes/page-itinéraire";
+import BoutonEnvoi from "../molécules/BoutonEnvoi";
 
 
 
@@ -45,8 +46,8 @@ const pd_défaut: PourcentageDétour[] = [
 export default function FormContribuer() {
 
 
-    const { toutes_les_étapes, zone } = useContext(contexte_iti);
-    
+    const { étapes, zone } = useContext(contexte_iti);
+
     const [pd_selectionnés, setPdSelectionnés] = useState(new Map(pd_défaut.map(pd => [pd.pourcentage_détour, false])));
     const [apprentissage_en_cours, setApprentissageEnCours] = useState(false);
     const ar = useRef<any>();
@@ -55,7 +56,7 @@ export default function FormContribuer() {
     function envoieForm(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setApprentissageEnCours(true);
-        const étapes_django = toutes_les_étapes.map(é => é.pourDjango());
+        const étapes_django = étapes.toutes_les_étapes.map(é => é.pourDjango());
         const pourcentages_détour = pd_défaut.flatMap(
             pd => pd_selectionnés.get(pd.pourcentage_détour) ? [pd.pourcentage_détour] : []
         )
@@ -102,67 +103,80 @@ export default function FormContribuer() {
                     label={pd.label}
 
                 />
-
             </Tooltip>
-
         )
     }
 
 
     // Cette fonction renvoie le formulaire lui-même
-    const formContribuer = () =>
-        <div>
-            <p> Si les points de passage indiqués vous semblent pertinents pour aller de « {toutes_les_étapes[0].nom} » à « {toutes_les_étapes[toutes_les_étapes.length - 1].nom} » : </p>
+    const formContribuer = () => {
+        if (!étapes.départ || !étapes.arrivée) { return null; }
+        else {
+            return (
+                <div>
+                    <p> Si les points de passage indiqués vous semblent pertinents pour aller de « {étapes.départ.nom} » à « {étapes.arrivée.nom} » : </p>
 
-            <form onSubmit={envoieForm}>
-                <ul>
+                    <form onSubmit={envoieForm}>
+                        <ul>
 
-                    <li>
-                        <FormControlLabel
-                            label="Type(s) de trajets adapté(s) : "
-                            labelPlacement="start"
-                            control={
-                                <FormGroup>
-                                    {pd_défaut.flatMap(pd => pd.pourcentage_détour !== 0 ? [checkboxOfPd(pd)] : [])}
-                                </FormGroup>
-                            }
-                        />
+                            <li>
+                                <FormControlLabel
+                                    label="Type(s) de trajets adapté(s) : "
+                                    labelPlacement="start"
+                                    control={
+                                        <FormGroup>
+                                            {pd_défaut.flatMap(pd => pd.pourcentage_détour !== 0 ? [checkboxOfPd(pd)] : [])}
+                                        </FormGroup>
+                                    }
+                                />
 
-                    </li>
+                            </li>
 
-                    <li>
-                        <FormControlLabel
-                            label="Valable aussi pour le retour ?"
-                            labelPlacement="start"
-                            control={
-                                <Switch inputRef={ar} />
-                            }
-                        />
-                    </li>
+                            <li>
+                                <FormControlLabel
+                                    label="Valable aussi pour le retour ?"
+                                    labelPlacement="start"
+                                    control={
+                                        <Switch inputRef={ar} />
+                                    }
+                                />
+                            </li>
 
-                    <li>
-                        <LoadingButton
-                            type="submit"
-                            variant="contained"
-                            loading={apprentissage_en_cours}
-                        >
-                            Enregistrer
-                        </LoadingButton>
-                    </li>
-                </ul>
-            </form>
-        </div >;
+                            <li>
+                                <LoadingButton
+                                    type="submit"
+                                    variant="contained"
+                                    loading={apprentissage_en_cours}
+                                >
+                                    Enregistrer
+                                </LoadingButton>
+                            </li>
+                        </ul>
+                    </form>
+                </div >);
+        }
+    }
 
 
     return (
         <div>
             <h1>Contribuer à CooCyclette ! </h1>
 
-            {
-                toutes_les_étapes.length > 2
-                    ? formContribuer()
-                    : <p> Ajoutez des points de passage pour améliorer l’itinéraire en cliquant sur la carte. </p>
-            }
+            <>
+                {
+                    étapes.toutes_les_étapes.length > 2
+                        ? formContribuer()
+                        : <p> Ajoutez des points de passage pour améliorer l’itinéraire en cliquant sur la carte. </p>
+                }
+
+                <BoutonEnvoi
+                    texte="Recalculer"
+                    disabled={false}
+                />
+            </>
+
+
+
         </div>
     );
 

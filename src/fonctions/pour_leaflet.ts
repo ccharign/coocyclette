@@ -20,22 +20,21 @@ export function màjItinéraires(itis: GetItinéraire[], carte: L.Map, itinérai
     itinéraires.length = 0;
     itis.forEach(
         iti => itinéraires.push(new Itinéraire(iti, carte))
-    )
+    );
+
 }
 
 
 // Supprime les itinéraires et les étapes passées en arg
-export function videItinéraires(itinéraires: Itinéraire[], étapes: Lieu[], setÉtapes : React.Dispatch<React.SetStateAction<ÉtapeClic[]>>) {
+export function videItinéraires(itinéraires: Itinéraire[], étapes: Lieu[], setÉtapes: React.Dispatch<React.SetStateAction<ÉtapeClic[]>>) {
+    
     itinéraires.forEach(
         iti => iti.supprimeLayers()
     );
     itinéraires.length = 0;
-    itinéraires.forEach(
-        iti => iti.supprimeLayers()
-    );
-    itinéraires.length = 0;
+
     étapes.forEach(
-        l => l.leaflet_layer.remove()
+        é => é.supprimeLeafletLayer()
     );
     étapes.length = 0;
     setÉtapes([]);

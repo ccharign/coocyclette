@@ -1,9 +1,9 @@
-import { FormEvent, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ChoixZone from "../molécules/choixZone";
 import AutoComplèteDistant from "../molécules/autoComplèteDistant"
-import { Étape, Lieu } from "../../classes/lieux";
+import { Lieu } from "../../classes/lieux";
 import { ÉtapeClic } from "../../classes/ÉtapeClic";
-import {  tClefTiroir } from "../../classes/types";
+
 //import SwapVertIcon from '@mui/icons-material/SwapVert';
 
 import L from "leaflet";
@@ -12,69 +12,86 @@ import { iconeFa } from "../../classes/iconeFa";
 import { contexte_iti } from "../contextes/page-itinéraire";
 import BoutonEnvoi from "../molécules/BoutonEnvoi";
 
+import { ActionÉtape } from "../../hooks/useÉtapes";
+
 
 export type propsFormItinéraires = {
     setZone: React.Dispatch<React.SetStateAction<string>>,
-    setToutesLesÉtapes: React.Dispatch<React.SetStateAction<Étape[]>>,
-    setItiEnChargement: React.Dispatch<React.SetStateAction<boolean>>,
-    iti_en_chargement: boolean,
+    //setToutesLesÉtapes: React.Dispatch<React.SetStateAction<Étape[]>>,
+    //setItiEnChargement: React.Dispatch<React.SetStateAction<boolean>>,
+    //iti_en_chargement: boolean,
+    étapesReducer: (action: ActionÉtape) => void,
 }
 
 
 
-export default function FormItinéraires(
-    { setZone, setToutesLesÉtapes, setItiEnChargement, iti_en_chargement }:
-        propsFormItinéraires) {
+export default function FormItinéraires({ setZone, étapesReducer }: propsFormItinéraires) {
 
-    const { zone, carte } = useContext(contexte_iti);
+    const { zone, carte, étapes } = useContext(contexte_iti);
 
     const [étapes_clic, setÉtapesClic] = useState<ÉtapeClic[]>([]);  // étapes créées par clic
-    const [départ, setDépart] = useState<Étape | undefined>(undefined);
-    const [arrivée, setArrivée] = useState<Étape | undefined>(undefined);
-    const [étapes_pas_clic, setÉtapePasClic] = useState<Étape | undefined>(undefined);
+    //const [départ, setDépart] = useState<Étape | undefined>(undefined);
+    //const [arrivée, setArrivée] = useState<Étape | undefined>(undefined);
+    //const [étapes_pas_clic, setÉtapePasClic] = useState<Étape | undefined>(undefined);
     const [données_modifiées, setDonnéesModifiées] = useState(true); // Indique si des modifs ont été faites depuis le dernier calcul d’itinéraire
 
 
+    /* function fonctionOnChange(setÉtape: React.Dispatch<React.SetStateAction<Étape | undefined>>) {
 
+*     return (value: LieuJson | null) => {
 
+*         videItinéraires(itinéraires, étapes_clic, setÉtapesClic);
 
+*         // Récupérer l’objet Étape
+*         const étape = value ? lieuOfJson(value) : undefined;
+
+*         // Afficher le layer leaflet
+*         if (carte && étape instanceof Lieu) {
+*             étape.leaflet_layer.addTo(carte);
+*         }
+
+*         // màj les données
+*         setÉtape(prev => {
+*             prev && prev.supprimeLeafletLayer();
+*             étape && ajusteFenêtre(toutes_les_étapes.concat([étape]), carte as L.Map);
+*             setToutesLesÉtapes([départ, ...étapes_clic, arrivée].filter(é => é) as Étape[])
+*             return étape;
+*         });
+*     }
+* } */
 
 
     // Change l’icone pour le départ
+    // TODO mettre icone en arg facultatif de autocomplèteDistant
     useEffect(
         () => {
-            if (départ instanceof Lieu && départ.leaflet_layer instanceof L.Marker) {
-                départ.leaflet_layer.setIcon(iconeFa("bicycle"));
+            if (étapes.départ instanceof Lieu && étapes.départ.leaflet_layer instanceof L.Marker) {
+                étapes.départ.leaflet_layer.setIcon(iconeFa("bicycle"));
             }
         }
     )
 
 
     // Lance la gestion des clics
-    // TODO sans doute simplifiable !
-    useEffect(
-        () => {
-            if (carte && départ instanceof Lieu && arrivée instanceof Lieu && étapes_pas_clic === undefined) {
-                carte.off("click");
-                carte.on(
-                    "click",
-                    e => {
-                        setDonnéesModifiées(true);
-                        new ÉtapeClic(
-                            e.latlng,
-                            [départ, ...étapes_clic, arrivée],
-                            setÉtapesClic,
-                            carte,
-                            setDonnéesModifiées
-                        );
-                    },
-                )
-            } else if (carte) {
-                carte.off("click");
-            }
-        },
-        [carte, étapes_clic] // étapes change dès que départ ou arrivée change -> inutile de mettre ceux-ci dans les déps
-    )
+    if (carte && étapes.départ instanceof Lieu && étapes.arrivée instanceof Lieu && !étapes.étape_pas_clic) {
+        carte.off("click");
+        carte.on(
+            "click",
+            e => {
+                setDonnéesModifiées(true);
+                new ÉtapeClic(
+                    e.latlng,
+                    étapes.toutes_les_étapes as Lieu[],
+                    étapesReducer,
+                    carte,
+                    setDonnéesModifiées
+                );
+            },
+        )
+    } else if (carte) {
+        carte.off("click");
+    }
+
 
 
 
@@ -96,7 +113,7 @@ export default function FormItinéraires(
     }
 
     return (
-        <form >
+        <form onSubmit={e => e.preventDefault()}>
             <Container>
 
 
@@ -115,10 +132,10 @@ export default function FormItinéraires(
 
                     <AutoComplèteDistant
                         {...propsDesAutocomplètes}
-                        étape={départ}
-                        setÉtape={setDépart}
+                        étape={étapes.départ}
                         label="Départ"
                         placeHolder="2 rue bidule, mon café, ..."
+                        onChange={val => étapesReducer({ cat: "set-départ", val: val })}
                     />
 
                     {/* <IconButton
@@ -129,10 +146,10 @@ export default function FormItinéraires(
 
                     <AutoComplèteDistant
                         {...propsDesAutocomplètes}
-                        étape={arrivée}
-                        setÉtape={setArrivée}
+                        étape={étapes.arrivée}
                         label="Arrivée"
                         placeHolder="une boulangerie, 3 rue truc, ..."
+                        onChange={val => étapesReducer({ cat: "set-arrivée", val: val })}
                     />
 
                 </Row>
@@ -141,7 +158,7 @@ export default function FormItinéraires(
                 <Row className="my-3">
                     <Col >
                         <BoutonEnvoi
-                            disabled={!départ || !arrivée || !données_modifiées}
+                            disabled={!étapes.départ || !étapes.arrivée || !données_modifiées}
                             texte=" C’est parti !"
                         />
                     </Col>
@@ -150,10 +167,10 @@ export default function FormItinéraires(
                 <Row>
                     <AutoComplèteDistant
                         {...propsDesAutocomplètes}
-                        étape={étapes_pas_clic}
-                        setÉtape={setÉtapePasClic}
+                        étape={étapes.étape_pas_clic}
                         label="(Option) passer par un(e):"
                         placeHolder="Essayer 'boulangerie', 'lieu où', ..."
+                        onChange={val => étapesReducer({ cat: "set-étape-pas-clic", val: val })}
                     />
                 </Row>
 

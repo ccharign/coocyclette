@@ -1,16 +1,14 @@
 import { URL_API } from "../../params";
 
-import Autocomplete, { AutocompleteChangeReason } from "@mui/material/Autocomplete";
+import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField"
-import { SyntheticEvent, useContext, useMemo, useState } from "react";
+import {  useContext, useMemo, useState } from "react";
 import { CircularProgress, debounce } from "@mui/material";
 import { LieuJson } from "../../classes/types";
 import React from "react";
-import lieuOfJson from "../../fonctions/crée-lieu";
-import { Lieu, Étape } from "../../classes/lieux";
+import {  Étape } from "../../classes/lieux";
 import { ÉtapeClic } from "../../classes/ÉtapeClic";
 import { contexte_iti } from "../contextes/page-itinéraire";
-import { ajusteFenêtre, videItinéraires } from "../../fonctions/pour_leaflet";
 
 
 /* Champ de recherche lieu/adresse qui va chercher les options sur le serveur */
@@ -24,11 +22,12 @@ const URL_COMPLÉTION = URL_API + "completion";
 type autocomplèteProps = {
     label: string;
     placeHolder: string;
-    étape: Étape | undefined,
+    étape: Étape | null,
     étapes_clic: ÉtapeClic[],
     setÉtapesClic: React.Dispatch<React.SetStateAction<ÉtapeClic[]>>,
-    setÉtape: React.Dispatch<React.SetStateAction<Étape | undefined>>,
+    //setÉtape: React.Dispatch<React.SetStateAction<Étape | undefined>>,
     setDonnéesModifiées: React.Dispatch<React.SetStateAction<boolean>>,
+    onChange: (val: LieuJson | null) => void,
 }
 
 const l_min = 3;
@@ -37,7 +36,7 @@ const l_min = 3;
 
 export default function AutoComplèteDistant(props: autocomplèteProps) {
 
-    const { zone, itinéraires, carte, toutes_les_étapes } = useContext(contexte_iti);
+    const { zone } = useContext(contexte_iti);
     const [charge_options, setChargeOptions] = useState(false);  // Indique si chargement en cours
     const [options, setOptions] = useState<LieuJson[]>([]);
     const [value, setValue] = useState<LieuJson | null>(null);
@@ -76,34 +75,6 @@ export default function AutoComplèteDistant(props: autocomplèteProps) {
 
 
 
-    function onChange(_event: SyntheticEvent<Element>, value: LieuJson | null, _reason: AutocompleteChangeReason) {
-
-        setValue(value);
-        videItinéraires(itinéraires, props.étapes_clic, props.setÉtapesClic);
-        if (value) {
-            const étape = lieuOfJson(value);
-            if (carte && étape instanceof Lieu) {
-                //props.marqueurs.addLayer(étape.leaflet_layer);
-                //props.marqueurs.addTo(props.carte);
-                étape.leaflet_layer.addTo(carte);
-            }
-            props.setÉtape(prev => {
-                if (prev instanceof Lieu) {
-                    prev.leaflet_layer.remove();
-                }
-                étape && ajusteFenêtre(toutes_les_étapes.concat([étape]), carte as L.Map)
-                return étape;
-            });
-
-        } else {
-            props.setÉtape(prev => {
-                prev instanceof Lieu ? prev.leaflet_layer.remove() : null;
-                return undefined;
-            }
-            );
-        }
-        props.setDonnéesModifiées(true);
-    }
 
 
 
@@ -114,7 +85,12 @@ export default function AutoComplèteDistant(props: autocomplèteProps) {
             options={options}
             filterOptions={(x) => x}
             value={value}
-            onChange={onChange}
+            onChange={
+                (_e, val) => {
+                    setValue(val);
+                    props.onChange(val);
+                }
+            }
             inputValue={inputValue}
             isOptionEqualToValue={(option, value) => option.nom === value.nom && option.pk === value.pk}
 

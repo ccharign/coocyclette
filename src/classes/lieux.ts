@@ -65,14 +65,18 @@ export abstract class Étape {
 
     abstract pourDjango(): PourDjango;
 
-    constructor(nom:string){
-        this.nom=nom;
+    supprimeLeafletLayer() {
+        null;
+    }
+
+    constructor(nom: string) {
+        this.nom = nom;
     }
 }
 
 
 // Une étape munie d’une géométrie
-export abstract class Lieu extends Étape{
+export abstract class Lieu extends Étape {
 
     static R_terre = 6360000; // en mètres
     static coeff_rad = Math.PI / 180; // Multiplier par ceci pour passer en radians
@@ -96,6 +100,10 @@ export abstract class Lieu extends Étape{
         this.coords = ll;
     }
 
+    supprimeLeafletLayer() {
+        this.leaflet_layer.remove();
+    }
+
 
     vecteurVers(autreLieu: Lieu) {
         return this.vecteurVersLatLng(autreLieu.coords);
@@ -112,14 +120,3 @@ export abstract class Lieu extends Étape{
 
 
 }
-
-
-
-
-
-
-
-
-
-
-

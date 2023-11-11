@@ -3,13 +3,13 @@ import { useState } from "react";
 import L from "leaflet";
 import FormItinéraires from "../composants/forms/FormItinéraires.tsx";
 import FormContribuer from "../composants/forms/FormContribuer.tsx";
-import { Lieu, Étape } from "../classes/lieux.ts";
 import { Nav } from "react-bootstrap";
 import { tClefTiroir, tTiroir, tTiroirOuvert } from "../classes/types.ts";
 import CarteItinéraires from "../composants/organismes/CarteItinéraire.tsx";
-import { contexte_iti } from "../composants/contextes/page-itinéraire.ts";
+import { contexte_iti, tContexteItinéraire } from "../composants/contextes/page-itinéraire.ts";
 import { Itinéraire } from "../classes/Itinéraire.ts";
 import Tiroir from "../composants/atomes/Tiroir.tsx";
+import useÉtapes from "../hooks/useÉtapes.ts";
 
 
 ////////////////////////////////////////
@@ -21,15 +21,6 @@ type propsItinéraires = {
     fouine?: boolean
 };
 
-/* type pourAutocomplète = {
-*     value: LieuJson | null,
-*     setValue: React.Dispatch<React.SetStateAction<LieuJson | null>>,
-*     inputVAlue: string,
-*     setInputValue: React.Dispatch<React.SetStateAction<string>>,
-*     étape: Étape | undefined,
-*     setÉtape: React.Dispatch<React.SetStateAction<Étape | undefined>>,
-* }
-*  */
 
 const clefs_tiroirs: tClefTiroir[] = ["recherche", "contribuer", "stats"];
 
@@ -49,7 +40,7 @@ const tiroirs: tTiroirs =
 
 const itinéraires: Itinéraire[] = [];
 
-
+//const toutes_les_étapes: Étape[] = [];
 
 
 
@@ -58,8 +49,9 @@ export default function Itinéraires({ fouine }: propsItinéraires) {
 
     const [carte, setCarte] = useState<L.Map | null>(null);
     const [zone, setZone] = useState<string>("");
-    const [toutes_les_étapes, setToutesLesÉtapes] = useState<Étape[]>([]);
-    const [iti_en_chargement, setItiEnChargement] = useState(false);
+    //const [toutes_les_étapes, setToutesLesÉtapes] = useState<Étape[]>([]);
+    const {étapes, étapesReducer} = useÉtapes(carte, itinéraires);
+    
     const [tiroir_ouvert, setTiroirOuvert] = useState<tTiroirOuvert>(
         new Map(clefs_tiroirs.map(clef => [clef, clef === "recherche"]))  // Initialement, seule la barre de recherche est ouverte.
     );
@@ -83,18 +75,18 @@ export default function Itinéraires({ fouine }: propsItinéraires) {
     // Le tiroir « Recherche »
     tiroirs.recherche.contenu =
         carte &&
-        <FormItinéraires
-            setZone={setZone}
-            setToutesLesÉtapes={setToutesLesÉtapes}
-            setItiEnChargement={setItiEnChargement}
-            iti_en_chargement={iti_en_chargement}
-            setTiroir={setTiroir}
-        />;
+        <div className={fouine ? "fouine" : ""}>
+            <FormItinéraires
+                setZone={setZone}
+                étapesReducer={étapesReducer}
+            />
+        </div >
+        ;
 
 
     // Le tiroir « Contribuer »
     tiroirs.contribuer.contenu =
-        toutes_les_étapes.length > 1 && toutes_les_étapes.every(é => é instanceof Lieu) &&
+        //toutes_les_étapes.length > 1 && toutes_les_étapes.every(é => é instanceof Lieu) &&
         // Affichage de la partie « Contribuer » ssi départ et arrivée remplis
         <FormContribuer
         />;
@@ -120,20 +112,18 @@ export default function Itinéraires({ fouine }: propsItinéraires) {
             }
         </Nav >;
 
-    const contexte = {
+    const contexte: tContexteItinéraire = {
         carte: carte,
-        itis: itinéraires,
         zone: zone,
-        toutes_les_étapes: toutes_les_étapes,
+        étapes: étapes,
         itinéraires: itinéraires,
+        setTiroir: setTiroir,
     }
 
     return (
 
         <Base>
-            <contexte_iti.Provider
-                value={contexte}
-            >
+            <contexte_iti.Provider value={contexte} >
 
                 {barreTiroirs}
 

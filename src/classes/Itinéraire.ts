@@ -6,12 +6,14 @@ import lieuOfJson from "../fonctions/crée-lieu";
 // Représente le résultat d’un calcul d’itinéraire
 export class Itinéraire {
 
+    
     couleur: string
     pourcentage_détour: number
     longueur: number // en km
     polyline: L.Polyline
     lieux: Lieu[]
 
+    
     constructor({ points, couleur, pourcentage_détour, lieux, longueur, nom }: GetItinéraire, carte: L.Map) {
 
         this.couleur = couleur;
@@ -50,8 +52,8 @@ ${nom}<br>${longueur}km, ${Math.floor(longueur / 0.25)}mn`
                 }
             )
             .addTo(carte);
-
     }
+    
 
     // Supprime les éventuels marqueurs de lieu et la polyline liés à l’itinéraire
     supprimeLayers(){
@@ -60,4 +62,5 @@ ${nom}<br>${longueur}km, ${Math.floor(longueur / 0.25)}mn`
         );
         this.polyline.remove();
     }
+    
 }

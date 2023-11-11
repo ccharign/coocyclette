@@ -1,25 +1,25 @@
 import { createContext } from "react";
 import { Itinéraire } from "../../classes/Itinéraire";
-import { Étape } from "../../classes/lieux";
 import { tClefTiroir } from "../../classes/types";
+import { tÉtapes } from "../../hooks/useÉtapes";
+
 
 // Contexte pour la page principale de l’appli
-// la carte
-// les itis
-// les étapes
+
 
 export type tContexteItinéraire = {
     carte: L.Map | null,
     itinéraires: Itinéraire[],
     zone: string,
-    toutes_les_étapes: Étape[],
-    setTiroir: (clef: tClefTiroir, ouvert: boolean)=> void,
+    étapes: tÉtapes,
+    setTiroir: (clef: tClefTiroir, ouvert: boolean) => void,
 }
+
 
 export const contexte_iti = createContext<tContexteItinéraire>({
     carte: null,
     itinéraires: [],
     zone: "",
-    toutes_les_étapes:[],
-    setTiroir: (_clef, _ouvert)=>null,
+    étapes: { départ: null, arrivée: null, étape_pas_clic: null, toutes_les_étapes: [] },
+    setTiroir: (_clef, _ouvert) => null,
 })
