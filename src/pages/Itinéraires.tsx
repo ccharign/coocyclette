@@ -15,6 +15,8 @@ import { contribuerPossible } from "../fonctions/utils.ts";
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
 
+
+
 ////////////////////////////////////////
 /* Page principale de l’appli.*/
 ////////////////////////////////////////
@@ -112,7 +114,10 @@ export default function Itinéraires({ fouine }: propsItinéraires) {
             key="contribuer"
             disabled={!contribuerPossible(étapes)}
         >
-            {tiroir_ouvert.get("contribuer") ? <KeyboardDoubleArrowUpIcon /> : <KeyboardDoubleArrowDownIcon />}Contribuer
+            {tiroir_ouvert.get("contribuer")
+                ? <KeyboardDoubleArrowUpIcon />
+                : <KeyboardDoubleArrowDownIcon />}
+            Contribuer
         </Button>
     );
     const barreTiroirs =
