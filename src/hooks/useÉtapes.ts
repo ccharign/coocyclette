@@ -15,6 +15,7 @@ export type ActionÉtape = {
     position?: number,
 };
 
+
 export class Étapes {
     départ: Étape | null
     arrivée: Étape | null
@@ -33,22 +34,20 @@ export class Étapes {
         return [this.départ, this.étape_pas_clic, ...this.étapes_clic, this.arrivée].filter(é => é) as Étape[];
     }
 
+    // Effet: màj le numéro de toutes les étapes clic
+    màjNuméros() {
+        let i = 0;
+        this.étapes_clic.forEach(
+            é => {
+                i++;
+                é.setNuméro(i);
+            }
+        )
+    }
+
+
 }
 
-
-const étapes_clic: ÉtapeClic[] = [];
-
-
-// Effet: màj le numéro de toutes les étapes clic
-function màjNumérosÉtapes() {
-    let i = 0;
-    étapes_clic.forEach(
-        é => {
-            i++;
-            é.setNuméro(i);
-        }
-    )
-}
 
 
 
@@ -59,11 +58,17 @@ export default function useÉtapes(carte: L.Map | null, itinéraires: Itinérair
     //const [étapes_clic, setÉtapesClic] = useState<ÉtapeClic[]>([]);
     const [étape_pas_clic, setÉtapePasClic] = useState<Étape | null>(null);
 
-    // Sera automatiquement recalculé à chaque rendu ?
+    const [étapes_clic, setÉtapesClic] = useState<ÉtapeClic[]>([]);
+
+
+
+    // Sera automatiquement recalculé à chaque rendu : pas besoin de le mettre dans un state
     const étapes = new Étapes(
         départ,
-        arrivée, étapes_clic,
-        étape_pas_clic);
+        arrivée,
+        étapes_clic,
+        étape_pas_clic
+    );
 
 
     function fonctionSetÉtape(setÉtape: React.Dispatch<React.SetStateAction<Étape | null>>, value: LieuJson | null) {
@@ -89,24 +94,25 @@ export default function useÉtapes(carte: L.Map | null, itinéraires: Itinérair
 
 
 
-
-
-
-    function insèreÉtape(i: number, étape: ÉtapeClic) {
-
-        étapes_clic.splice(i, 0, étape);
-        màjNumérosÉtapes();
+    function insèreÉtapeClic(i: number, étape: ÉtapeClic) {
+        setÉtapesClic(
+            prev => {
+                prev.splice(i, 0, étape);
+                étapes.màjNuméros();
+                return [...prev];
+            }
+        )
 
     }
 
     // Supprime l’étape d’indice i *dans toutes_les_étapes*
-    function supprimeÉtape(i: number) {
-        //this.layer_group.removeLayer(this.leaflet_layer);
-
-
-        étapes_clic.splice(i - 1, 1);
-        màjNumérosÉtapes();
-
+    function supprimeÉtapeClic(i: number) {
+        setÉtapesClic(prev => {
+            prev.splice(i - 1, 1);
+            étapes.màjNuméros();
+            return [...prev];
+        }
+        )
     }
 
 
@@ -125,11 +131,11 @@ export default function useÉtapes(carte: L.Map | null, itinéraires: Itinérair
                 break;
             }
             case "insère": {
-                insèreÉtape(action.position as number, action.val as ÉtapeClic)
+                insèreÉtapeClic(action.position as number, action.val as ÉtapeClic)
                 break;
             }
             case "supprime": {
-                supprimeÉtape(action.position as number);
+                supprimeÉtapeClic(action.position as number);
             }
         }
 

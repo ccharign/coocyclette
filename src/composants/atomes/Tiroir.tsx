@@ -3,9 +3,8 @@ import { Nav } from "react-bootstrap"
 import { tTiroir, tZoneAffichage, VariantDrawer } from "../../classes/types"
 import Drawer from "@mui/material/Drawer"
 import { Divider, IconButton } from "@mui/material"
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-
+import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
+import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
 
 /* Un élément d’un Nav qui a pour but de faire sortir ou rentrer un tiroir et le tiroir lui-même */
 
@@ -30,9 +29,9 @@ export default function Tiroir({ tiroir, clef, toggleTiroir, tiroir_ouvert }: pr
     function bouton_fermer() {
         function icone(): React.ReactNode {
             switch (tiroir.ancre) {
-                case "left": return <ChevronLeftIcon />;
-                case "right": return <ChevronRightIcon />;
-                default: return "^";
+                case "left": return <KeyboardDoubleArrowLeftIcon />;
+                case "right": return <KeyboardDoubleArrowRightIcon />;
+                default: return null;
             }
         }
         return (
@@ -54,6 +53,10 @@ export default function Tiroir({ tiroir, clef, toggleTiroir, tiroir_ouvert }: pr
                     onClick={toggleTiroir(clef)}
                     disabled={!tiroir.contenu}
                 >
+                    {(tiroir.ancre === "left" && tiroir_ouvert.get(clef) || tiroir.ancre === "right" && !tiroir_ouvert.get(clef))
+                        ? <KeyboardDoubleArrowLeftIcon />
+                        : <KeyboardDoubleArrowRightIcon />
+                    }
                     {tiroir.nom}
                 </Button>
             </Nav.Item>

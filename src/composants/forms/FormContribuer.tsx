@@ -4,9 +4,6 @@
 // Choisir les pourcentage_détour pertinents
 // envoyer les étapes
 
-// Besoin de :
-//    les étapes
-//    la zone
 
 import { ChangeEvent, FormEvent, useContext, useRef, useState } from "react";
 import { URL_API } from "../../params";
@@ -15,6 +12,7 @@ import { Checkbox, FormControlLabel, Switch, Tooltip } from "@mui/material";
 import { FormGroup } from "react-bootstrap";
 import { contexte_iti } from "../contextes/page-itinéraire";
 import BoutonEnvoi from "../molécules/BoutonEnvoi";
+import { Étape } from "../../classes/lieux";
 
 
 
@@ -56,7 +54,7 @@ export default function FormContribuer() {
     function envoieForm(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setApprentissageEnCours(true);
-        const étapes_django = étapes.toutes_les_étapes.map(é => é.pourDjango());
+        const étapes_django = étapes.toutes_les_étapes().map(é => é.pourDjango());
         const pourcentages_détour = pd_défaut.flatMap(
             pd => pd_selectionnés.get(pd.pourcentage_détour) ? [pd.pourcentage_détour] : []
         )
@@ -110,52 +108,52 @@ export default function FormContribuer() {
 
     // Cette fonction renvoie le formulaire lui-même
     const formContribuer = () => {
-        if (!étapes.départ || !étapes.arrivée) { return null; }
-        else {
-            return (
-                <div>
-                    <p> Si les points de passage indiqués vous semblent pertinents pour aller de « {étapes.départ.nom} » à « {étapes.arrivée.nom} » : </p>
+        return (
+            <div>
 
-                    <form onSubmit={envoieForm}>
-                        <ul>
+                    <p> Si les points de passage indiqués vous semblent pertinents pour aller de « {(étapes.départ as Étape).nom} » à « {(étapes.arrivée as Étape).nom} » : </p>
+                
 
-                            <li>
-                                <FormControlLabel
-                                    label="Type(s) de trajets adapté(s) : "
-                                    labelPlacement="start"
-                                    control={
-                                        <FormGroup>
-                                            {pd_défaut.flatMap(pd => pd.pourcentage_détour !== 0 ? [checkboxOfPd(pd)] : [])}
-                                        </FormGroup>
-                                    }
-                                />
+                <form onSubmit={envoieForm}>
+                    <ul>
 
-                            </li>
+                        <li>
+                            <FormControlLabel
+                                label="Type(s) de trajets adapté(s) : "
+                                labelPlacement="start"
+                                control={
+                                    <FormGroup>
+                                        {pd_défaut.flatMap(pd => pd.pourcentage_détour !== 0 ? [checkboxOfPd(pd)] : [])}
+                                    </FormGroup>
+                                }
+                            />
 
-                            <li>
-                                <FormControlLabel
-                                    label="Valable aussi pour le retour ?"
-                                    labelPlacement="start"
-                                    control={
-                                        <Switch inputRef={ar} />
-                                    }
-                                />
-                            </li>
+                        </li>
 
-                            <li>
-                                <LoadingButton
-                                    type="submit"
-                                    variant="contained"
-                                    loading={apprentissage_en_cours}
-                                >
-                                    Enregistrer
-                                </LoadingButton>
-                            </li>
-                        </ul>
-                    </form>
-                </div >);
-        }
-    }
+                        <li>
+                            <FormControlLabel
+                                label="Valable aussi pour le retour ?"
+                                labelPlacement="start"
+                                control={
+                                    <Switch inputRef={ar} />
+                                }
+                            />
+                        </li>
+
+                        <li>
+                            <LoadingButton
+                                type="submit"
+                                variant="contained"
+                                loading={apprentissage_en_cours}
+                            >
+                                Enregistrer
+                            </LoadingButton>
+                        </li>
+                    </ul>
+                </form>
+            </div >);
+    };
+
 
 
     return (
@@ -164,7 +162,7 @@ export default function FormContribuer() {
 
             <>
                 {
-                    étapes.toutes_les_étapes.length > 2
+                    étapes.étapes_clic.length>0
                         ? formContribuer()
                         : <p> Ajoutez des points de passage pour améliorer l’itinéraire en cliquant sur la carte. </p>
                 }
@@ -178,6 +176,5 @@ export default function FormContribuer() {
 
 
         </div>
-    );
-
-}
+    )
+};

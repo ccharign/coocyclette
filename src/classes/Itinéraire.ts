@@ -38,17 +38,10 @@ ${nom}<br>${longueur}km, ${Math.floor(longueur / 0.25)}mn`
                 lineJoin: "miter",
             }
         )
-            .bindTooltip(
+            .bindPopup(
                 contenu_popup,
                 {
                     //permanent: true,
-                }
-            )
-            .on("click",
-                e => {
-                    e.originalEvent.stopPropagation();
-                    e.originalEvent.stopImmediatePropagation();
-                    this.polyline.toggleTooltip();
                 }
             )
             .addTo(carte);

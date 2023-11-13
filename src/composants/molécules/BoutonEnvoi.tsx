@@ -34,8 +34,6 @@ export default function BoutonEnvoi({ texte, disabled }: propsBoutonEnvoi) {
         setItiEnChargement(true);
 
         try {
-            //const toutes_les_étapes = [départ, ...étapes_clic, étapes_pas_clic, arrivée].filter(x => x) as Lieu[];
-            // setToutesLesÉtapes(toutes_les_étapes);
             const étapes_django = étapes.toutes_les_étapes().map(é => é.pourDjango());
             const url = new URL(`${URL_API}itineraire/${zone}`);
             url.searchParams.append("étapes_str", JSON.stringify(étapes_django));
