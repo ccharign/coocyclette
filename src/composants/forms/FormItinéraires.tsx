@@ -4,22 +4,19 @@ import AutoComplèteDistant from "../molécules/autoComplèteDistant"
 import { Lieu } from "../../classes/lieux";
 import { ÉtapeClic } from "../../classes/ÉtapeClic";
 
-//import SwapVertIcon from '@mui/icons-material/SwapVert';
+import SwapVertIcon from '@mui/icons-material/SwapVert';
 
 import L from "leaflet";
 import { Container, Row, Col } from "react-bootstrap";
 import { iconeFa } from "../../classes/iconeFa";
 import { contexte_iti } from "../contextes/page-itinéraire";
 import BoutonEnvoi from "../molécules/BoutonEnvoi";
+import IconButton from "@mui/material/IconButton";
 
 
 
 export type propsFormItinéraires = {
     setZone: React.Dispatch<React.SetStateAction<string>>,
-    //setToutesLesÉtapes: React.Dispatch<React.SetStateAction<Étape[]>>,
-    //setItiEnChargement: React.Dispatch<React.SetStateAction<boolean>>,
-    //iti_en_chargement: boolean,
-    //étapes: Étapes,
 }
 
 
@@ -29,36 +26,10 @@ export default function FormItinéraires({ setZone }: propsFormItinéraires) {
     const { zone, carte, étapes } = useContext(contexte_iti);
 
     const [étapes_clic, setÉtapesClic] = useState<ÉtapeClic[]>([]);  // étapes créées par clic
-    //const [départ, setDépart] = useState<Étape | undefined>(undefined);
-    //const [arrivée, setArrivée] = useState<Étape | undefined>(undefined);
-    //const [étapes_pas_clic, setÉtapePasClic] = useState<Étape | undefined>(undefined);
     const [données_modifiées, setDonnéesModifiées] = useState(true); // Indique si des modifs ont été faites depuis le dernier calcul d’itinéraire
 
 
-    /* function fonctionOnChange(setÉtape: React.Dispatch<React.SetStateAction<Étape | undefined>>) {
-
-*     return (value: LieuJson | null) => {
-
-*         videItinéraires(itinéraires, étapes_clic, setÉtapesClic);
-
-*         // Récupérer l’objet Étape
-*         const étape = value ? lieuOfJson(value) : undefined;
-
-*         // Afficher le layer leaflet
-*         if (carte && étape instanceof Lieu) {
-*             étape.leaflet_layer.addTo(carte);
-*         }
-
-*         // màj les données
-*         setÉtape(prev => {
-*             prev && prev.supprimeLeafletLayer();
-*             étape && ajusteFenêtre(toutes_les_étapes.concat([étape]), carte as L.Map);
-*             setToutesLesÉtapes([départ, ...étapes_clic, arrivée].filter(é => é) as Étape[])
-*             return étape;
-*         });
-*     }
-* } */
-
+  
 
     // Change l’icone pour le départ
     // TODO mettre icone en arg facultatif de autocomplèteDistant
@@ -93,18 +64,6 @@ export default function FormItinéraires({ setZone }: propsFormItinéraires) {
 
 
 
-
-    /* function inverseÉtapes(_event: any): void {
-*     setDépart(arrivée);
-*     setArrivée(départ);
-*     setÉtapes(prev=> {
-*         prev.reverse();
-*         màjNumérosÉtapes(prev);
-*         return prev;
-*     });
-* }
-     */
-
     const propsDesAutocomplètes = {
         étapes_clic: étapes_clic,
         setÉtapesClic: setÉtapesClic,
@@ -137,11 +96,11 @@ export default function FormItinéraires({ setZone }: propsFormItinéraires) {
                         onChange={val => étapes.changeDépart(val)}
                     />
 
-                    {/* <IconButton
-                            onClick={inverseÉtapes}
-                        >
-                            <SwapVertIcon />
-                        </IconButton> */}
+                    <IconButton
+                        onClick={() => étapes.inverse() }
+                    >
+                        <SwapVertIcon />
+                    </IconButton>
 
                     <AutoComplèteDistant
                         {...propsDesAutocomplètes}

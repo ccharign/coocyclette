@@ -83,7 +83,6 @@ export class Étapes {
         setÉtape(prev => {
             prev && prev.supprimeLeafletLayer();
             étape && ajusteFenêtre(this.toutes_les_étapes().concat([étape]), this.carte as L.Map);
-            console.log("Étape màj : ", étape);
             return étape;
         });
     }
@@ -114,7 +113,6 @@ export class Étapes {
         this.fonctionSetÉtape(this.setDépart, départ);
     }
 
-
     changeArrivée(arrivée: LieuJson | null) {
         this.fonctionSetÉtape(this.setArrivée, arrivée);
     }
@@ -123,6 +121,21 @@ export class Étapes {
         this.fonctionSetÉtape(this.setÉtapePasClic, étape);
     }
 
+
+    // Inverse l’ordre des étapes
+    inverse() {
+        const ancien_départ = this.départ;
+        const ancienne_arrivée = this.arrivée;
+        this.setÉtapesClic(
+            prev => {
+                prev.reverse();
+                this.màjNuméros();
+                return prev;
+            }
+        );
+        this.setArrivée(ancien_départ);
+        this.setDépart(ancienne_arrivée);
+    }
 }
 
 
