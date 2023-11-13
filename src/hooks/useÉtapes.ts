@@ -7,14 +7,14 @@ import { Itinéraire } from "../classes/Itinéraire";
 import { useState } from "react";
 
 
-type CatActionÉtape = "set-départ" | "set-arrivée" | "set-étape-pas-clic" | "insère" | "supprime";
-
-export type ActionÉtape = {
-    cat: CatActionÉtape,
-    val?: LieuJson | null | Étape,
-    position?: number,
-};
-
+// type CatActionÉtape = "set-départ" | "set-arrivée" | "set-étape-pas-clic" | "insère" | "supprime";
+//
+// export type ActionÉtape = {
+//     cat: CatActionÉtape,
+//     val?: LieuJson | null | Étape,
+//     position?: number,
+// };
+//
 
 export class Étapes {
 
@@ -110,16 +110,16 @@ export class Étapes {
         )
     }
 
-    changeDépart(départ: LieuJson) {
+    changeDépart(départ: LieuJson | null) {
         this.fonctionSetÉtape(this.setDépart, départ);
     }
 
 
-    changeArrivée(arrivée: LieuJson) {
+    changeArrivée(arrivée: LieuJson | null) {
         this.fonctionSetÉtape(this.setArrivée, arrivée);
     }
 
-    changeÉtapePasClic(étape: LieuJson){
+    changeÉtapePasClic(étape: LieuJson | null) {
         this.fonctionSetÉtape(this.setÉtapePasClic, étape);
     }
 
@@ -150,30 +150,30 @@ export default function useÉtapes(carte: L.Map | null, itinéraires: Itinérair
 
 
 
-    function étapesReducer(action: ActionÉtape) {
-        switch (action.cat) {
-            case "set-départ": {
-                étapes.fonctionSetÉtape(setDépart, action.val as LieuJson | null);
-                break;
-            }
-            case "set-arrivée": {
-                étapes.fonctionSetÉtape(setArrivée, action.val as LieuJson | null);
-                break;
-            }
-            case "set-étape-pas-clic": {
-                étapes.fonctionSetÉtape(setÉtapePasClic, action.val as LieuJson | null);
-                break;
-            }
-            case "insère": {
-                étapes.insèreÉtapeClic(action.position as number, action.val as ÉtapeClic)
-                break;
-            }
-            case "supprime": {
-                étapes.supprimeÉtapeClic(action.position as number);
-            }
-        }
-
-    }
-
-    return { étapes, étapesReducer };
+    // function étapesReducer(action: ActionÉtape) {
+    //     switch (action.cat) {
+    //         case "set-départ": {
+    //             étapes.fonctionSetÉtape(setDépart, action.val as LieuJson | null);
+    //             break;
+    //         }
+    //         case "set-arrivée": {
+    //             étapes.fonctionSetÉtape(setArrivée, action.val as LieuJson | null);
+    //             break;
+    //         }
+    //         case "set-étape-pas-clic": {
+    //             étapes.fonctionSetÉtape(setÉtapePasClic, action.val as LieuJson | null);
+    //             break;
+    //         }
+    //         case "insère": {
+    //             étapes.insèreÉtapeClic(action.position as number, action.val as ÉtapeClic)
+    //             break;
+    //         }
+    //         case "supprime": {
+    //             étapes.supprimeÉtapeClic(action.position as number);
+    //         }
+    //     }
+    //
+    // }
+    //
+    return { étapes };
 }

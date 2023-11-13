@@ -12,7 +12,6 @@ import { iconeFa } from "../../classes/iconeFa";
 import { contexte_iti } from "../contextes/page-itinéraire";
 import BoutonEnvoi from "../molécules/BoutonEnvoi";
 
-import { ActionÉtape } from "../../hooks/useÉtapes";
 
 
 export type propsFormItinéraires = {
@@ -20,12 +19,12 @@ export type propsFormItinéraires = {
     //setToutesLesÉtapes: React.Dispatch<React.SetStateAction<Étape[]>>,
     //setItiEnChargement: React.Dispatch<React.SetStateAction<boolean>>,
     //iti_en_chargement: boolean,
-    étapesReducer: (action: ActionÉtape) => void,
+    //étapes: Étapes,
 }
 
 
 
-export default function FormItinéraires({ setZone, étapesReducer }: propsFormItinéraires) {
+export default function FormItinéraires({ setZone }: propsFormItinéraires) {
 
     const { zone, carte, étapes } = useContext(contexte_iti);
 
@@ -81,8 +80,8 @@ export default function FormItinéraires({ setZone, étapesReducer }: propsFormI
                 setDonnéesModifiées(true);
                 new ÉtapeClic(
                     e.latlng,
-                    étapes.toutes_les_étapes() as Lieu[],
-                    étapesReducer,
+                    //étapes.toutes_les_étapes() as Lieu[],
+                    étapes,
                     carte,
                     setDonnéesModifiées
                 );
@@ -135,7 +134,7 @@ export default function FormItinéraires({ setZone, étapesReducer }: propsFormI
                         étape={étapes.départ}
                         label="Départ"
                         placeHolder="2 rue bidule, mon café, ..."
-                        onChange={val => étapesReducer({ cat: "set-départ", val: val })}
+                        onChange={val => étapes.changeDépart(val)}
                     />
 
                     {/* <IconButton
@@ -149,7 +148,7 @@ export default function FormItinéraires({ setZone, étapesReducer }: propsFormI
                         étape={étapes.arrivée}
                         label="Arrivée"
                         placeHolder="une boulangerie, 3 rue truc, ..."
-                        onChange={val => étapesReducer({ cat: "set-arrivée", val: val })}
+                        onChange={val => étapes.changeArrivée(val)}
                     />
 
                 </Row>
@@ -170,7 +169,7 @@ export default function FormItinéraires({ setZone, étapesReducer }: propsFormI
                         étape={étapes.étape_pas_clic}
                         label="(Option) passer par un(e):"
                         placeHolder="Essayer 'boulangerie', 'lieu où', ..."
-                        onChange={val => étapesReducer({ cat: "set-étape-pas-clic", val: val })}
+                        onChange={val => étapes.changeÉtapePasClic(val)}
                     />
                 </Row>
 

@@ -1,7 +1,7 @@
 import L from "leaflet";
 import { sansIcone } from "./iconeFa.ts";
 import { Lieu, PourDjango } from "./lieux.ts";
-import { ActionÉtape } from "../hooks/useÉtapes.ts";
+import { Étapes } from "../hooks/useÉtapes.ts";
 
 
 
@@ -55,24 +55,23 @@ export class ÉtapeClic extends Lieu {
 
     numéro: number;
     //setÉtapes: React.Dispatch<React.SetStateAction<ÉtapeClic[]>>; // setter React pour les étapes intermédiaires
-    étapesReducer: (action: ActionÉtape) => void;
+    étapes:Étapes;
     carte: L.Map;
     //layer_group: L.LayerGroup;
     //setDonnéesModifiées: React.Dispatch<React.SetStateAction<boolean>>; // pour indiquer qu’il y a eu des changements dans les données du form
 
     constructor(
         ll: L.LatLng,
-        toutes_les_étapes: Lieu[],
-        //setÉtapes: React.Dispatch<React.SetStateAction<ÉtapeClic[]>>,
-        étapesReducer: (action: ActionÉtape) => void,
-        //layer_group: L.LayerGroup, // le layerGroup auquel appartiendra le marqueur de cette étape
+        //toutes_les_étapes: Lieu[],
+        //étapesReducer: (action: ActionÉtape) => void,
+        étapes: Étapes,
         carte: L.Map,
         setDonnéesModifiées: React.Dispatch<React.SetStateAction<boolean>>
     ) {
 
         super([[ll.lng, ll.lat]], "Point de passage");
         //this.setÉtapes = setÉtapes;
-        this.étapesReducer = étapesReducer;
+        this.étapes = étapes;
         //this.layer_group = layer_group;
         this.carte = carte;
         //this.setDonnéesModifiées = setDonnéesModifiées;
@@ -114,14 +113,15 @@ export class ÉtapeClic extends Lieu {
                     );
                 }
             )
-        .addTo(carte);
-        
+            .addTo(carte);
+
 
         // Insérer l’étape dans la liste de toutes les étapes
-        this.numéro = numOùInsérer(ll, toutes_les_étapes);
-        this.étapesReducer(
-            { cat: "insère", position: this.numéro - 1, val: this }
-        );
+        this.numéro = numOùInsérer(ll, étapes.toutes_les_étapes() as Lieu[]);
+        // this.étapesReducer(
+        //     { cat: "insère", position: this.numéro - 1, val: this }
+        // );
+        this.étapes.insèreÉtapeClic(this.numéro, this);
     }
 
 
@@ -136,13 +136,13 @@ export class ÉtapeClic extends Lieu {
     supprimer() {
         //this.layer_group.removeLayer(this.leaflet_layer);
         this.leaflet_layer.remove();
-        this.étapesReducer(
-            {
-                cat: "supprime",
-                position: this.numéro,
-            }
-        );
-
+        // this.étapesReducer(
+        //     {
+        //         cat: "supprime",
+        //         position: this.numéro,
+        //     }
+        // );
+        this.étapes.supprimeÉtapeClic(this.numéro);
     }
 
 

@@ -54,7 +54,7 @@ export default function Itinéraires({ fouine }: propsItinéraires) {
 
     const [carte, setCarte] = useState<L.Map | null>(null);
     const [zone, setZone] = useState<string>("");
-    const { étapes, étapesReducer } = useÉtapes(carte, itinéraires);
+    const { étapes } = useÉtapes(carte, itinéraires);
 
     const [tiroir_ouvert, setTiroirOuvert] = useState<tTiroirOuvert>(
         new Map(clefs_tiroirs.map(clef => [clef, clef === "recherche"]))  // Initialement, seule la barre de recherche est ouverte.
@@ -87,7 +87,6 @@ export default function Itinéraires({ fouine }: propsItinéraires) {
         <div className={fouine ? "fouine" : ""}>
             <FormItinéraires
                 setZone={setZone}
-                étapesReducer={étapesReducer}
             />
         </div >
         ;
