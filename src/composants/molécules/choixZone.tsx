@@ -9,11 +9,6 @@ type PropsChoixZone = {
     zone: string,
 }
 
-type resDuGet = string;/* {
-    label: string,
-    value: string,
-} */
-
 export default function ChoixZone(props: PropsChoixZone) {
 
     const [options, setOptions] = useState<string[]>([]);
