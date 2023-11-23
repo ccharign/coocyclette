@@ -1,4 +1,4 @@
-import { Étape } from "../classes/lieux";
+import { Étape } from "../classes/Lieu";
 import { LieuJson, GéométrieOsm } from "../classes/types";
 import LieuAdresse, { ArgsLieuAdresse } from "../classes/LieuAdresse";
 import LieuOsm, { ArgsLieuOsm } from "../classes/LieuOsm";

@@ -18,7 +18,7 @@ export class GèreUneÉtape {
 
     constructor(
         étape_json: LieuJson | null, setÉtapeJson: React.Dispatch<React.SetStateAction<LieuJson | null>>,
-        étape: Étape,
+        étape: Étape | null,
         options_autocomplète: LieuJson[], setOptionsAutocomplète: React.Dispatch<React.SetStateAction<LieuJson[]>>
     ) {
         this.étape_json = étape_json;

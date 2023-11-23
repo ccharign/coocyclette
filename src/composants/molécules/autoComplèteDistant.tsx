@@ -7,7 +7,7 @@ import { CircularProgress, debounce } from "@mui/material";
 import { LieuJson } from "../../classes/types";
 import React from "react";
 import { contexte_iti } from "../../contextes/ctx-page-itinéraire";
-import { GèreUneÉtape } from "../../hooks/useÉtapes"
+import { GèreUneÉtape } from "../../hooks/useÉtape"
 
 /* Champ de recherche lieu/adresse qui va chercher les options sur le serveur */
 
@@ -21,9 +21,7 @@ type autocomplèteProps = {
     label: string;
     placeHolder: string;
     étape: GèreUneÉtape,
-    //value: LieuJson | null,
-    //setÉtape: React.Dispatch<React.SetStateAction<Étape | undefined>>,
-    setDonnéesModifiées: React.Dispatch<React.SetStateAction<boolean>>,
+    //setDonnéesModifiées: React.Dispatch<React.SetStateAction<boolean>>,
     onChange: (val: LieuJson | null) => void,
 }
 
@@ -31,12 +29,10 @@ const l_min = 3;
 
 
 
-export default function AutoComplèteDistant({ label, placeHolder, étape, setDonnéesModifiées, onChange }: autocomplèteProps) {
+export default function AutoComplèteDistant({ label, placeHolder, étape, onChange }: autocomplèteProps) {
 
     const { zone } = useContext(contexte_iti);
     const [charge_options, setChargeOptions] = useState(false);  // Indique si chargement en cours
-    //const [options, setOptions] = useState<LieuJson[]>([]);
-    //const [value, setValue] = useState<LieuJson | null>(null);
     const [inputValue, setInputValue] = useState("");
 
 

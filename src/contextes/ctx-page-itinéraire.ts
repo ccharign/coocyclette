@@ -1,7 +1,8 @@
 import { createContext } from "react";
 import { Itinéraire } from "../classes/Itinéraire";
-import { tZoneAffichage } from "../classes/types";
-import { Étapes} from "../hooks/useÉtapes"
+import { LieuJson, tZoneAffichage } from "../classes/types";
+import { Étapes } from "../hooks/useÉtapes";
+import { GèreUneÉtape } from "../hooks/useÉtape";
 
 
 // Contexte pour la page principale de l’appli
@@ -16,12 +17,15 @@ export type tContexteItinéraire = {
 }
 
 
-const étape = null;
+const fonctionNull = ((_e: LieuJson | null | ((prev: LieuJson | null) => LieuJson | null)) => null);
+const fonctionNull2 = ((_e: any  | ((prev: any ) => any )) => null);
+
+const gère_une_étape = new GèreUneÉtape(null, fonctionNull, null, [], fonctionNull2);
 
 export const contexte_iti = createContext<tContexteItinéraire>({
     carte: null,
     itinéraires: [],
     zone: "",
-    étapes: new Étapes(étape, _e => null, étape, _e => null, [], _e => null, étape, _e => null, null, []),
+    étapes: new Étapes(gère_une_étape, gère_une_étape, [], fonctionNull2, gère_une_étape, null, []),
     setTiroir: (_clef, _ouvert) => null,
 })
