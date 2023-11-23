@@ -1,51 +1,42 @@
-import Lieu, { Étape } from "../classes/Lieu";
+import { Lieu, Étape } from "../classes/lieux";
 import { ÉtapeClic } from "../classes/ÉtapeClic";
 import { LieuJson } from "../classes/types";
 import { ajusteFenêtre, videItinéraires } from "../fonctions/pour_leaflet";
-import type { Itinéraire } from "../classes/Itinéraire";
-import {  useState } from "react";
-import useÉtape, {GèreUneÉtape} from "./useÉtape";
-
-
-////////////////////////////////////////
-//
-// Utilisations :
-// - via toutes_les_étapes : pour envoyer les données
-// - départ et arrivée : pour les autocomplètes du formRecherche. Besoin des json initiaux pour les champs value
-//
-//////////////////////////////////////////////////
-
-
+import { Itinéraire } from "../classes/Itinéraire";
+import { gèreUneÉtape } from "./useÉtapes";
 
 
 
 export class Étapes {
 
-    départ: GèreUneÉtape
-    arrivée: GèreUneÉtape
+    départ: gèreUneÉtape;
+    arrivée: gèreUneÉtape;
 
-    étapes_clic: ÉtapeClic[]
-    private setÉtapesClic: React.Dispatch<React.SetStateAction<ÉtapeClic[]>>
+    étapes_clic: ÉtapeClic[];
+    private setÉtapesClic: React.Dispatch<React.SetStateAction<ÉtapeClic[]>>;
 
-    étape_pas_clic: GèreUneÉtape
+    étape_pas_clic: gèreUneÉtape;
 
-    carte: L.Map | null
-    itinéraires: Itinéraire[]
+    carte: L.Map | null;
+    itinéraires: Itinéraire[];
 
     constructor(
-        départ: GèreUneÉtape,
-        arrivée: GèreUneÉtape,
+        départ_json: LieuJson | null, setDépartJson: React.Dispatch<React.SetStateAction<LieuJson | null>>,
+        arrivée_json: LieuJson | null, setArrivéeJson: React.Dispatch<React.SetStateAction<LieuJson | null>>,
         étapes_clic: ÉtapeClic[], setÉtapesClic: React.Dispatch<React.SetStateAction<ÉtapeClic[]>>,
-        étape_pas_clic: GèreUneÉtape,
+        étape_pas_clic_json: LieuJson | null, setÉtapePasClicJson: React.Dispatch<React.SetStateAction<LieuJson | null>>,
         carte: L.Map | null, itinéraires: Itinéraire[]
     ) {
         this.étapes_clic = étapes_clic;
         this.setÉtapesClic = setÉtapesClic;
         this.carte = carte;
         this.itinéraires = itinéraires;
-        this.départ = départ;
-        this.arrivée = arrivée;
-        this.étape_pas_clic = étape_pas_clic;
+
+        this.arrivée = new gèreUneÉtape(arrivée_json, setArrivéeJson);
+
+        this.départ = new gèreUneÉtape(départ_json, setDépartJson);
+
+        this.étape_pas_clic = new gèreUneÉtape(étape_pas_clic_json, setÉtapePasClicJson);
     }
 
 
@@ -64,7 +55,7 @@ export class Étapes {
                 i++;
                 é.setNuméro(i);
             }
-        )
+        );
     }
 
 
@@ -77,7 +68,7 @@ export class Étapes {
                 this.màjNuméros();
                 return [...prev];
             }
-        )
+        );
     }
 
     // Supprime l’étape d’indice i *dans toutes_les_étapes*
@@ -87,11 +78,11 @@ export class Étapes {
             this.màjNuméros();
             return [...prev];
         }
-        )
+        );
     }
 
 
-    changeÉtape(gère_étape: GèreUneÉtape, value: LieuJson | null) {
+    changeÉtape(gère_étape: gèreUneÉtape, value: LieuJson | null) {
 
         videItinéraires(this.itinéraires, this.étapes_clic);
 
@@ -140,32 +131,4 @@ export class Étapes {
         this.changeÉtape(this.départ, ancienne_arrivée);
         this.changeÉtape(this.arrivée, ancien_départ);
     }
-}
-
-
-
-
-export default function useÉtapes(carte: L.Map | null, itinéraires: Itinéraire[]) {
-
-   
-   
-    const gère_arrivée = useÉtape();
-
-    const gère_départ = useÉtape();
-
-    const gère_étape_pas_clic = useÉtape();
-
-    const [étapes_clic, setÉtapesClic] = useState<ÉtapeClic[]>([]);
-
-    // Sera automatiquement recalculé à chaque rendu : pas besoin de le mettre dans un state
-    const étapes = new Étapes(
-        gère_départ,
-        gère_arrivée,
-        étapes_clic, setÉtapesClic,
-        gère_étape_pas_clic,
-        carte, itinéraires,
-    );
-
-
-    return { étapes };
 }
