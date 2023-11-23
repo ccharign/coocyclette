@@ -75,7 +75,7 @@ export default function FormAutourDeMoi({ carte, marqueurs }: props) {
             if (type_lieux_sélectionnés.get(tl)) {
                 res.push(tl);
             }
-        };
+        }
         return res;
     }
 

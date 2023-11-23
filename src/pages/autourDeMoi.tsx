@@ -17,25 +17,25 @@ const marqueurs = new L.LayerGroup();
 
 export default function AutourDeMoi() {
 
-    let [carte, setCarte] = useState<L.Map | null>(null);
+    const [carte, setCarte] = useState<L.Map | null>(null);
 
 
     return (
-	<Base>
+        <Base>
             <Container>
                 <Row>
-                    
+
                     <Col md={9} >
-                    <Carte carte={carte} setCarte={setCarte} layers_groups={[marqueurs]} />
-	            </Col>
-                    
-                    <Col>
-	                {carte ? <FormAutourDeMoi carte={carte as L.Map} marqueurs={marqueurs} /> : null}
+                        <Carte carte={carte} setCarte={setCarte} layers_groups={[marqueurs]} />
                     </Col>
-                    
+
+                    <Col>
+                        {carte ? <FormAutourDeMoi carte={carte as L.Map} marqueurs={marqueurs} /> : null}
+                    </Col>
+
                 </Row>
             </Container>
-            
-	</Base>
+
+        </Base>
     )
 }

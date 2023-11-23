@@ -5,7 +5,7 @@ import "leaflet.locatecontrol"
 import "leaflet.locatecontrol/dist/L.Control.Locate.min.css"
 import { Dico, GetItinéraire } from "../classes/types.ts";
 import { Itinéraire } from "../classes/Itinéraire.ts"
-import { Lieu, Étape } from "../classes/lieux.ts"
+import Lieu, { Étape } from "../classes/Lieu.ts"
 
 
 // Efface les anciens itinéraires et affiche les nouveaux
@@ -27,7 +27,7 @@ export function màjItinéraires(itis: GetItinéraire[], carte: L.Map, itinérai
 // Supprime les itinéraires et les étapes passées en arg
 export function videItinéraires(itinéraires: Itinéraire[], étapes: Lieu[]// , setÉtapes: React.Dispatch<React.SetStateAction<ÉtapeClic[]>>
 ) {
-    
+
     itinéraires.forEach(
         iti => iti.supprimeLayers()
     );
@@ -97,7 +97,7 @@ export function marqueur_avec_popup(infos: Dico, carte: L.Map) {
         [infos.lat as number, infos.lon as number]
     ).addTo(carte);
 
-    let contenu = ["nom", "adresse", "horaires", "tél"]
+    const contenu = ["nom", "adresse", "horaires", "tél"]
         .filter(c => infos[c])
         .map(c => infos[c])
         .join("<br>");

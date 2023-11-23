@@ -7,18 +7,18 @@ import "leaflet/dist/leaflet.css"
 import "./css/pour-leaflet.css"
 import "./css/styles.css"
 import AutourDeMoi from './pages/autourDeMoi.tsx';
-import Itinéraires from "./pages/Itinéraires.tsx";
+import PageItinéraires from "./pages/PageItinéraires.tsx";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 const router = createBrowserRouter([
     {
         path: "/coocyclette/",
-        element: <Itinéraires />,
+        element: <PageItinéraires />,
     },
     {
         path: "/coocyclette/fouine",
-        element: <Itinéraires fouine />,
+        element: <PageItinéraires fouine />,
     },
     {
         path: "/coocyclette/autourDeMoi",

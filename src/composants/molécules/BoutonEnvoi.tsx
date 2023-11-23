@@ -1,6 +1,6 @@
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useContext, useState } from "react";
-import { contexte_iti } from "../contextes/page-itinéraire";
+import { contexte_iti } from "../../contextes/ctx-page-itinéraire";
 import { URL_API } from "../../params";
 import { màjItinéraires } from "../../fonctions/pour_leaflet";
 import { GetItinéraire } from "../../classes/types";

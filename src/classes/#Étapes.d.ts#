@@ -1,0 +1,9 @@
+declare class Étapes {
+    constructor(départ_json: LieuJson | null, setDépartJson: React.Dispatch<React.SetStateAction<LieuJson | null>>,
+        arrivée_json: LieuJson | null, setArrivéeJson: React.Dispatch<React.SetStateAction<LieuJson | null>>,
+        étapes_clic: ÉtapeClic[], setÉtapesClic: React.Dispatch<React.SetStateAction<ÉtapeClic[]>>,
+        étape_pas_clic_json: LieuJson | null, setÉtapePasClicJson: React.Dispatch<React.SetStateAction<LieuJson | null>>,
+        carte: L.Map | null, itinéraires: Itinéraire[])
+
+
+}

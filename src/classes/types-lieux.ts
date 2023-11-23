@@ -1,6 +1,6 @@
 //import Papa from "papaparse";
 
-import { PourDjango, Étape } from "./lieux";
+import { PourDjango, Étape } from "./Lieu";
 
 export class TypeLieu {
 

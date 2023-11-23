@@ -30,9 +30,9 @@ export class GèreUneÉtape {
 
 
     // Enregistre le json et crée l’objet étape
-    // mémoïze ce dernier
     setÉtape(étape_json: LieuJson | null) {
         this.setÉtapeJson(étape_json);
+        this.setOptionsAutocomplète([étape_json].filter(é => é) as LieuJson[])
         this.étape = étape_json ? lieuOfJson(étape_json) : null;
         return this.étape;
     }

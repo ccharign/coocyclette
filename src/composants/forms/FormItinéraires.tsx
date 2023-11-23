@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import ChoixZone from "../molécules/choixZone";
 import AutoComplèteDistant from "../molécules/autoComplèteDistant"
-import { Lieu } from "../../classes/lieux";
+import Lieu from "../../classes/Lieu";
 import { ÉtapeClic } from "../../classes/ÉtapeClic";
 
 import SwapVertIcon from '@mui/icons-material/SwapVert';
@@ -9,7 +9,7 @@ import SwapVertIcon from '@mui/icons-material/SwapVert';
 import L from "leaflet";
 import { Container, Row, Col } from "react-bootstrap";
 import { iconeFa } from "../../classes/iconeFa";
-import { contexte_iti } from "../contextes/page-itinéraire";
+import { contexte_iti } from "../../contextes/ctx-page-itinéraire";
 import BoutonEnvoi from "../molécules/BoutonEnvoi";
 import IconButton from "@mui/material/IconButton";
 
@@ -29,14 +29,15 @@ export default function FormItinéraires({ setZone }: propsFormItinéraires) {
     const [données_modifiées, setDonnéesModifiées] = useState(true); // Indique si des modifs ont été faites depuis le dernier calcul d’itinéraire
 
 
-  
+
 
     // Change l’icone pour le départ
     // TODO mettre icone en arg facultatif de autocomplèteDistant
     useEffect(
         () => {
-            if (étapes.départ instanceof Lieu && étapes.départ.leaflet_layer instanceof L.Marker) {
-                étapes.départ.leaflet_layer.setIcon(iconeFa("bicycle"));
+            const étape_départ = étapes.départ.étape;
+            if (étape_départ instanceof Lieu && étape_départ.leaflet_layer instanceof L.Marker) {
+                étape_départ.leaflet_layer.setIcon(iconeFa("bicycle"));
             }
         }
     )
@@ -97,7 +98,7 @@ export default function FormItinéraires({ setZone }: propsFormItinéraires) {
                     />
 
                     <IconButton
-                        onClick={() => étapes.inverse() }
+                        onClick={() => étapes.inverse()}
                     >
                         <SwapVertIcon />
                     </IconButton>

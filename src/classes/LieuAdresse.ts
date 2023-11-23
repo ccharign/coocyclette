@@ -1,5 +1,5 @@
 import L from "leaflet";
-import { Lieu, géomOsmVersLeaflet } from "./lieux.ts";
+import Lieu, { géomOsmVersLeaflet } from "./Lieu.ts";
 import { GéométrieOsm } from "./types.ts";
 
 

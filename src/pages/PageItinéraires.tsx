@@ -6,7 +6,7 @@ import FormContribuer from "../composants/forms/FormContribuer.tsx";
 import { Nav, Row } from "react-bootstrap";
 import { tZoneAffichage, tTiroir, tTiroirOuvert } from "../classes/types.ts";
 import CarteItinéraires from "../composants/organismes/CarteItinéraire.tsx";
-import { contexte_iti, tContexteItinéraire } from "../composants/contextes/page-itinéraire.ts";
+import { contexte_iti, tContexteItinéraire } from "../contextes/ctx-page-itinéraire.ts";
 import { Itinéraire } from "../classes/Itinéraire.ts";
 import Tiroir from "../composants/atomes/Tiroir.tsx";
 import useÉtapes from "../hooks/useÉtapes.ts";
@@ -50,7 +50,7 @@ const itinéraires: Itinéraire[] = [];
 
 
 
-export default function Itinéraires({ fouine }: propsItinéraires) {
+export default function PageItinéraires({ fouine }: propsItinéraires) {
 
     const [carte, setCarte] = useState<L.Map | null>(null);
     const [zone, setZone] = useState<string>("");

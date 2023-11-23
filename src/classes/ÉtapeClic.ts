@@ -1,7 +1,7 @@
 import L from "leaflet";
 import { sansIcone } from "./iconeFa.ts";
-import { Lieu, PourDjango } from "./lieux.ts";
-import { Étapes } from "../hooks/useÉtapes.ts";
+import Lieu, { PourDjango } from "./Lieu.ts";
+import type { Étapes } from "../hooks/useÉtapes.ts";
 
 
 
@@ -55,7 +55,7 @@ export class ÉtapeClic extends Lieu {
 
     numéro: number;
     //setÉtapes: React.Dispatch<React.SetStateAction<ÉtapeClic[]>>; // setter React pour les étapes intermédiaires
-    étapes:Étapes;
+    étapes: Étapes;
     carte: L.Map;
     //layer_group: L.LayerGroup;
     //setDonnéesModifiées: React.Dispatch<React.SetStateAction<boolean>>; // pour indiquer qu’il y a eu des changements dans les données du form

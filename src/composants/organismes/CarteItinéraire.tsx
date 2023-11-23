@@ -4,7 +4,7 @@
 
 import { useContext, useEffect } from "react";
 import carteIci from "../../fonctions/pour_leaflet";
-import { contexte_iti } from "../contextes/page-itinéraire";
+import { contexte_iti } from "../../contextes/ctx-page-itinéraire";
 
 type propsCarte = {
     setCarte: React.Dispatch<React.SetStateAction<L.Map | null>>;

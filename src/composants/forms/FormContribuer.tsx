@@ -10,9 +10,9 @@ import { URL_API } from "../../params";
 import { LoadingButton } from "@mui/lab";
 import { Checkbox, FormControlLabel, Switch, Tooltip } from "@mui/material";
 import { FormGroup } from "react-bootstrap";
-import { contexte_iti } from "../contextes/page-itinéraire";
+import { contexte_iti } from "../../contextes/ctx-page-itinéraire";
 import BoutonEnvoi from "../molécules/BoutonEnvoi";
-import { Étape } from "../../classes/lieux";
+import { Étape } from "../../classes/Lieu";
 
 
 
@@ -111,7 +111,10 @@ export default function FormContribuer() {
         return (
             <div>
 
-                    <p> Si les points de passage indiqués vous semblent pertinents pour aller de « {(étapes.départ as Étape).nom} » à « {(étapes.arrivée as Étape).nom} » : </p>
+                <p>
+                    Si les points de passage indiqués vous semblent pertinents pour aller de
+                    « {(étapes.départ.étape as Étape).nom} » à « {(étapes.arrivée.étape as Étape).nom} » :
+                </p>
                 
 
                 <form onSubmit={envoieForm}>
@@ -177,4 +180,4 @@ export default function FormContribuer() {
 
         </div>
     )
-};
+}

@@ -1,6 +1,6 @@
 import { Dico, OverpassRes, GéométrieOsm } from "./types.ts";
 import { TypeLieu } from "./types-lieux.ts";
-import { Lieu } from "./lieux.ts";
+import Lieu from "./Lieu.ts";
 
 
 

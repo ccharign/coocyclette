@@ -2,14 +2,12 @@ import { URL_API } from "../../params";
 
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField"
-import {  useContext, useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { CircularProgress, debounce } from "@mui/material";
 import { LieuJson } from "../../classes/types";
 import React from "react";
-import {  Étape } from "../../classes/lieux";
-import { ÉtapeClic } from "../../classes/ÉtapeClic";
-import { contexte_iti } from "../contextes/page-itinéraire";
-
+import { contexte_iti } from "../../contextes/ctx-page-itinéraire";
+import { GèreUneÉtape } from "../../hooks/useÉtapes"
 
 /* Champ de recherche lieu/adresse qui va chercher les options sur le serveur */
 
@@ -22,9 +20,8 @@ const URL_COMPLÉTION = URL_API + "completion";
 type autocomplèteProps = {
     label: string;
     placeHolder: string;
-    étape: Étape | null,
-    étapes_clic: ÉtapeClic[],
-    setÉtapesClic: React.Dispatch<React.SetStateAction<ÉtapeClic[]>>,
+    étape: GèreUneÉtape,
+    //value: LieuJson | null,
     //setÉtape: React.Dispatch<React.SetStateAction<Étape | undefined>>,
     setDonnéesModifiées: React.Dispatch<React.SetStateAction<boolean>>,
     onChange: (val: LieuJson | null) => void,
@@ -34,12 +31,12 @@ const l_min = 3;
 
 
 
-export default function AutoComplèteDistant(props: autocomplèteProps) {
+export default function AutoComplèteDistant({ label, placeHolder, étape, setDonnéesModifiées, onChange }: autocomplèteProps) {
 
     const { zone } = useContext(contexte_iti);
     const [charge_options, setChargeOptions] = useState(false);  // Indique si chargement en cours
-    const [options, setOptions] = useState<LieuJson[]>([]);
-    const [value, setValue] = useState<LieuJson | null>(null);
+    //const [options, setOptions] = useState<LieuJson[]>([]);
+    //const [value, setValue] = useState<LieuJson | null>(null);
     const [inputValue, setInputValue] = useState("");
 
 
@@ -58,14 +55,14 @@ export default function AutoComplèteDistant(props: autocomplèteProps) {
 
     const getOptions = useMemo(() => debounce(
         async (value: string) => {
-            setInputValue(value);
+            //setInputValue(value);
             if (value.length >= l_min) {
                 setChargeOptions(true);
                 const res = await getLieux(value);
                 setChargeOptions(false);
-                setOptions(res);
+                étape.setOptionsAutocomplète(res);
             } else {
-                setOptions([]);
+                étape.setOptionsAutocomplète([]);
             }
         },
         600
@@ -76,19 +73,16 @@ export default function AutoComplèteDistant(props: autocomplèteProps) {
 
 
 
-
-
-
     return (
         <Autocomplete
             getOptionLabel={(option) => option.nom}
-            options={options}
+            options={étape.options_autocomplète}
             filterOptions={(x) => x}
-            value={value}
+            value={étape.étape_json}
             onChange={
                 (_e, val) => {
-                    setValue(val);
-                    props.onChange(val);
+                    //setValue(val);
+                    onChange(val);
                 }
             }
             inputValue={inputValue}
@@ -102,8 +96,8 @@ export default function AutoComplèteDistant(props: autocomplèteProps) {
                 (params) => (
                     <TextField
                         {...params}
-                        label={props.label}
-                        placeholder={props.placeHolder}
+                        label={label}
+                        placeholder={placeHolder}
                         InputProps={{
                             ...params.InputProps,
                             endAdornment: (
