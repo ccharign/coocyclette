@@ -44,7 +44,7 @@ export default function FormItinéraires({ setZone }: propsFormItinéraires) {
 
 
     // Lance la gestion des clics
-    if (carte && étapes.départ instanceof Lieu && étapes.arrivée instanceof Lieu && !étapes.étape_pas_clic) {
+    if (carte && étapes.départ.étape instanceof Lieu && étapes.arrivée.étape instanceof Lieu && !étapes.étape_pas_clic.étape) {
         carte.off("click");
         carte.on(
             "click",
