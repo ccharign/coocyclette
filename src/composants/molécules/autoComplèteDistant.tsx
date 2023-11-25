@@ -14,7 +14,7 @@ import { GèreUneÉtape } from "../../hooks/useÉtape"
 
 
 const URL_COMPLÉTION = URL_API + "completion";
-
+const MA_POSITION : LieuJson = { "type_étape": "ma-position", "nom": "Ma position", "géom": [[0, 0]] }
 
 
 type autocomplèteProps = {
@@ -51,12 +51,11 @@ export default function AutoComplèteDistant({ label, placeHolder, étape, onCha
 
     const getOptions = useMemo(() => debounce(
         async (value: string) => {
-            //setInputValue(value);
             if (value.length >= l_min) {
                 setChargeOptions(true);
                 const res = await getLieux(value);
                 setChargeOptions(false);
-                étape.setOptionsAutocomplète(res);
+                étape.setOptionsAutocomplète(res.concat([MA_POSITION]));
             } else {
                 étape.setOptionsAutocomplète([]);
             }

@@ -55,12 +55,9 @@ export class ÉtapeClic extends Lieu {
 
     numéro: number;
     étapes: Étapes;
-    //carte: L.Map;
 
     constructor(
         ll: L.LatLng,
-        //toutes_les_étapes: Lieu[],
-        //étapesReducer: (action: ActionÉtape) => void,
         étapes: Étapes,
         carte: L.Map,
         setDonnéesModifiées: React.Dispatch<React.SetStateAction<boolean>>
@@ -113,9 +110,6 @@ export class ÉtapeClic extends Lieu {
 
         // Insérer l’étape dans la liste de toutes les étapes
         this.numéro = numOùInsérer(ll, étapes.toutes_les_étapes() as Lieu[]);
-        // this.étapesReducer(
-        //     { cat: "insère", position: this.numéro - 1, val: this }
-        // );
         this.étapes.insèreÉtapeClic(this.numéro, this);
     }
 
@@ -129,14 +123,7 @@ export class ÉtapeClic extends Lieu {
 
     // Supprime l’étape
     supprimer() {
-        //this.layer_group.removeLayer(this.leaflet_layer);
         this.leaflet_layer.remove();
-        // this.étapesReducer(
-        //     {
-        //         cat: "supprime",
-        //         position: this.numéro,
-        //     }
-        // );
         this.étapes.supprimeÉtapeClic(this.numéro);
     }
 

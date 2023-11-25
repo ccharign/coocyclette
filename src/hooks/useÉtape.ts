@@ -34,7 +34,7 @@ export class GèreUneÉtape {
 
     // Enregistre le json et crée l’objet étape
     // Puis enregistre l’étape
-    setÉtape(étape_json: LieuJson | null) {
+    setÉtapeÀPartirDuJson(étape_json: LieuJson | null) {
         this.setÉtapeJson(étape_json);
         this.setOptionsAutocomplète([étape_json].filter(é => é) as LieuJson[])
         const étape = étape_json ? lieuOfJson(étape_json, this.carte as L.Map) : null;

@@ -114,8 +114,10 @@ export default class Lieu extends Étape {
 
     setLatlng(ll: L.LatLng) {
         this.coords = ll;
+        (this.leaflet_layer instanceof L.Marker) && this.leaflet_layer.setLatLng(ll);
     }
 
+    
     supprimeLeafletLayer() {
         this.leaflet_layer.remove();
     }

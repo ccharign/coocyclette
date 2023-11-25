@@ -1,6 +1,7 @@
-import Lieu, { Étape } from "../classes/Lieu";
+import Lieu from "../classes/Lieu";
+import type { Étape } from "../classes/Lieu";
 import { ÉtapeClic } from "../classes/ÉtapeClic";
-import { LieuJson } from "../classes/types";
+import type { LieuJson } from "../classes/types";
 import { ajusteFenêtre, videItinéraires } from "../fonctions/pour_leaflet";
 import type { Itinéraire } from "../classes/Itinéraire";
 import { useState } from "react";
@@ -95,7 +96,7 @@ export class Étapes {
 
         // Crée, enregistre et récupère l’objet Étape
         //const étape =
-        gère_étape.setÉtape(value);
+        const étape=gère_étape.setÉtapeÀPartirDuJson(value);
 
         // Affiche le layer leaflet
         // if (this.carte && étape instanceof Lieu) {
@@ -103,6 +104,8 @@ export class Étapes {
         // }
 
         this.ménageAprèsChangeÉtape();
+
+        return étape;
     }
 
     ménageAprèsChangeÉtape() {
@@ -114,18 +117,8 @@ export class Étapes {
     }
 
 
-    //
-    //    Modifie l’étape mais pas le json associé: ceci va désynchroniser l’étape de son champ de recherche.
-    //    Utilisé a priori pour l’option « partir de ma position »
-    //
-    // changeDépartMaisPasLeJson(étape: Étape) {
-    //     this.départ.setÉtapeMaisPasLeJson(étape);
-    //     this.ménageAprèsChangeÉtape();
-    // }
-
-    changeDépart(départ: LieuJson | null) {
-        this.changeÉtape(this.départ, départ);
-        const étape_départ = this.départ.étape;
+    changeDépart(départ_j: LieuJson | null) {
+        const étape_départ = this.changeÉtape(this.départ, départ_j);
         if (étape_départ instanceof Lieu && étape_départ.leaflet_layer instanceof L.Marker) {
             étape_départ.leaflet_layer.setIcon(iconeFa("bicycle"));
         }
@@ -144,6 +137,9 @@ export class Étapes {
     inverse() {
         const ancien_départ = this.départ.étape_json;
         const ancienne_arrivée = this.arrivée.étape_json;
+        
+        this.changeÉtape(this.départ, ancienne_arrivée);
+        this.changeÉtape(this.arrivée, ancien_départ);
         this.setÉtapesClic(
             prev => {
                 prev.reverse();
@@ -151,8 +147,6 @@ export class Étapes {
                 return prev;
             }
         );
-        this.changeÉtape(this.départ, ancienne_arrivée);
-        this.changeÉtape(this.arrivée, ancien_départ);
     }
 }
 
