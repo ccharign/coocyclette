@@ -19,7 +19,7 @@ export class Itinéraire {
         this.couleur = couleur;
         this.longueur = longueur;
         this.pourcentage_détour = pourcentage_détour;
-        this.lieux = lieux.map(lieuOfJson) as Lieu[];
+        this.lieux = lieux.map(l=>lieuOfJson(l, carte)) as Lieu[];
         this.lieux.forEach(
             l => l.leaflet_layer.addTo(carte)
         )

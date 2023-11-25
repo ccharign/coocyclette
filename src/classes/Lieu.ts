@@ -11,10 +11,11 @@ import { iconeFa } from "./iconeFa.ts";
 
 
 
+type TypeÉtapeDjango = "lieu" | "gtl" | "arête" | "rue";
 
 // Pour envoyer au serveur
 export type PourDjango = {
-    type_étape: string,
+    type_étape: TypeÉtapeDjango,
     pk?: number,
     num?: boolean,
     lon?: number,
@@ -75,8 +76,22 @@ export abstract class Étape {
 }
 
 
+export type ArgsLieu = {
+    géom: GéométrieOsm,
+    nom: string,
+}
+
 // Une étape munie d’une géométrie
-export default abstract class Lieu extends Étape {
+export default class Lieu extends Étape {
+
+
+    pourDjango(): PourDjango {
+        return {
+            type_étape: "arête",
+            lon: this.coords.lng,
+            lat: this.coords.lat,
+        };
+    }
 
     static R_terre = 6360000; // en mètres
     static coeff_rad = Math.PI / 180; // Multiplier par ceci pour passer en radians
@@ -84,15 +99,16 @@ export default abstract class Lieu extends Étape {
     coords: L.LatLng;
     leaflet_layer: L.Layer; // L’objet leaflet à dessiner sur la carte. (Sera un polyline pour les rues, un marqueur sinon.)
     icone: L.AwesomeMarkers.Icon = iconeFa();
-
+    carte: L.Map;
 
 
     // Crée l’objet mais aussi un marqueur. Le marqueur n’est pas lié à la carte.
-    constructor(géom: GéométrieOsm, nom: string) {
+    constructor(géom: GéométrieOsm, nom: string, carte: L.Map) {
         super(nom);
         this.coords = sommetMédian(géom);
         this.leaflet_layer = new L.Marker(this.coords, { icon: this.icone });
         this.leaflet_layer.bindPopup(nom);
+        this.carte = carte;
     }
 
 

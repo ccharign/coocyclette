@@ -3,8 +3,10 @@ import { ÉtapeClic } from "../classes/ÉtapeClic";
 import { LieuJson } from "../classes/types";
 import { ajusteFenêtre, videItinéraires } from "../fonctions/pour_leaflet";
 import type { Itinéraire } from "../classes/Itinéraire";
-import {  useState } from "react";
-import useÉtape, {GèreUneÉtape} from "./useÉtape";
+import { useState } from "react";
+import useÉtape, { GèreUneÉtape } from "./useÉtape";
+import { iconeFa } from "../classes/iconeFa";
+import L from "leaflet";
 
 
 ////////////////////////////////////////
@@ -68,8 +70,6 @@ export class Étapes {
     }
 
 
-
-
     insèreÉtapeClic(i: number, étape: ÉtapeClic) {
         this.setÉtapesClic(
             prev => {
@@ -93,28 +93,42 @@ export class Étapes {
 
     changeÉtape(gère_étape: GèreUneÉtape, value: LieuJson | null) {
 
-        videItinéraires(this.itinéraires, this.étapes_clic);
-
-        // Supprime l’ancien marqueur
-        const prev = gère_étape.étape;
-        prev && prev.supprimeLeafletLayer();
-
-        // Récupére l’objet Étape
-        const étape = gère_étape.setÉtape(value);
+        // Crée, enregistre et récupère l’objet Étape
+        //const étape =
+        gère_étape.setÉtape(value);
 
         // Affiche le layer leaflet
-        if (this.carte && étape instanceof Lieu) {
-            étape.leaflet_layer.addTo(this.carte);
-        }
+        // if (this.carte && étape instanceof Lieu) {
+        //     étape.leaflet_layer.addTo(this.carte);
+        // }
+
+        this.ménageAprèsChangeÉtape();
+    }
+
+    ménageAprèsChangeÉtape() {
+        // Supprime les anciens itinéraires
+        videItinéraires(this.itinéraires, this.étapes_clic);
 
         // Ajuste la fenêtre
-        étape && ajusteFenêtre(this.toutes_les_étapes().concat([étape]), this.carte as L.Map);
-
+        ajusteFenêtre(this.toutes_les_étapes(), this.carte as L.Map);
     }
 
 
+    //
+    //    Modifie l’étape mais pas le json associé: ceci va désynchroniser l’étape de son champ de recherche.
+    //    Utilisé a priori pour l’option « partir de ma position »
+    //
+    // changeDépartMaisPasLeJson(étape: Étape) {
+    //     this.départ.setÉtapeMaisPasLeJson(étape);
+    //     this.ménageAprèsChangeÉtape();
+    // }
+
     changeDépart(départ: LieuJson | null) {
         this.changeÉtape(this.départ, départ);
+        const étape_départ = this.départ.étape;
+        if (étape_départ instanceof Lieu && étape_départ.leaflet_layer instanceof L.Marker) {
+            étape_départ.leaflet_layer.setIcon(iconeFa("bicycle"));
+        }
     }
 
     changeArrivée(arrivée: LieuJson | null) {
@@ -147,13 +161,12 @@ export class Étapes {
 
 export default function useÉtapes(carte: L.Map | null, itinéraires: Itinéraire[]) {
 
-   
-   
-    const gère_arrivée = useÉtape();
 
-    const gère_départ = useÉtape();
+    const gère_arrivée = useÉtape(carte)
 
-    const gère_étape_pas_clic = useÉtape();
+    const gère_départ = useÉtape(carte);
+
+    const gère_étape_pas_clic = useÉtape(carte);
 
     const [étapes_clic, setÉtapesClic] = useState<ÉtapeClic[]>([]);
 

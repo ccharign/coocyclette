@@ -54,11 +54,8 @@ const bouton_suppr = '<button type="button" class="supprimeÉtape">Supprimer</bu
 export class ÉtapeClic extends Lieu {
 
     numéro: number;
-    //setÉtapes: React.Dispatch<React.SetStateAction<ÉtapeClic[]>>; // setter React pour les étapes intermédiaires
     étapes: Étapes;
-    carte: L.Map;
-    //layer_group: L.LayerGroup;
-    //setDonnéesModifiées: React.Dispatch<React.SetStateAction<boolean>>; // pour indiquer qu’il y a eu des changements dans les données du form
+    //carte: L.Map;
 
     constructor(
         ll: L.LatLng,
@@ -69,10 +66,8 @@ export class ÉtapeClic extends Lieu {
         setDonnéesModifiées: React.Dispatch<React.SetStateAction<boolean>>
     ) {
 
-        super([[ll.lng, ll.lat]], "Point de passage");
-        //this.setÉtapes = setÉtapes;
+        super([[ll.lng, ll.lat]], "Point de passage", carte);
         this.étapes = étapes;
-        //this.layer_group = layer_group;
         this.carte = carte;
         //this.setDonnéesModifiées = setDonnéesModifiées;
 

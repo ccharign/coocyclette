@@ -8,6 +8,12 @@ import { Itinéraire } from "../classes/Itinéraire.ts"
 import Lieu, { Étape } from "../classes/Lieu.ts"
 
 
+export function positionVersLatlng(position: GeolocationPosition): L.LatLng {
+    const { longitude, latitude } = position.coords;
+    return new L.LatLng(latitude, longitude);
+}
+
+
 // Efface les anciens itinéraires et affiche les nouveaux
 // itis: résultat du get
 // itinéraires: les itinéraires de l’appli

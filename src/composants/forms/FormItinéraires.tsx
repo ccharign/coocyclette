@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import ChoixZone from "../molécules/choixZone";
 import AutoComplèteDistant from "../molécules/autoComplèteDistant"
 import Lieu from "../../classes/Lieu";
@@ -6,13 +6,12 @@ import { ÉtapeClic } from "../../classes/ÉtapeClic";
 
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 
-import L from "leaflet";
 import { Container, Row, Col } from "react-bootstrap";
-import { iconeFa } from "../../classes/iconeFa";
 import { contexte_iti } from "../../contextes/ctx-page-itinéraire";
 import BoutonEnvoi from "../molécules/BoutonEnvoi";
 import IconButton from "@mui/material/IconButton";
-
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 
 export type propsFormItinéraires = {
@@ -24,24 +23,34 @@ export type propsFormItinéraires = {
 export default function FormItinéraires({ setZone }: propsFormItinéraires) {
 
     const { zone, carte, étapes } = useContext(contexte_iti);
-
-    const [étapes_clic, setÉtapesClic] = useState<ÉtapeClic[]>([]);  // étapes créées par clic
     const [données_modifiées, setDonnéesModifiées] = useState(true); // Indique si des modifs ont été faites depuis le dernier calcul d’itinéraire
+    const [partir_de_ma_postion, setPartirDeMaPosition] = useState(false);
 
 
-
+    function changePartirDeMaPosition(event: React.ChangeEvent<HTMLInputElement>) {
+        setPartirDeMaPosition(event.target.checked);
+        if (event.target.checked) {
+            étapes.changeDépart({
+                type_étape: "ma-position",
+                nom: "Ma position",
+                géom: [[0,0]],
+            });
+        }else{
+            étapes.changeDépart(null);
+        }
+    }
 
     // Change l’icone pour le départ
     // TODO mettre icone en arg facultatif de autocomplèteDistant
-    useEffect(
-        () => {
-            const étape_départ = étapes.départ.étape;
-            if (étape_départ instanceof Lieu && étape_départ.leaflet_layer instanceof L.Marker) {
-                étape_départ.leaflet_layer.setIcon(iconeFa("bicycle"));
-            }
-        }
-    )
-
+    /* useEffect(
+*     () => {
+*         const étape_départ = étapes.départ.étape;
+*         if (étape_départ instanceof Lieu && étape_départ.leaflet_layer instanceof L.Marker) {
+*             étape_départ.
+*         }
+*     }
+* )
+ */
 
     // Lance la gestion des clics
     if (carte && étapes.départ.étape instanceof Lieu && étapes.arrivée.étape instanceof Lieu && !étapes.étape_pas_clic.étape) {
@@ -52,7 +61,6 @@ export default function FormItinéraires({ setZone }: propsFormItinéraires) {
                 setDonnéesModifiées(true);
                 new ÉtapeClic(
                     e.latlng,
-                    //étapes.toutes_les_étapes() as Lieu[],
                     étapes,
                     carte,
                     setDonnéesModifiées
@@ -66,8 +74,6 @@ export default function FormItinéraires({ setZone }: propsFormItinéraires) {
 
 
     const propsDesAutocomplètes = {
-        étapes_clic: étapes_clic,
-        setÉtapesClic: setÉtapesClic,
         setDonnéesModifiées: setDonnéesModifiées,
     }
 
@@ -89,12 +95,22 @@ export default function FormItinéraires({ setZone }: propsFormItinéraires) {
                 <Row className="my-3">
 
 
+
                     <AutoComplèteDistant
                         {...propsDesAutocomplètes}
                         étape={étapes.départ}
                         label="Départ"
                         placeHolder="2 rue bidule, mon café, ..."
                         onChange={val => étapes.changeDépart(val)}
+                    />
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={partir_de_ma_postion}
+                                onChange={changePartirDeMaPosition}
+                            />
+                        }
+                        label="Partir de ma position"
                     />
 
                     <IconButton

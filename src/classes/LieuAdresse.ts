@@ -1,5 +1,5 @@
 import L from "leaflet";
-import Lieu, { géomOsmVersLeaflet } from "./Lieu.ts";
+import Lieu, { géomOsmVersLeaflet, PourDjango } from "./Lieu.ts";
 import { GéométrieOsm } from "./types.ts";
 
 
@@ -27,10 +27,10 @@ export default class LieuAdresse extends Lieu {
 
 
     constructor(
-        { nom, pk, géom, avec_num }: ArgsLieuAdresse
+        { nom, pk, géom, avec_num }: ArgsLieuAdresse, carte: L.Map
     ) {
 
-        super(géom, nom);
+        super(géom, nom, carte);
         this.pk_rue = pk;
 
         if (avec_num) {
@@ -42,6 +42,7 @@ export default class LieuAdresse extends Lieu {
                     (ll) => {
                         this.coords = ll;
                         (this.leaflet_layer as L.Marker).setLatLng(ll);
+                        this.leaflet_layer.addTo(this.carte);
                     }
                 );
 
@@ -58,7 +59,7 @@ export default class LieuAdresse extends Lieu {
     }
 
 
-    pourDjango() {
+    pourDjango(): PourDjango {
         if (this.avec_num) {
             // On renvoie en fait une étape arête
             return {
@@ -68,8 +69,8 @@ export default class LieuAdresse extends Lieu {
             }
         } else {
             return {
-                "type_étape": "rue",
-                "pk": this.pk_rue,
+                type_étape: "rue",
+                pk: this.pk_rue,
             };
         }
     }

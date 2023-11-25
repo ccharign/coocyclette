@@ -13,13 +13,13 @@ export type OverpassRes = {
 // géomtrie osm : coords au format [lon, lat]
 export type GéométrieOsm = [number, number][];
 
-
+type TypeÉtape = "arête" | "ma-position" | "adresse" | "lieu" | "gtl";
 // C’est le type reçu du serveur lors d’une autocomplétion
 export interface LieuJson {
-    type_étape: string;
+    type_étape: TypeÉtape;
     géom: GéométrieOsm;  // le plus souvent un singleton. Attention, format issu d’openstreetmap, donc (lon,lat).
     nom: string;
-    pk: number; // pk de l’objet dans la base Django
+    pk?: number; // pk de l’objet dans la base Django
 }
 
 
@@ -40,7 +40,7 @@ export type GetItinéraire = {
 export type VariantDrawer = "persistent" | "permanent" | "temporary" | undefined;
 
 type Ancre = 'top' | 'left' | 'bottom' | 'right';
-export type tZoneAffichage = "recherche"  | "contribuer" | "stats";
+export type tZoneAffichage = "recherche" | "contribuer" | "stats";
 export type tTiroir = {
     nom: string,
     ancre: Ancre,

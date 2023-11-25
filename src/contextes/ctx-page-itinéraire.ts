@@ -20,7 +20,7 @@ export type tContexteItinéraire = {
 const fonctionNull = ((_e: LieuJson | null | ((prev: LieuJson | null) => LieuJson | null)) => null);
 const fonctionNull2 = ((_e: any  | ((prev: any ) => any )) => null);
 
-const gère_une_étape = new GèreUneÉtape(null, fonctionNull, null, [], fonctionNull2);
+const gère_une_étape = new GèreUneÉtape(null, fonctionNull, null, [], fonctionNull2, null);
 
 export const contexte_iti = createContext<tContexteItinéraire>({
     carte: null,
