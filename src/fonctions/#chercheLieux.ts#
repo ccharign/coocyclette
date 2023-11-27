@@ -1,4 +1,4 @@
-import LieuOsm from "../classes/LieuOsm.ts";
+import LieuOsmAvecÉtapes from "../classes/LieuOsm.ts";
 import { OverpassRes } from "../classes/types.ts";
 import { BoundingBox } from "../classes/bounding-box.ts";
 import { TypeLieu } from "../classes/types-lieux.ts";
@@ -12,7 +12,7 @@ function tlsMêmeCatégorieVersOverpass(tls: TypeLieu[], catégorie: string) {
 }
 
 
-export default async function chercheLieux(carte: L.Map, types_de_lieux: TypeLieu[]): Promise<LieuOsm[]> {
+export default async function chercheLieux(carte: L.Map, types_de_lieux: TypeLieu[]): Promise<LieuOsmAvecÉtapes[]> {
 
     console.log("Lieux recherchés :", types_de_lieux);
     const bb = BoundingBox.ofCarte(carte);
@@ -42,7 +42,7 @@ export default async function chercheLieux(carte: L.Map, types_de_lieux: TypeLie
     const res_req = await fetch('https://www.overpass-api.de/api/interpreter?' + "data=" + requête);
     const res_overpass = await res_req.json();
     const lieux = res_overpass.elements.map(
-        (x: OverpassRes) => LieuOsm.from_overpass(x, types_de_lieux)
+        (x: OverpassRes) => LieuOsmAvecÉtapes.from_overpass(x, types_de_lieux, carte)
     );
     console.log("lieux reçus d’overpass", lieux);
     return lieux;

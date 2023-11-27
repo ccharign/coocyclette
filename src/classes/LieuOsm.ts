@@ -1,7 +1,7 @@
 import { Dico, OverpassRes, GéométrieOsm } from "./types.ts";
 import { TypeLieu } from "./types-lieux.ts";
 import Lieu, { PourDjango } from "./Lieu.ts";
-
+import type { Étapes } from "../hooks/useÉtapes.ts";
 
 
 
@@ -38,8 +38,8 @@ export default class LieuOsm extends Lieu {
     id_osm?: number; // id osm
 
 
-    constructor({ géom, nom, type_lieu, infos, pk, id_osm }: ArgsLieuOsmGénéral, carte: L.Map) {
-        super(géom, nom, carte);
+    constructor({ géom, nom, type_lieu, infos, pk, id_osm }: ArgsLieuOsmGénéral, carte: L.Map, étapes?: Étapes) {
+        super(géom, nom, carte, étapes);
         this.type_lieu = type_lieu;
         this.infos = infos;
         if (pk) this.pk = pk;
@@ -54,7 +54,6 @@ export default class LieuOsm extends Lieu {
         this.leaflet_layer
             .setPopupContent(`<div class="pop">${this.nom} (${this.type_lieu})<br>${contenu_popup}</div>`)
             .addTo(this.carte);
-
     }
 
 
@@ -68,8 +67,9 @@ export default class LieuOsm extends Lieu {
         };
     }
 
+
     // Crée un LieuOsm à partir du résultat d’une requête overpass
-    static from_overpass(données: OverpassRes, tousLesTls: TypeLieu[], carte: L.Map) {
+    static fromOverpass(données: OverpassRes, tousLesTls: TypeLieu[], carte: L.Map) {
 
         // Récupérer le tl
         const tl = tousLesTls.filter(
@@ -80,13 +80,16 @@ export default class LieuOsm extends Lieu {
 
         const géom = [[données.lon, données.lat]] as GéométrieOsm;
         const infos = données.tags;
-        const res = new LieuOsm({
-            géom: géom,
-            nom: infos.name ? infos.name : "",
-            type_lieu: tl.nom,
-            id_osm: données.id,
-            infos: infos
-        }, carte);
-        return res;
+        return new LieuOsm(
+            {
+                géom: géom,
+                nom: infos.name ? infos.name : "",
+                type_lieu: tl.nom,
+                id_osm: données.id,
+                infos: infos
+            },
+            carte
+        );
+
     }
 }

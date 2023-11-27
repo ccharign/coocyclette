@@ -42,7 +42,7 @@ export default async function chercheLieux(carte: L.Map, types_de_lieux: TypeLie
     const res_req = await fetch('https://www.overpass-api.de/api/interpreter?' + "data=" + requête);
     const res_overpass = await res_req.json();
     const lieux = res_overpass.elements.map(
-        (x: OverpassRes) => LieuOsm.from_overpass(x, types_de_lieux, carte)
+        (x: OverpassRes) => LieuOsm.fromOverpass(x, types_de_lieux, carte)
     );
     console.log("lieux reçus d’overpass", lieux);
     return lieux;

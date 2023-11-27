@@ -13,12 +13,12 @@ export type tContexteItinéraire = {
     itinéraires: Itinéraire[],
     zone: string,
     étapes: Étapes,
-    setTiroir: (clef: tZoneAffichage, ouvert: boolean) => void,
+    setTiroir: (_clef: tZoneAffichage, _ouvert: boolean) => void,
 }
 
 
-const fonctionNull = ((_e: LieuJson | null | ((prev: LieuJson | null) => LieuJson | null)) => null);
-const fonctionNull2 = ((_e: any  | ((prev: any ) => any )) => null);
+const fonctionNull = ((_e: LieuJson | null | ((_prev: LieuJson | null) => LieuJson | null)) => null);
+const fonctionNull2 = ((_e: any  | ((_prev: any ) => any )) => null);
 
 const gère_une_étape = new GèreUneÉtape(null, fonctionNull, null, [], fonctionNull2, null);
 

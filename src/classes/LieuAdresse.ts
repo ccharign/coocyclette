@@ -1,7 +1,7 @@
 import L from "leaflet";
 import Lieu, { géomOsmVersLeaflet, PourDjango } from "./Lieu.ts";
 import { GéométrieOsm } from "./types.ts";
-
+import type { Étapes } from "../hooks/useÉtapes.ts";
 
 
 
@@ -27,10 +27,10 @@ export default class LieuAdresse extends Lieu {
 
 
     constructor(
-        { nom, pk, géom, avec_num }: ArgsLieuAdresse, carte: L.Map
+        { nom, pk, géom, avec_num }: ArgsLieuAdresse, carte: L.Map, étapes?: Étapes
     ) {
 
-        super(géom, nom, carte);
+        super(géom, nom, carte, étapes);
         this.pk_rue = pk;
 
         if (avec_num) {

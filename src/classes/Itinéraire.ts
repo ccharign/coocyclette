@@ -2,6 +2,23 @@ import Lieu, { géomOsmVersLeaflet } from "./Lieu";
 import { GetItinéraire } from "./types";
 import L from "leaflet";
 import lieuOfJson from "../fonctions/crée-lieu";
+import type { Étapes } from "../hooks/useÉtapes"
+
+
+// Efface les anciens itinéraires et affiche les nouveaux
+// itis: résultat du get
+// itinéraires: les itinéraires de l’appli
+export function màjItinéraires(itis: GetItinéraire[], carte: L.Map, itinéraires: Itinéraire[], étapes: Étapes) {
+
+    itinéraires.forEach(
+        iti => iti.supprimeLayers()
+    );
+    itinéraires.length = 0;
+    itis.forEach(
+        iti => itinéraires.push(new Itinéraire(iti, carte, étapes))
+    );
+}
+
 
 // Représente le résultat d’un calcul d’itinéraire
 export class Itinéraire {
@@ -14,12 +31,12 @@ export class Itinéraire {
     lieux: Lieu[]
 
 
-    constructor({ points, couleur, pourcentage_détour, lieux, longueur, nom }: GetItinéraire, carte: L.Map) {
+    constructor({ points, couleur, pourcentage_détour, lieux, longueur, nom }: GetItinéraire, carte: L.Map, étapes: Étapes) {
 
         this.couleur = couleur;
         this.longueur = longueur;
         this.pourcentage_détour = pourcentage_détour;
-        this.lieux = lieux.map(l=>lieuOfJson(l, carte)) as Lieu[];
+        this.lieux = lieux.map(l => lieuOfJson(l, carte, étapes)) as Lieu[];
         this.lieux.forEach(
             l => l.leaflet_layer.addTo(carte)
         )

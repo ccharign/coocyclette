@@ -54,17 +54,15 @@ const bouton_suppr = '<button type="button" class="supprimeÉtape">Supprimer</bu
 export class ÉtapeClic extends Lieu {
 
     numéro: number;
-    étapes: Étapes;
 
     constructor(
         ll: L.LatLng,
-        étapes: Étapes,
+        étapes: Étapes, // NB dans cette classe, la propriété « étapes » est obligatoire
         carte: L.Map,
         setDonnéesModifiées: React.Dispatch<React.SetStateAction<boolean>>
     ) {
 
-        super([[ll.lng, ll.lat]], "Point de passage", carte);
-        this.étapes = étapes;
+        super([[ll.lng, ll.lat]], "Point de passage", carte, étapes);
         this.carte = carte;
         //this.setDonnéesModifiées = setDonnéesModifiées;
 
@@ -110,7 +108,7 @@ export class ÉtapeClic extends Lieu {
 
         // Insérer l’étape dans la liste de toutes les étapes
         this.numéro = numOùInsérer(ll, étapes.toutes_les_étapes() as Lieu[]);
-        this.étapes.insèreÉtapeClic(this.numéro, this);
+        this.étapes!.insèreÉtapeClic(this.numéro, this);
     }
 
 
@@ -124,7 +122,7 @@ export class ÉtapeClic extends Lieu {
     // Supprime l’étape
     supprimer() {
         this.leaflet_layer.remove();
-        this.étapes.supprimeÉtapeClic(this.numéro);
+        this.étapes!.supprimeÉtapeClic(this.numéro);
     }
 
 

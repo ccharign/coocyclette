@@ -2,7 +2,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import { useContext, useState } from "react";
 import { contexte_iti } from "../../contextes/ctx-page-itinéraire";
 import { URL_API } from "../../params";
-import { màjItinéraires } from "../../fonctions/pour_leaflet";
+import { màjItinéraires } from "../../classes/Itinéraire";
 import { GetItinéraire } from "../../classes/types";
 
 
@@ -38,7 +38,7 @@ export default function BoutonEnvoi({ texte, disabled }: propsBoutonEnvoi) {
             const url = new URL(`${URL_API}itineraire/${zone}`);
             url.searchParams.append("étapes_str", JSON.stringify(étapes_django));
             const res = await (fetch(url).then(res => res.json())) as GetItinéraire[];
-            màjItinéraires(res, carte as L.Map, itinéraires);
+            màjItinéraires(res, carte as L.Map, itinéraires, étapes);
             //setDonnéesModifiées(false);
             setTiroir("contribuer", true);
             

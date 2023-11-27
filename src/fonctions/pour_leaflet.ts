@@ -1,11 +1,11 @@
-import L from "leaflet"
-import "leaflet.fullscreen"
-import "leaflet.fullscreen/icon-fullscreen.svg"
-import "leaflet.locatecontrol"
-import "leaflet.locatecontrol/dist/L.Control.Locate.min.css"
-import { Dico, GetItinéraire } from "../classes/types.ts";
-import { Itinéraire } from "../classes/Itinéraire.ts"
-import Lieu, { Étape } from "../classes/Lieu.ts"
+import L from "leaflet";
+import "leaflet.fullscreen";
+import "leaflet.fullscreen/icon-fullscreen.svg";
+import "leaflet.locatecontrol";
+import "leaflet.locatecontrol/dist/L.Control.Locate.min.css";
+import { Dico } from "../classes/types.ts";
+import type { Itinéraire } from "../classes/Itinéraire.ts";
+import type Lieu from "../classes/Lieu.ts";
 
 
 export function positionVersLatlng(position: GeolocationPosition): L.LatLng {
@@ -14,20 +14,6 @@ export function positionVersLatlng(position: GeolocationPosition): L.LatLng {
 }
 
 
-// Efface les anciens itinéraires et affiche les nouveaux
-// itis: résultat du get
-// itinéraires: les itinéraires de l’appli
-export function màjItinéraires(itis: GetItinéraire[], carte: L.Map, itinéraires: Itinéraire[]) {
-
-    itinéraires.forEach(
-        iti => iti.supprimeLayers()
-    );
-    itinéraires.length = 0;
-    itis.forEach(
-        iti => itinéraires.push(new Itinéraire(iti, carte))
-    );
-
-}
 
 
 // Supprime les itinéraires et les étapes passées en arg
@@ -48,18 +34,6 @@ export function videItinéraires(itinéraires: Itinéraire[], étapes: Lieu[]// 
 
 
 
-// Ajuste la fenêtre de la carte pour avoir toutes les étapes à l’écran
-export function ajusteFenêtre(étapes: Étape[], carte: L.Map) {
-    console.log("ajusteFenêtre lancé");
-    const étapes_filtrées = étapes
-        .flatMap(étape => étape instanceof Lieu ? [étape.coords] : []);
-
-    if (étapes_filtrées.length === 1) {
-        carte.setView(étapes_filtrées[0]);
-    } else if (étapes_filtrées.length > 1) {
-        carte.fitBounds(L.latLngBounds(étapes_filtrées));
-    }
-}
 
 
 

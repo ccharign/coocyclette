@@ -6,7 +6,7 @@ export type OverpassRes = {
     id: number,
     lat: number,
     lon: number,
-    tags: any,
+    tags: { [clef: string]: string },
     type: string,
 }
 

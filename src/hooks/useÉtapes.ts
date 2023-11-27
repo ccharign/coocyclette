@@ -1,8 +1,7 @@
-import Lieu from "../classes/Lieu";
-import type { Étape } from "../classes/Lieu";
+import Lieu,  { ajusteFenêtre, Étape } from "../classes/Lieu";
 import { ÉtapeClic } from "../classes/ÉtapeClic";
 import type { LieuJson } from "../classes/types";
-import { ajusteFenêtre, videItinéraires } from "../fonctions/pour_leaflet";
+import { videItinéraires } from "../fonctions/pour_leaflet";
 import type { Itinéraire } from "../classes/Itinéraire";
 import { useState } from "react";
 import useÉtape, { GèreUneÉtape } from "./useÉtape";
@@ -96,7 +95,7 @@ export class Étapes {
 
         // Crée, enregistre et récupère l’objet Étape
         //const étape =
-        const étape=gère_étape.setÉtapeÀPartirDuJson(value);
+        const étape = gère_étape.setÉtapeÀPartirDuJson(value, this);
 
         // Affiche le layer leaflet
         // if (this.carte && étape instanceof Lieu) {
@@ -137,7 +136,7 @@ export class Étapes {
     inverse() {
         const ancien_départ = this.départ.étape_json;
         const ancienne_arrivée = this.arrivée.étape_json;
-        
+
         this.changeÉtape(this.départ, ancienne_arrivée);
         this.changeÉtape(this.arrivée, ancien_départ);
         this.setÉtapesClic(

@@ -1,1 +1,0 @@
-LieuOsm({ géom, nom, type_lieu, infos, pk, id_osm }: ArgsLieuOsmGénéral, carte: Map): LieuOsm
