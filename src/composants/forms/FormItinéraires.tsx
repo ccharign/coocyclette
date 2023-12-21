@@ -31,24 +31,26 @@ export default function FormItinéraires({ setZone }: propsFormItinéraires) {
 *     position => setMaPosition(positionVersGeom(position))
 * )
      */
-    const { coords, isGeolocationAvailable, isGeolocationEnabled } =
+    const { coords, getPosition } =
         useGeolocated({
             positionOptions: {
                 enableHighAccuracy: true,
             },
-            userDecisionTimeout: 5000,
+            //userDecisionTimeout: 5000,
             watchPosition: true,
             watchLocationPermissionChange: true,
-            onError: e => alert("Erreur à la géolocalisation : " + e)
+            //onError: e => alert("Erreur à la géolocalisation : " + e)
         });
+
+    getPosition();
 
 
     function changePartirDeMaPosition() {
-        if (!coords){
+        if (!coords) {
             throw new Error("Localisation pas disponible");
         }
-        const {longitude, latitude} = coords;
-        
+        const { longitude, latitude } = coords;
+
         étapes.changeDépart({
             type_étape: "ma-position",
             nom: "Ma position",
@@ -85,14 +87,18 @@ export default function FormItinéraires({ setZone }: propsFormItinéraires) {
         <Button
             variant="outlined"
             onClick={changePartirDeMaPosition}
-            disabled={isGeolocationAvailable || isGeolocationEnabled}
+            disabled={coords === undefined}
         >
             {
-                (isGeolocationAvailable || isGeolocationEnabled)
-                    ? "Géolocalisation non disponible"
-                    : "Partir de ma position"
+                (coords)
+                    ? "Partir de ma position"
+                    : "Géolocalisation non disponible"
             }
 
+            {
+                coords
+                && ` ((${coords.longitude}, ${coords.latitude}))`
+            }
         </Button>;
 
     return (
