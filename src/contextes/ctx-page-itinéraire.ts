@@ -17,9 +17,9 @@ export type tContexteItinéraire = {
     setStats: React.Dispatch<React.SetStateAction<ReactNode>>,
 }
 
-
+// Création d’un objet Étapes factice pour initialiser le contexte
 const fonctionNull = ((_e: LieuJson | null | ((_prev: LieuJson | null) => LieuJson | null)) => null);
-const fonctionNull2 = ((_e: any  | ((_prev: any ) => any )) => null);
+const fonctionNull2 = ((_e: any | ((_prev: any) => any)) => null);
 
 const gère_une_étape = new GèreUneÉtape(null, fonctionNull, null, [], fonctionNull2, null);
 
@@ -29,5 +29,5 @@ export const contexte_iti = createContext<tContexteItinéraire>({
     zone: "",
     étapes: new Étapes(gère_une_étape, gère_une_étape, [], fonctionNull2, gère_une_étape, null, [], fonctionNull2),
     setTiroir: (_clef, _ouvert) => null,
-    setStats: ()=>null,
+    setStats: () => null,
 })

@@ -1,26 +1,24 @@
 import { useContext, useState } from "react";
+
+import SwapVertIcon from '@mui/icons-material/SwapVert';
+import { Container, Row, Col } from "react-bootstrap";
+import { useGeolocated } from "react-geolocated";
+import IconButton from "@mui/material/IconButton";
+import { Button } from "@mui/material";
+
+import { contexte_iti } from "../../contextes/ctx-page-itinéraire";
+import BoutonEnvoi from "../molécules/BoutonEnvoi";
 import ChoixZone from "../molécules/choixZone";
 import AutoComplèteDistant from "../molécules/autoComplèteDistant";
 import LieuAvecÉtapes from "../../classes/Lieu";
 import { ÉtapeClic } from "../../classes/ÉtapeClic";
-
-import SwapVertIcon from '@mui/icons-material/SwapVert';
-
-import { Container, Row, Col } from "react-bootstrap";
-import { contexte_iti } from "../../contextes/ctx-page-itinéraire";
-import BoutonEnvoi from "../molécules/BoutonEnvoi";
-import IconButton from "@mui/material/IconButton";
-import { Button } from "@mui/material";
-import { positionVersGeom } from "../../fonctions/pour_leaflet";
-
-import {GéométrieOsm} from "../../classes/types"
 
 
 export type propsFormItinéraires = {
     setZone: React.Dispatch<React.SetStateAction<string>>,
 }
 
-const geo = navigator.geolocation;
+//const geo = navigator.geolocation;
 
 
 export default function FormItinéraires({ setZone }: propsFormItinéraires) {
@@ -28,17 +26,34 @@ export default function FormItinéraires({ setZone }: propsFormItinéraires) {
     const { zone, carte, étapes } = useContext(contexte_iti);
     const [données_modifiées, setDonnéesModifiées] = useState(true); // Indique si des modifs ont été faites depuis le dernier calcul d’itinéraire
 
-    const [ma_position, setMaPosition] = useState<GéométrieOsm>([[0, 0]]);
-    geo.watchPosition(
-        position => setMaPosition(positionVersGeom(position))
-    )
+    /* const [ma_position, setMaPosition] = useState<GéométrieOsm>([[0, 0]]);
+* geo.watchPosition(
+*     position => setMaPosition(positionVersGeom(position))
+* )
+     */
+    const { coords, isGeolocationAvailable, isGeolocationEnabled } =
+        useGeolocated({
+            positionOptions: {
+                enableHighAccuracy: true,
+            },
+            userDecisionTimeout: 5000,
+            watchPosition: true,
+            watchLocationPermissionChange: true,
+            onError: e => alert("Erreur à la géolocalisation : " + e)
+        });
+
 
     function changePartirDeMaPosition() {
+        if (!coords){
+            throw new Error("Localisation pas disponible");
+        }
+        const {longitude, latitude} = coords;
+        
         étapes.changeDépart({
-                type_étape: "ma-position",
-                nom: "Ma position",
-                géom: ma_position,
-            });
+            type_étape: "ma-position",
+            nom: "Ma position",
+            géom: [[longitude, latitude]],
+        });
     }
 
 
@@ -66,6 +81,20 @@ export default function FormItinéraires({ setZone }: propsFormItinéraires) {
         setDonnéesModifiées: setDonnéesModifiées,
     }
 
+    const bouton_partir_de_ma_position =
+        <Button
+            variant="outlined"
+            onClick={changePartirDeMaPosition}
+            disabled={isGeolocationAvailable || isGeolocationEnabled}
+        >
+            {
+                (isGeolocationAvailable || isGeolocationEnabled)
+                    ? "Géolocalisation non disponible"
+                    : "Partir de ma position"
+            }
+
+        </Button>;
+
     return (
         <form onSubmit={e => e.preventDefault()}>
             <Container>
@@ -83,8 +112,6 @@ export default function FormItinéraires({ setZone }: propsFormItinéraires) {
 
                 <Row className="my-3">
 
-
-
                     <AutoComplèteDistant
                         {...propsDesAutocomplètes}
                         étape={étapes.départ}
@@ -92,13 +119,8 @@ export default function FormItinéraires({ setZone }: propsFormItinéraires) {
                         placeHolder="2 rue bidule, mon café, ..."
                         onChange={val => étapes.changeDépart(val)}
                     />
-                    <Button
-                        variant="outlined"
-                        onClick={changePartirDeMaPosition}
-                    >
-                        Partir de ma position
-                    </Button>
 
+                    {bouton_partir_de_ma_position}
 
                     <IconButton
                         onClick={() => étapes.inverse()}
