@@ -42,6 +42,7 @@ export default class LieuAdresse extends Lieu {
                     (ll) => {
                         this.coords = ll;
                         (this.leaflet_layer as L.Marker).setLatLng(ll);
+                        //this.setLatlng(ll);
                         this.leaflet_layer.addTo(this.carte);
                     }
                 );

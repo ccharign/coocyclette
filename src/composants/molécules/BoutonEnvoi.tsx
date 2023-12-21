@@ -23,7 +23,7 @@ type propsBoutonEnvoi = {
 export default function BoutonEnvoi({ texte, disabled }: propsBoutonEnvoi) {
 
     
-    const { zone, setTiroir, carte, itinéraires, étapes } = useContext(contexte_iti);
+    const { zone, setTiroir, carte, itinéraires, étapes, setStats } = useContext(contexte_iti);
     const [iti_en_chargement, setItiEnChargement] = useState(false);
 
     
@@ -38,7 +38,7 @@ export default function BoutonEnvoi({ texte, disabled }: propsBoutonEnvoi) {
             const url = new URL(`${URL_API}itineraire/${zone}`);
             url.searchParams.append("étapes_str", JSON.stringify(étapes_django));
             const res = await (fetch(url).then(res => res.json())) as GetItinéraire[];
-            màjItinéraires(res, carte as L.Map, itinéraires, étapes);
+            màjItinéraires(res, carte as L.Map, itinéraires, étapes, setStats);
             //setDonnéesModifiées(false);
             setTiroir("contribuer", true);
             

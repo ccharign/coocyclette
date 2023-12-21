@@ -1,5 +1,5 @@
 import Base from "../../src/layouts/base"
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import L from "leaflet";
 import FormItinéraires from "../composants/forms/FormItinéraires.tsx";
 import FormContribuer from "../composants/forms/FormContribuer.tsx";
@@ -8,7 +8,7 @@ import { tZoneAffichage, tTiroir, tTiroirOuvert } from "../classes/types.ts";
 import CarteItinéraires from "../composants/organismes/CarteItinéraire.tsx";
 import { tContexteItinéraire } from "../contextes/ctx-page-itinéraire.ts";
 import { contexte_iti } from "../contextes/ctx-page-itinéraire.ts";
-import { Itinéraire } from "../classes/Itinéraire.ts";
+import { Itinéraire } from "../classes/Itinéraire.tsx";
 import Tiroir from "../composants/atomes/Tiroir.tsx";
 import useÉtapes from "../hooks/useÉtapes.ts";
 import { Button } from "@mui/material";
@@ -44,7 +44,7 @@ const tiroirs: tTiroirs =
 {
     recherche: { nom: "Modifier la recherche", ancre: "left", contenu: "" },
     //contribuer: { nom: "Contribuer", ancre: "top", contenu: "" },
-    stats: { nom: "Stats", ancre: "right", contenu: "Un jour il y aura ici les stats sur les itinéraires proposés" },
+    stats: { nom: "Stats", ancre: "right", contenu: "" },
 }
 
 const itinéraires: Itinéraire[] = [];
@@ -56,8 +56,11 @@ export default function PageItinéraires({ fouine }: propsItinéraires) {
 
     const [carte, setCarte] = useState<L.Map | null>(null);
     const [zone, setZone] = useState<string>("");
-    const { étapes } = useÉtapes(carte, itinéraires);
 
+    const [stats, setStats] = useState<ReactNode>("Pas d’itinéraire pour l’instant.");
+    tiroirs.stats.contenu=stats;
+    const { étapes } = useÉtapes(carte, itinéraires, setStats);
+    
     const [tiroir_ouvert, setTiroirOuvert] = useState<tTiroirOuvert>(
         new Map(clefs_tiroirs.map(clef => [clef, clef === "recherche"]))  // Initialement, seule la barre de recherche est ouverte.
     );
@@ -74,6 +77,7 @@ export default function PageItinéraires({ fouine }: propsItinéraires) {
         }
     }
 
+
     // Fixe l’état du tiroir
     function setTiroir(clef: tZoneAffichage, ouvert: boolean) {
         if (clef !== "contribuer" || contribuerPossible(étapes)) {
@@ -82,6 +86,7 @@ export default function PageItinéraires({ fouine }: propsItinéraires) {
             )
         }
     }
+
 
     // Le tiroir « Recherche »
     tiroirs.recherche.contenu =
@@ -135,6 +140,7 @@ export default function PageItinéraires({ fouine }: propsItinéraires) {
         étapes: étapes,
         itinéraires: itinéraires,
         setTiroir: setTiroir,
+        setStats: setStats,
     }
 
 

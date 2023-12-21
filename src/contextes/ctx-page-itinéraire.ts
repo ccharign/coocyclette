@@ -1,4 +1,4 @@
-import { createContext } from "react";
+import { ReactNode, createContext } from "react";
 import { Itinéraire } from "../classes/Itinéraire";
 import { LieuJson, tZoneAffichage } from "../classes/types";
 import { Étapes } from "../hooks/useÉtapes";
@@ -14,6 +14,7 @@ export type tContexteItinéraire = {
     zone: string,
     étapes: Étapes,
     setTiroir: (_clef: tZoneAffichage, _ouvert: boolean) => void,
+    setStats: React.Dispatch<React.SetStateAction<ReactNode>>,
 }
 
 
@@ -26,6 +27,7 @@ export const contexte_iti = createContext<tContexteItinéraire>({
     carte: null,
     itinéraires: [],
     zone: "",
-    étapes: new Étapes(gère_une_étape, gère_une_étape, [], fonctionNull2, gère_une_étape, null, []),
+    étapes: new Étapes(gère_une_étape, gère_une_étape, [], fonctionNull2, gère_une_étape, null, [], fonctionNull2),
     setTiroir: (_clef, _ouvert) => null,
+    setStats: ()=>null,
 })

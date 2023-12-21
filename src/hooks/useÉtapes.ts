@@ -1,9 +1,9 @@
-import Lieu,  { ajusteFenêtre, Étape } from "../classes/Lieu";
+import Lieu, { ajusteFenêtre, Étape } from "../classes/Lieu";
 import { ÉtapeClic } from "../classes/ÉtapeClic";
 import type { LieuJson } from "../classes/types";
 import { videItinéraires } from "../fonctions/pour_leaflet";
 import type { Itinéraire } from "../classes/Itinéraire";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import useÉtape, { GèreUneÉtape } from "./useÉtape";
 import { iconeFa } from "../classes/iconeFa";
 import L from "leaflet";
@@ -33,13 +33,15 @@ export class Étapes {
 
     carte: L.Map | null
     itinéraires: Itinéraire[]
+    setStats: React.Dispatch<React.SetStateAction<ReactNode>>
 
     constructor(
         départ: GèreUneÉtape,
         arrivée: GèreUneÉtape,
         étapes_clic: ÉtapeClic[], setÉtapesClic: React.Dispatch<React.SetStateAction<ÉtapeClic[]>>,
         étape_pas_clic: GèreUneÉtape,
-        carte: L.Map | null, itinéraires: Itinéraire[]
+        carte: L.Map | null, itinéraires: Itinéraire[],
+        setStats: React.Dispatch<React.SetStateAction<ReactNode>>,
     ) {
         this.étapes_clic = étapes_clic;
         this.setÉtapesClic = setÉtapesClic;
@@ -48,6 +50,7 @@ export class Étapes {
         this.départ = départ;
         this.arrivée = arrivée;
         this.étape_pas_clic = étape_pas_clic;
+        this.setStats = setStats;
     }
 
 
@@ -94,13 +97,8 @@ export class Étapes {
     changeÉtape(gère_étape: GèreUneÉtape, value: LieuJson | null) {
 
         // Crée, enregistre et récupère l’objet Étape
-        //const étape =
         const étape = gère_étape.setÉtapeÀPartirDuJson(value, this);
 
-        // Affiche le layer leaflet
-        // if (this.carte && étape instanceof Lieu) {
-        //     étape.leaflet_layer.addTo(this.carte);
-        // }
 
         this.ménageAprèsChangeÉtape();
 
@@ -109,7 +107,7 @@ export class Étapes {
 
     ménageAprèsChangeÉtape() {
         // Supprime les anciens itinéraires
-        videItinéraires(this.itinéraires, this.étapes_clic);
+        videItinéraires(this.itinéraires, this.étapes_clic, this.setStats);
 
         // Ajuste la fenêtre
         ajusteFenêtre(this.toutes_les_étapes(), this.carte as L.Map);
@@ -118,6 +116,7 @@ export class Étapes {
 
     changeDépart(départ_j: LieuJson | null) {
         const étape_départ = this.changeÉtape(this.départ, départ_j);
+        // Mettre l’icône ""vélo""
         if (étape_départ instanceof Lieu && étape_départ.leaflet_layer instanceof L.Marker) {
             étape_départ.leaflet_layer.setIcon(iconeFa("bicycle"));
         }
@@ -152,7 +151,7 @@ export class Étapes {
 
 
 
-export default function useÉtapes(carte: L.Map | null, itinéraires: Itinéraire[]) {
+export default function useÉtapes(carte: L.Map | null, itinéraires: Itinéraire[], setStats: React.Dispatch<React.SetStateAction<ReactNode>>) {
 
 
     const gère_arrivée = useÉtape(carte)
@@ -170,6 +169,7 @@ export default function useÉtapes(carte: L.Map | null, itinéraires: Itinérair
         étapes_clic, setÉtapesClic,
         gère_étape_pas_clic,
         carte, itinéraires,
+        setStats,
     );
 
 

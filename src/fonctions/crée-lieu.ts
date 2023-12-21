@@ -3,7 +3,6 @@ import { LieuJson, GéométrieOsm } from "../classes/types";
 import LieuAdresse, { ArgsLieuAdresse } from "../classes/LieuAdresse";
 import LieuOsmAvecÉtapes, { ArgsLieuOsm } from "../classes/LieuOsm";
 import { ÉtapeGtl, ArgsÉtapeGtl } from "../classes/types-lieux";
-import MaPosition from "../classes/MaPosition";
 import type { Étapes } from "../hooks/useÉtapes.ts";
 
 // Sert de transition pour les types suivants
@@ -30,7 +29,7 @@ export default function lieuOfJson(données: LieuJson, carte: L.Map, étapes?: �
             return new Lieu(données.géom, données.nom, carte, étapes);
         }
         case "ma-position": {
-            return new MaPosition(carte, étapes);
+            return new Lieu(données.géom, "Ma position", carte, étapes);
         }
         default: {
             throw new Error(`Type non reconnu : ${données.type_étape} pour ${données.nom}`);

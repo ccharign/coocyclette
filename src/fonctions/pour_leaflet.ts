@@ -3,9 +3,10 @@ import "leaflet.fullscreen";
 import "leaflet.fullscreen/icon-fullscreen.svg";
 import "leaflet.locatecontrol";
 import "leaflet.locatecontrol/dist/L.Control.Locate.min.css";
-import { Dico } from "../classes/types.ts";
-import type { Itinéraire } from "../classes/Itinéraire.ts";
+import { Dico, GéométrieOsm } from "../classes/types.ts";
+import type { Itinéraire } from "../classes/Itinéraire.tsx";
 import type Lieu from "../classes/Lieu.ts";
+import { ReactNode } from "react";
 
 
 export function positionVersLatlng(position: GeolocationPosition): L.LatLng {
@@ -14,10 +15,15 @@ export function positionVersLatlng(position: GeolocationPosition): L.LatLng {
 }
 
 
+export function positionVersGeom(position: GeolocationPosition): GéométrieOsm {
+    const { longitude, latitude } = position.coords;
+    return [[latitude, longitude]];
+}
+
 
 
 // Supprime les itinéraires et les étapes passées en arg
-export function videItinéraires(itinéraires: Itinéraire[], étapes: Lieu[]// , setÉtapes: React.Dispatch<React.SetStateAction<ÉtapeClic[]>>
+export function videItinéraires(itinéraires: Itinéraire[], étapes: Lieu[], setStats: React.Dispatch<React.SetStateAction<ReactNode>>
 ) {
 
     itinéraires.forEach(
@@ -29,7 +35,7 @@ export function videItinéraires(itinéraires: Itinéraire[], étapes: Lieu[]// 
         é => é.supprimeLeafletLayer()
     );
     étapes.length = 0;
-    //setÉtapes([]);
+    setStats(null);
 }
 
 

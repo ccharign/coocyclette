@@ -3,12 +3,13 @@ import { GetItinéraire } from "./types";
 import L from "leaflet";
 import lieuOfJson from "../fonctions/crée-lieu";
 import type { Étapes } from "../hooks/useÉtapes"
+import { ReactNode } from "react";
 
 
 // Efface les anciens itinéraires et affiche les nouveaux
 // itis: résultat du get
 // itinéraires: les itinéraires de l’appli
-export function màjItinéraires(itis: GetItinéraire[], carte: L.Map, itinéraires: Itinéraire[], étapes: Étapes) {
+export function màjItinéraires(itis: GetItinéraire[], carte: L.Map, itinéraires: Itinéraire[], étapes: Étapes, setStats: React.Dispatch<React.SetStateAction<ReactNode>>) {
 
     itinéraires.forEach(
         iti => iti.supprimeLayers()
@@ -16,6 +17,16 @@ export function màjItinéraires(itis: GetItinéraire[], carte: L.Map, itinérai
     itinéraires.length = 0;
     itis.forEach(
         iti => itinéraires.push(new Itinéraire(iti, carte, étapes))
+    );
+    setStats(
+        <ul>
+            {itinéraires.map(
+                iti=>
+                    <li key={iti.pourcentage_détour}>
+                        {iti.stats()}
+                    </li>
+            )}
+        </ul>
     );
 }
 
@@ -29,6 +40,7 @@ export class Itinéraire {
     longueur: number // en km
     polyline: L.Polyline
     lieux: Lieu[]
+    nom: string
 
 
     constructor({ points, couleur, pourcentage_détour, lieux, longueur, nom }: GetItinéraire, carte: L.Map, étapes: Étapes) {
@@ -40,10 +52,9 @@ export class Itinéraire {
         this.lieux.forEach(
             l => l.leaflet_layer.addTo(carte)
         )
+        this.nom = nom;
 
-        const contenu_popup = `
-${nom}<br>${longueur}km, ${Math.floor(longueur / 0.25)}mn`
-            + (pourcentage_détour ? `,<br> détour de ${pourcentage_détour}%` : "");
+        const contenu_popup = this.stats();
         //contenu_popup = `<div stlyle="background-color: ${this.couleur}">${contenu_popup}</div>`
 
         this.polyline = new L.Polyline(
@@ -62,6 +73,16 @@ ${nom}<br>${longueur}km, ${Math.floor(longueur / 0.25)}mn`
                 }
             )
             .addTo(carte);
+    }
+
+    stringPourcentageDétour() {
+        return this.pourcentage_détour
+            ? `détour de ${this.pourcentage_détour}%`
+            : "trajet direct"
+    }
+
+    stats() {
+        return `${this.nom}<br>${this.longueur}km, ${Math.floor(this.longueur / 0.25)}mn, ${this.stringPourcentageDétour()}`;
     }
 
 

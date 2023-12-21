@@ -36,7 +36,7 @@ export function ajusteFenêtre(étapes: Étape[], carte: L.Map) {
         .flatMap(étape => étape instanceof Lieu ? [étape.coords] : []);
 
     if (étapes_filtrées.length === 1) {
-        carte.setView(étapes_filtrées[0]);
+        carte.setView(étapes_filtrées[0], 14);
     } else if (étapes_filtrées.length > 1) {
         carte.fitBounds(L.latLngBounds(étapes_filtrées));
     }

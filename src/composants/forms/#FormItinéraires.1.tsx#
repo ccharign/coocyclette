@@ -3,24 +3,15 @@ import ChoixZone from "../molécules/choixZone";
 import AutoComplèteDistant from "../molécules/autoComplèteDistant";
 import LieuAvecÉtapes from "../../classes/Lieu";
 import { ÉtapeClic } from "../../classes/ÉtapeClic";
-
 import SwapVertIcon from '@mui/icons-material/SwapVert';
-
 import { Container, Row, Col } from "react-bootstrap";
 import { contexte_iti } from "../../contextes/ctx-page-itinéraire";
 import BoutonEnvoi from "../molécules/BoutonEnvoi";
 import IconButton from "@mui/material/IconButton";
 import { Button } from "@mui/material";
 import { positionVersGeom } from "../../fonctions/pour_leaflet";
+import { propsFormItinéraires, geo } from "./FormItinéraires";
 
-import {GéométrieOsm} from "../../classes/types"
-
-
-export type propsFormItinéraires = {
-    setZone: React.Dispatch<React.SetStateAction<string>>,
-}
-
-const geo = navigator.geolocation;
 
 
 export default function FormItinéraires({ setZone }: propsFormItinéraires) {
@@ -28,17 +19,17 @@ export default function FormItinéraires({ setZone }: propsFormItinéraires) {
     const { zone, carte, étapes } = useContext(contexte_iti);
     const [données_modifiées, setDonnéesModifiées] = useState(true); // Indique si des modifs ont été faites depuis le dernier calcul d’itinéraire
 
-    const [ma_position, setMaPosition] = useState<GéométrieOsm>([[0, 0]]);
+    const [ma_position, setMaPosition] = useState<GeometrieOsm>([[0, 0]]);
     geo.watchPosition(
         position => setMaPosition(positionVersGeom(position))
-    )
+    );
 
     function changePartirDeMaPosition() {
         étapes.changeDépart({
-                type_étape: "ma-position",
-                nom: "Ma position",
-                géom: ma_position,
-            });
+            type_étape: "ma-position",
+            nom: "Ma position",
+            géom: ma_position,
+        });
     }
 
 
@@ -55,8 +46,8 @@ export default function FormItinéraires({ setZone }: propsFormItinéraires) {
                     carte,
                     setDonnéesModifiées
                 );
-            },
-        )
+            }
+        );
     } else if (carte) {
         carte.off("click");
     }
@@ -64,7 +55,7 @@ export default function FormItinéraires({ setZone }: propsFormItinéraires) {
 
     const propsDesAutocomplètes = {
         setDonnéesModifiées: setDonnéesModifiées,
-    }
+    };
 
     return (
         <form onSubmit={e => e.preventDefault()}>
@@ -75,8 +66,7 @@ export default function FormItinéraires({ setZone }: propsFormItinéraires) {
                     <Col>
                         <ChoixZone
                             setZone={setZone}
-                            zone={zone}
-                        />
+                            zone={zone} />
                     </Col>
                 </Row>
 
@@ -90,8 +80,7 @@ export default function FormItinéraires({ setZone }: propsFormItinéraires) {
                         étape={étapes.départ}
                         label="Départ"
                         placeHolder="2 rue bidule, mon café, ..."
-                        onChange={val => étapes.changeDépart(val)}
-                    />
+                        onChange={val => étapes.changeDépart(val)} />
                     <Button
                         variant="outlined"
                         onClick={changePartirDeMaPosition}
@@ -111,18 +100,16 @@ export default function FormItinéraires({ setZone }: propsFormItinéraires) {
                         étape={étapes.arrivée}
                         label="Arrivée"
                         placeHolder="une boulangerie, 3 rue truc, ..."
-                        onChange={val => étapes.changeArrivée(val)}
-                    />
+                        onChange={val => étapes.changeArrivée(val)} />
 
                 </Row>
 
 
                 <Row className="my-3">
-                    <Col >
+                    <Col>
                         <BoutonEnvoi
                             disabled={!étapes.départ || !étapes.arrivée || !données_modifiées}
-                            texte=" C’est parti !"
-                        />
+                            texte=" C’est parti !" />
                     </Col>
                 </Row>
 
@@ -132,8 +119,7 @@ export default function FormItinéraires({ setZone }: propsFormItinéraires) {
                         étape={étapes.étape_pas_clic}
                         label="(Option) passer par un(e):"
                         placeHolder="Essayer 'boulangerie', 'lieu où', ..."
-                        onChange={val => étapes.changeÉtapePasClic(val)}
-                    />
+                        onChange={val => étapes.changeÉtapePasClic(val)} />
                 </Row>
 
             </Container>
