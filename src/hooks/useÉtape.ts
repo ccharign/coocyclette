@@ -16,11 +16,13 @@ export class GèreUneÉtape {
     setOptionsAutocomplète: React.Dispatch<React.SetStateAction<LieuJson[]>>
     carte: L.Map | null
 
+    
     constructor(
         étape_json: LieuJson | null, setÉtapeJson: React.Dispatch<React.SetStateAction<LieuJson | null>>,
         étape: Étape | null,
         options_autocomplète: LieuJson[], setOptionsAutocomplète: React.Dispatch<React.SetStateAction<LieuJson[]>>,
         carte: L.Map | null,
+
     ) {
         this.étape_json = étape_json;
         this.setÉtapeJson = setÉtapeJson;
@@ -31,9 +33,10 @@ export class GèreUneÉtape {
     }
 
 
+
     // Enregistre le json et crée l’objet étape
     // Puis enregistre l’étape
-    setÉtapeÀPartirDuJson(étape_json: LieuJson | null, étapes:Étapes) {
+    setÉtapeÀPartirDuJson(étape_json: LieuJson | null, étapes: Étapes) {
         this.setÉtapeJson(étape_json);
         this.setOptionsAutocomplète([étape_json].filter(é => é) as LieuJson[])
         const étape = étape_json ? lieuOfJson(étape_json, this.carte as L.Map, étapes) : null;
@@ -63,6 +66,7 @@ export default function useÉtape(carte: L.Map | null) {
 
     const [étape_j, setÉtapeJ] = useState<LieuJson | null>(null);
     const [options_étape, setOptionsÉtape] = useState<LieuJson[]>([]);
+
 
     const étape = useMemo(
         () => étape_j && carte

@@ -14,22 +14,23 @@ import { GèreUneÉtape } from "../../hooks/useÉtape"
 
 
 const URL_COMPLÉTION = URL_API + "completion";
-const MA_POSITION : LieuJson = { "type_étape": "ma-position", "nom": "Ma position", "géom": [[0, 0]] }
+const MA_POSITION: LieuJson = { "type_étape": "ma-position", "nom": "Ma position", "géom": [[0, 0]] }
 
 
 type autocomplèteProps = {
     label: string;
     placeHolder: string;
-    étape: GèreUneÉtape,
+    étape: GèreUneÉtape;
     //setDonnéesModifiées: React.Dispatch<React.SetStateAction<boolean>>,
-    onChange: (_val: LieuJson | null) => void,
+    onChange: (_val: LieuJson | null) => void;
+    disabled?: boolean;
 }
 
 const l_min = 3;
 
 
 
-export default function AutoComplèteDistant({ label, placeHolder, étape, onChange }: autocomplèteProps) {
+export default function AutoComplèteDistant({ label, placeHolder, étape, onChange, disabled }: autocomplèteProps) {
 
     const { zone } = useContext(contexte_iti);
     const [charge_options, setChargeOptions] = useState(false);  // Indique si chargement en cours
@@ -70,6 +71,7 @@ export default function AutoComplèteDistant({ label, placeHolder, étape, onCha
 
     return (
         <Autocomplete
+            disabled={disabled}
             getOptionLabel={(option) => option.nom}
             options={étape.options_autocomplète}
             filterOptions={(x) => x}
@@ -84,9 +86,12 @@ export default function AutoComplèteDistant({ label, placeHolder, étape, onCha
             isOptionEqualToValue={(option, value) => option.nom === value.nom && option.pk === value.pk}
 
             onInputChange={(_e, val) => {
-                setInputValue(val);
-                getOptions(val);
+                if (val !== "Ma position") {
+                    setInputValue(val);
+                    getOptions(val);
+                }
             }}
+
             renderInput={
                 (params) => (
                     <TextField

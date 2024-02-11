@@ -17,7 +17,7 @@ export function positionVersLatlng(position: GeolocationPosition): L.LatLng {
 
 export function positionVersGeom(position: GeolocationPosition): GéométrieOsm {
     const { longitude, latitude } = position.coords;
-    return [[latitude, longitude]];
+    return [[longitude, latitude]];
 }
 
 
