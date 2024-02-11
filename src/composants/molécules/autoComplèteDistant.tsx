@@ -14,8 +14,6 @@ import { GèreUneÉtape } from "../../hooks/useÉtape"
 
 
 const URL_COMPLÉTION = URL_API + "completion";
-const MA_POSITION: LieuJson = { "type_étape": "ma-position", "nom": "Ma position", "géom": [[0, 0]] }
-
 
 type autocomplèteProps = {
     label: string;
@@ -56,7 +54,7 @@ export default function AutoComplèteDistant({ label, placeHolder, étape, onCha
                 setChargeOptions(true);
                 const res = await getLieux(value);
                 setChargeOptions(false);
-                étape.setOptionsAutocomplète(res.concat([MA_POSITION]));
+                étape.setOptionsAutocomplète(res);
             } else {
                 étape.setOptionsAutocomplète([]);
             }
@@ -73,7 +71,7 @@ export default function AutoComplèteDistant({ label, placeHolder, étape, onCha
         <Autocomplete
             disabled={disabled}
             getOptionLabel={(option) => option.nom}
-            options={étape.options_autocomplète}
+                options={étape.options_autocomplète}
             filterOptions={(x) => x}
             value={étape.étape_json}
             onChange={
@@ -86,11 +84,10 @@ export default function AutoComplèteDistant({ label, placeHolder, étape, onCha
             isOptionEqualToValue={(option, value) => option.nom === value.nom && option.pk === value.pk}
 
             onInputChange={(_e, val) => {
-                if (val !== "Ma position") {
                     setInputValue(val);
                     getOptions(val);
-                }
-            }}
+            }
+            }
 
             renderInput={
                 (params) => (
