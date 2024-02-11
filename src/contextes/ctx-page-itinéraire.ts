@@ -27,7 +27,7 @@ export const contexte_iti = createContext<tContexteItinéraire>({
     carte: null,
     itinéraires: [],
     zone: "",
-    étapes: new Étapes(gère_une_étape, gère_une_étape, [], fonctionNull2, gère_une_étape, null, [], fonctionNull2),
+    étapes: new Étapes(gère_une_étape, gère_une_étape, [], fonctionNull2, gère_une_étape, null, [], fonctionNull2, null, false, fonctionNull2),
     setTiroir: (_clef, _ouvert) => null,
     setStats: () => null,
 })
