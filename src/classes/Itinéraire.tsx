@@ -9,7 +9,9 @@ import { ReactNode } from "react";
 // Efface les anciens itinéraires et affiche les nouveaux
 // itis: résultat du get
 // itinéraires: les itinéraires de l’appli
-export function màjItinéraires(itis: GetItinéraire[], carte: L.Map, itinéraires: Itinéraire[], étapes: Étapes, setStats: React.Dispatch<React.SetStateAction<ReactNode>>) {
+export function màjItinéraires(
+    itis: GetItinéraire[], carte: L.Map, itinéraires: Itinéraire[], étapes: Étapes, setStats: React.Dispatch<React.SetStateAction<ReactNode>>
+) {
 
     itinéraires.forEach(
         iti => iti.supprimeLayers()
@@ -18,11 +20,12 @@ export function màjItinéraires(itis: GetItinéraire[], carte: L.Map, itinérai
     itis.forEach(
         iti => itinéraires.push(new Itinéraire(iti, carte, étapes))
     );
+
     setStats(
         <ul>
             {itinéraires.map(
-                iti=>
-                    <li key={iti.pourcentage_détour}>
+                iti =>
+                    <li key={iti.nom}>
                         {iti.stats()}
                     </li>
             )}
@@ -54,9 +57,6 @@ export class Itinéraire {
         )
         this.nom = nom;
 
-        const contenu_popup = this.stats();
-        //contenu_popup = `<div stlyle="background-color: ${this.couleur}">${contenu_popup}</div>`
-
         this.polyline = new L.Polyline(
             géomOsmVersLeaflet(points),
             {
@@ -67,10 +67,7 @@ export class Itinéraire {
             }
         )
             .bindPopup(
-                contenu_popup,
-                {
-                    //permanent: true,
-                }
+                this.stats_str()
             )
             .addTo(carte);
     }
@@ -81,8 +78,20 @@ export class Itinéraire {
             : "trajet direct"
     }
 
+    // Renvoie les stats de l’itinéraire dans un élément jsx.
     stats() {
-        return `${this.nom}<br>${this.longueur}km, ${Math.floor(this.longueur / 0.25)}mn, ${this.stringPourcentageDétour()}`;
+        return (
+            <span style={{ color: this.couleur }}>
+                {this.nom} : {this.longueur}km, {Math.floor(this.longueur / 0.25)}mn, {this.stringPourcentageDétour()}
+            </span>
+        );
+    }
+
+    // Renvoie les stats de l’itinéraire dans un string au format html
+    stats_str(): string {
+        return `<span style="color:${this.couleur}">
+                ${this.nom} :<br> ${this.longueur}km, ${Math.floor(this.longueur / 0.25)}mn, ${this.stringPourcentageDétour()}
+            </span>`;
     }
 
 

@@ -58,9 +58,9 @@ export default function PageItinéraires({ fouine }: propsItinéraires) {
     const [zone, setZone] = useState<string>("");
 
     const [stats, setStats] = useState<ReactNode>("Pas d’itinéraire pour l’instant.");
-    tiroirs.stats.contenu=stats;
+    tiroirs.stats.contenu = stats;
     const { étapes } = useÉtapes(carte, itinéraires, setStats);
-    
+
     const [tiroir_ouvert, setTiroirOuvert] = useState<tTiroirOuvert>(
         new Map(clefs_tiroirs.map(clef => [clef, clef === "recherche"]))  // Initialement, seule la barre de recherche est ouverte.
     );
@@ -76,7 +76,6 @@ export default function PageItinéraires({ fouine }: propsItinéraires) {
             }
         }
     }
-
 
     // Fixe l’état du tiroir
     function setTiroir(clef: tZoneAffichage, ouvert: boolean) {
